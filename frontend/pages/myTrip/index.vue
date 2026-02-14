@@ -158,6 +158,14 @@
                                             class="px-4 py-2 text-sm text-white transition duration-200 bg-blue-600 rounded-md hover:bg-blue-700">
                                             แชทกับผู้ขับ
                                         </button>
+
+                                    <!-- CONFIRMED: เพิ่มปุ่มรายงาน by Thunchanok -->
+                                    <button v-if="trip.status === 'confirmed'"
+                                        @click="openReportModal(trip)"
+                                        class="px-4 py-2 text-sm text-red-600 transition duration-200 border border-red-300 rounded-md hover:bg-red-50">
+                                        รายงานคนขับ
+                                    </button>
+
                                     </template>
 
                                     <!-- REJECTED / CANCELLED: ลบได้ -->
@@ -220,6 +228,17 @@
             :confirmText="modalContent.confirmText" :variant="modalContent.variant" @confirm="handleConfirmAction"
             @cancel="closeConfirmModal" />
     </div>
+
+<!-- ✅ Report Modal -->
+    <ReportModal
+        :show="isReportModalVisible"
+        :driver-id="reportDriverId"
+        @submit="handleSubmitReport"
+        @close="closeReportModal"
+    />
+
+
+
 </template>
 
 <script setup>
@@ -229,6 +248,10 @@ import 'dayjs/locale/th'
 import buddhistEra from 'dayjs/plugin/buddhistEra'
 import ConfirmModal from '~/components/ConfirmModal.vue'
 import { useToast } from '~/composables/useToast'
+
+//เพิ่มModalรายงาน ink
+import ReportModal from '~/components/ReportModal.vue'
+
 
 // Setup dayjs for Thai locale
 dayjs.locale('th')
@@ -280,6 +303,50 @@ const cancelReasonOptions = [
     { value: 'COMMUNICATION_ISSUE', label: 'สื่อสารไม่สะดวก/ติดต่อไม่ได้' }
 ]
 
+ //Modal Report By Ink
+ 
+const isReportModalVisible = ref(false)
+const reportDriverId = ref(null)
+
+function openReportModal(trip) {
+  reportDriverId.value = trip.driver.id
+  isReportModalVisible.value = true
+}
+
+
+function closeReportModal() {
+  isReportModalVisible.value = false
+}
+//ยิงAPI
+async function handleSubmitReport(payload) {
+  const body = {
+    driverId: reportDriverId.value,
+    types: payload.types,
+    description: payload.description
+  }
+
+  try {
+    await $api('/reports', {
+      method: 'POST',
+      body
+    })
+
+    toast.success('ส่งรายงานสำเร็จ', 'ระบบได้รับข้อมูลแล้ว')
+    closeReportModal()
+
+  } catch (err) {
+    console.error('report failed:', err)
+    toast.error(
+      'ส่งรายงานไม่สำเร็จ',
+      err?.data?.message || 'กรุณาลองใหม่อีกครั้ง'
+    )
+  }
+}
+
+
+
+
+
 const isCancelModalVisible = ref(false)
 const isSubmittingCancel = ref(false)
 const selectedCancelReason = ref('')
@@ -312,6 +379,8 @@ async function fetchMyTrips() {
         // map ข้อมูลพื้นฐานก่อน (ตั้งชื่อชั่วคราวเป็นพิกัด แล้วไป reverse geocode ภายหลัง)
         const formatted = bookings.map((b) => {
             const driverData = {
+                //เพิ่มการค้นหาID driver
+                id: b.route.driver.id,
                 name: `${b.route.driver.firstName} ${b.route.driver.lastName}`.trim(),
                 image:
                     b.route.driver.profilePicture ||
