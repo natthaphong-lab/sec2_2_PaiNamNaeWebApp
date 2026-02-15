@@ -162,7 +162,7 @@ async function confirm() {
   emit('submit', {
     types: selected.value,
     description: description.value,
-    //photos: uploadedUrls
+    photos: photoFiles.value,
   })
 
   close()

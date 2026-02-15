@@ -320,19 +320,22 @@ function closeReportModal() {
 
 //ยิงAPI ส่งได้แค่ข้อความ Thunchanok
 async function handleSubmitReport(payload) {
-//ดูobjectที่ส่งออกมา
-console.log(payload)
-
-  const body = {
-    driverId: reportDriverId.value,
-    types: payload.types,
-    description: payload.description
+  const formData = new FormData()
+  formData.append('driverId', reportDriverId.value)
+  formData.append('types', JSON.stringify(payload.types))
+  if (payload.description) {
+    formData.append('description', payload.description)
+  }
+  if (payload.photos && payload.photos.length > 0) {
+    for (const file of payload.photos) {
+      formData.append('photos', file)
+    }
   }
 
   try {
     await $api('/reports', {
       method: 'POST',
-      body
+      body: formData,
     })
 
     toast.success('ส่งรายงานสำเร็จ', 'ระบบได้รับข้อมูลแล้ว')
