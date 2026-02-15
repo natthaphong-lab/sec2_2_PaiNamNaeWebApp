@@ -70,6 +70,7 @@ enum ReportType {
   OVERCHARGING
   DECLINE_PASSENGER
   TAKING_WRONG_ROUTE_INTENTIONALLY
+  OTHER
 }
 
 enum ReportStatus {

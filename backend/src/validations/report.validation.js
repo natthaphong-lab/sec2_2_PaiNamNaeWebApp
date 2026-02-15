@@ -10,6 +10,7 @@ const reportTypes = [
   'OVERCHARGING',
   'DECLINE_PASSENGER',
   'TAKING_WRONG_ROUTE_INTENTIONALLY',
+  'OTHER'
 ];
 
 const createReportSchema = z.object({

@@ -14,29 +14,36 @@
       <!-- ด้านพฤติกรรม -->
       <h4 class="sub">ด้านพฤติกรรม</h4>
       <div class="options">
-        <label v-for="item in behaviorReasons" :key="item">
-          <input type="checkbox" :value="item" v-model="selected" />
-          {{ item }}
+      <!-- แก้ไขข้อความที่แสดงในฟอร์ม-->
+        <label v-for="item in behaviorReasons" :key="item.value">
+          <input type="checkbox" :value="item.value" v-model="selected" />
+          {{ item.label }}
+
         </label>
       </div>
 
       <!-- ด้านบริการ -->
       <h4 class="sub">ด้านบริการ</h4>
       <div class="options">
-        <label v-for="item in serviceReasons" :key="item">
-          <input type="checkbox" :value="item" v-model="selected" />
-          {{ item }}
+        <label v-for="item in serviceReasons" :key="item.value">
+          <input type="checkbox" :value="item.value" v-model="selected" />
+          {{ item.label }}
+
         </label>
       </div>
 
-      <!-- อื่น ๆ -->
-      <h4 class="sub">อื่น ๆ</h4>
-      <input
-        type="text"
-        v-model="otherReason"
-        placeholder="ระบุเหตุผลอื่น ๆ"
-        class="input"
-      />
+      <!-- อื่น ๆ อัปเดตให้กดcheckboxได้-->
+<h4 class="sub">อื่น ๆ</h4>
+
+<label>
+  <input
+    type="checkbox"
+    value="OTHER"
+    v-model="selected"
+  />
+  อื่น ๆ
+</label>
+
 
       <!-- รายละเอียดเพิ่มเติม -->
       <h3 class="section">รายละเอียดเพิ่มเติม</h3>
@@ -47,11 +54,28 @@
         class="textarea"
       ></textarea>
 
-      <!-- อัปโหลดรูป -->
-      <h3 class="section">อัปโหลดรูปภาพเพิ่มเติม</h3>
-      <button class="upload-btn" @click="uploadImage">
-        อัปโหลดรูป
-      </button>
+     <!-- อัปโหลดรูป พรีวิว-->
+<h3 class="section">อัปโหลดรูปภาพเพิ่มเติม</h3>
+
+<input
+  ref="fileInput"
+  type="file"
+  multiple
+  accept="image/*"
+  @change="handleFileUpload"
+/>
+
+<!-- 🔽 เพิ่มตรงนี้ -->
+<div class="preview-list">
+  <div
+    v-for="(img, index) in photoPreviews"
+    :key="index"
+    class="preview-item"
+  >
+    <img :src="img" class="preview-img" />
+    <button class="remove-btn" @click="removeImage(index)">✕</button>
+  </div>
+</div>
 
       <!-- error -->
       <p v-if="error" class="error">
@@ -78,57 +102,104 @@ defineProps({
 const emit = defineEmits(['close'])
 
 const behaviorReasons = [
-  'DANGEROUS_DRIVING',
-  'INAPPROPRIATE_COMMENTS',
-  'USING_PHONE_WHILE_DRIVING',
-  'HARASSMENT',
+  { label: 'ขับรถเร็วและประมาท', value: 'DANGEROUS_DRIVING' },
+  { label: 'พูดจาไม่สุภาพ', value: 'INAPPROPRIATE_COMMENTS' },
+  { label: 'ใช้โทรศัพท์ขณะขับรถ', value: 'USING_PHONE_WHILE_DRIVING' },
+  { label: 'แสดงพฤติกรรมคุกคาม', value: 'HARASSMENT' },
 ]
 
 const serviceReasons = [
-  'LATE',
-  'OVERCHARGING',
-  'DECLINE_PASSENGER',
-  'TAKING_WRONG_ROUTE_INTENTIONALLY',
+  { label: 'มารับล่าช้า', value: 'LATE' },
+  { label: 'เก็บเงินเกินราคา', value: 'OVERCHARGING' },
+  { label: 'ปฏิเสธผู้โดยสาร', value: 'DECLINE_PASSENGER' },
+  { label: 'เส้นทางไม่เป็นไปตามที่ตกลง', value: 'TAKING_WRONG_ROUTE_INTENTIONALLY' },
 ]
 
 const selected = ref([])
-const otherReason = ref('')
 const description = ref('')
 const error = ref(false)
+const photoFiles = ref([])     // เก็บ File จริง
+const photoPreviews = ref([]) // เก็บ base64 สำหรับ preview
+const fileInput = ref(null)
+
 
 function close() {
   emit('close')
   selected.value = []
-  otherReason.value = ''
   description.value = ''
   error.value = false
+  photoFiles.value = [] //เก็บไฟล์จริง
+  photoPreviews.value = [] //เก็บไฟล์ไว้แสดงพรีวิว
 }
 
-function confirm() {
-  const reasons = [...selected.value]
 
-  if (otherReason.value.trim()) {
-    reasons.push(otherReason.value)
-  }
-
-  if (reasons.length === 0) {
+async function confirm() {
+  if (selected.value.length === 0) {
     error.value = true
     return
   }
 
+  //อัปโหลดรูปยังไม่ได้
+  //const uploadedUrls = []
+
+  //for (const file of photoFiles.value) {
+  //  const formData = new FormData()
+  //  formData.append('file', file)
+  //  formData.append('upload_preset', 'YOUR_UPLOAD_PRESET')
+
+  //  const res = await fetch(
+  //    'https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/image/upload',
+  //    {
+  //      method: 'POST',
+  //      body: formData
+  //    }
+  //  )
+
+  //  const data = await res.json()
+  //  uploadedUrls.push(data.secure_url)
+  //}
+
   emit('submit', {
-    types: reasons,
-    description: description.value
+    types: selected.value,
+    description: description.value,
+    //photos: uploadedUrls
   })
 
   close()
 }
 
 
-// placeholder Cloudinary
-function uploadImage() {
-  alert('เดี๋ยวค่อยต่อ Cloudinary')
+
+// พรีวิวบันทึกรูป
+const handleFileUpload = (event) => {
+  const files = Array.from(event.target.files)
+  if (!files.length) return
+
+  files.forEach((file) => {
+    const reader = new FileReader()
+
+    reader.onload = (e) => {
+      photoPreviews.value.push(e.target.result)
+      photoFiles.value.push(file)
+    }
+
+    reader.readAsDataURL(file)
+  })
 }
+//ลบรูปออก
+const removeImage = (index) => {
+  photoPreviews.value.splice(index, 1)
+  photoFiles.value.splice(index, 1)
+
+  // ถ้าไม่มีรูปแล้ว ล้าง input file ด้วย
+  if (photoFiles.value.length === 0 && fileInput.value) {
+    fileInput.value.value = ''
+  }
+}
+
+
+
+
 </script>
 
 <style scoped>
@@ -223,4 +294,37 @@ function uploadImage() {
 .close-btn:hover {
   color: #000;
 }
+
+.preview-item {
+  position: relative;   /* ⭐ สำคัญมาก */
+  width: 80px;
+  height: 80px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #ddd;
+}
+
+.preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.remove-btn {
+  position: absolute;   /* ⭐ ลอยทับรูป */
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+  line-height: 20px;
+  padding: 0;
+}
+
+
 </style>

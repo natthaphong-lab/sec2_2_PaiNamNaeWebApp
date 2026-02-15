@@ -229,7 +229,7 @@
             @cancel="closeConfirmModal" />
     </div>
 
-<!-- ✅ Report Modal -->
+<!--Add  Report Modal -->
     <ReportModal
         :show="isReportModalVisible"
         :driver-id="reportDriverId"
@@ -303,7 +303,7 @@ const cancelReasonOptions = [
     { value: 'COMMUNICATION_ISSUE', label: 'สื่อสารไม่สะดวก/ติดต่อไม่ได้' }
 ]
 
- //Modal Report By Ink
+ //Modal Report By Thunchanok
  
 const isReportModalVisible = ref(false)
 const reportDriverId = ref(null)
@@ -317,8 +317,12 @@ function openReportModal(trip) {
 function closeReportModal() {
   isReportModalVisible.value = false
 }
-//ยิงAPI
+
+//ยิงAPI ส่งได้แค่ข้อความ Thunchanok
 async function handleSubmitReport(payload) {
+//ดูobjectที่ส่งออกมา
+console.log(payload)
+
   const body = {
     driverId: reportDriverId.value,
     types: payload.types,
@@ -342,10 +346,7 @@ async function handleSubmitReport(payload) {
     )
   }
 }
-
-
-
-
+ //End Modal Report By Thunchanok
 
 const isCancelModalVisible = ref(false)
 const isSubmittingCancel = ref(false)
