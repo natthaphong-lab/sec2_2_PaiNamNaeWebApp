@@ -55,7 +55,10 @@
       ></textarea>
 
      <!-- อัปโหลดรูป พรีวิว-->
-<h3 class="section">อัปโหลดรูปภาพเพิ่มเติม</h3>
+<h3 class="section">
+  อัปโหลดรูปภาพเพิ่มเติม
+  <span class="required">*</span>
+</h3>
 
 <input
   ref="fileInput"
@@ -76,6 +79,10 @@
     <button class="remove-btn" @click="removeImage(index)">✕</button>
   </div>
 </div>
+    <!-- error ต้องเพิ่มรูป -->
+    <p v-if="imageError" class="error">
+      กรุณาอัปโหลดรูปภาพอย่างน้อย 1 รูปก่อนส่งรายงาน
+    </p>
 
       <!-- error -->
       <p v-if="error" class="error">
@@ -83,9 +90,18 @@
       </p>
 
       <!-- ปุ่ม -->
-      <div class="actions">
-        <button @click="close">ยกเลิก</button>
-        <button @click="confirm">ยืนยัน</button>
+     <div class="actions">
+        <button
+        @click="close"
+        class="px-4 py-2 text-sm text-red-600 transition duration-200 border border-red-300 rounded-md hover:bg-red-50">
+        ยกเลิก
+      </button>
+
+       <button
+       @click="confirm"
+       class="px-4 py-2 text-sm text-white transition duration-200 bg-blue-600 rounded-md hover:bg-blue-700">
+       ยืนยัน
+      </button>
       </div>
 
     </div>
@@ -121,6 +137,7 @@ const error = ref(false)
 const photoFiles = ref([])     // เก็บ File จริง
 const photoPreviews = ref([]) // เก็บ base64 สำหรับ preview
 const fileInput = ref(null)
+const imageError = ref(false)
 
 
 function close() {
@@ -128,36 +145,25 @@ function close() {
   selected.value = []
   description.value = ''
   error.value = false
+  imageError.value = false
   photoFiles.value = [] //เก็บไฟล์จริง
   photoPreviews.value = [] //เก็บไฟล์ไว้แสดงพรีวิว
 }
 
 
 async function confirm() {
+  error.value = false
+  imageError.value = false
+
   if (selected.value.length === 0) {
     error.value = true
     return
   }
 
-  //อัปโหลดรูปยังไม่ได้
-  //const uploadedUrls = []
-
-  //for (const file of photoFiles.value) {
-  //  const formData = new FormData()
-  //  formData.append('file', file)
-  //  formData.append('upload_preset', 'YOUR_UPLOAD_PRESET')
-
-  //  const res = await fetch(
-  //    'https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/image/upload',
-  //    {
-  //      method: 'POST',
-  //      body: formData
-  //    }
-  //  )
-
-  //  const data = await res.json()
-  //  uploadedUrls.push(data.secure_url)
-  //}
+    if (photoFiles.value.length === 0) {
+    imageError.value = true
+    return
+  }
 
   emit('submit', {
     types: selected.value,
@@ -272,7 +278,7 @@ const removeImage = (index) => {
 }
 
 .modal {
-  position: relative; /* สำคัญมาก */
+  position: relative;
   background: white;
   padding: 24px;
   width: 420px;
@@ -296,7 +302,7 @@ const removeImage = (index) => {
 }
 
 .preview-item {
-  position: relative;   /* ⭐ สำคัญมาก */
+  position: relative;
   width: 80px;
   height: 80px;
   border-radius: 6px;
@@ -311,7 +317,7 @@ const removeImage = (index) => {
 }
 
 .remove-btn {
-  position: absolute;   /* ⭐ ลอยทับรูป */
+  position: absolute;   /*ลอยทับรูป */
   top: 4px;
   right: 4px;
   width: 20px;
@@ -324,6 +330,18 @@ const removeImage = (index) => {
   cursor: pointer;
   line-height: 20px;
   padding: 0;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end; /* ดันปุ่มไปขวา */
+  gap: 12px; /* ระยะห่างระหว่างปุ่ม */
+  margin-top: 16px;
+}
+
+.required {
+  color: red;
+  margin-left: 4px;
 }
 
 
