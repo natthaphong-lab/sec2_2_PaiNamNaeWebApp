@@ -208,16 +208,16 @@ const adminUpdateReportStatus = async (id, status) => {
     });
 
     // Send notification to passenger about status change
-    const statusText = status === 'APPROVED' ? 'อนุมัติ' : 'ปฏิเสธ';
+    const statusText = status === 'APPROVED' ? 'ดำเนินการเรียบร้อย' : 'ปฏิเสธ';
     const bodyText = status === 'APPROVED'
-      ? 'รายงานของคุณได้รับการอนุมัติแล้ว ขอบคุณที่แจ้งให้เราทราบ'
-      : 'รายงานของคุณถูกปฏิเสธ หากมีข้อสงสัยกรุณาติดต่อเจ้าหน้าที่';
+      ? 'ทางทีมงานได้ตรวจสอบและดำเนินการตามแนวทางของระบบแล้ว ขอบคุณที่แจ้งข้อมูลให้เราทราบ'
+      : 'ขอขอบคุณสำหรับการรายงานหลังจากตรวจสอบแล้ว ทีมงานไม่พบการกระทำที่เข้าข่ายการละเมิดหรือผิดกฎของระบบ จึงขอปฏิเสธการรายงานในครั้งนี้ หากมีข้อมูลเพิ่มเติมสามารถแจ้งเข้ามาได้อีกครั้ง';
 
     await tx.notification.create({
       data: {
         userId: report.passengerId,
         type: 'REPORT',
-        title: `รายงานของคุณถูก${statusText}`,
+        title: `รายงานคนขับของคุณถูก${statusText}`,
         body: bodyText,
         metadata: {
           kind: 'REPORT_STATUS_UPDATED',

@@ -10,14 +10,22 @@ const reportTypes = [
   'OVERCHARGING',
   'DECLINE_PASSENGER',
   'TAKING_WRONG_ROUTE_INTENTIONALLY',
-  'OTHER',
+  'OTHER'
 ];
 
 const createReportSchema = z.object({
   driverId: z.string().cuid({ message: 'Invalid driver ID format' }),
   types: z
-    .array(z.enum(reportTypes, { message: 'Invalid report type' }))
-    .min(1, 'At least one report type is required'),
+    .preprocess(
+      (val) => {
+        if (typeof val === 'string') {
+          try { return JSON.parse(val); } catch { return val; }
+        }
+        return val;
+      },
+      z.array(z.enum(reportTypes, { message: 'Invalid report type' }))
+       .min(1, 'At least one report type is required'),
+    ),
   description: z.string().max(2000, 'Description must not exceed 2000 characters').optional(),
 });
 
