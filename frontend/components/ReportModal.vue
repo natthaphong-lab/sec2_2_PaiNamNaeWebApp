@@ -216,14 +216,19 @@ const removeImage = (index) => {
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow-y: auto;
 }
 
 .modal {
+  position: relative;
   background: white;
   padding: 24px;
   width: 420px;
+  max-height: 90vh;    
+  overflow-y: auto;      
   border-radius: 10px;
 }
+
 
 .title {
   font-size: 20px;
