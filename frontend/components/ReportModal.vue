@@ -33,16 +33,11 @@
       </div>
 
       <!-- อื่น ๆ อัปเดตให้กดcheckboxได้-->
-<h4 class="sub">อื่น ๆ</h4>
-
-<label>
-  <input
-    type="checkbox"
-    value="OTHER"
-    v-model="selected"
-  />
-  อื่น ๆ
-</label>
+      <h4 class="sub">อื่น ๆ</h4>
+       <label>
+       <input type="checkbox" value="OTHER" v-model="selected"/>
+          อื่น ๆ
+       </label>
 
 
       <!-- รายละเอียดเพิ่มเติม -->
@@ -55,56 +50,56 @@
       ></textarea>
 
      <!-- อัปโหลดรูป พรีวิว-->
-<h3 class="section">
-  อัปโหลดรูปภาพเพิ่มเติม
-  <span class="required">*</span>
-</h3>
+     <h3 class="section">
+        อัปโหลดรูปภาพเพิ่มเติม
+     <span class="required">*</span>
+     </h3>
 
-<input
-  ref="fileInput"
-  type="file"
-  multiple
-  accept="image/*"
-  @change="handleFileUpload"
-/>
+     <input
+      ref="fileInput"
+      type="file"
+      multiple
+      accept="image/*"
+      @change="handleFileUpload"
+    />
 
-<!-- 🔽 เพิ่มตรงนี้ -->
-<div class="preview-list">
-  <div
-    v-for="(img, index) in photoPreviews"
-    :key="index"
-    class="preview-item"
-  >
+    <!-- 🔽 เพิ่มตรงนี้ -->
+    <div class="preview-list">
+    <div
+     v-for="(img, index) in photoPreviews"
+     :key="index"
+     class="preview-item"
+    >
     <img :src="img" class="preview-img" />
     <button class="remove-btn" @click="removeImage(index)">✕</button>
+    </div>
   </div>
-</div>
     <!-- error ต้องเพิ่มรูป -->
     <p v-if="imageError" class="error">
       กรุณาอัปโหลดรูปภาพอย่างน้อย 1 รูปก่อนส่งรายงาน
     </p>
 
-      <!-- error -->
-      <p v-if="error" class="error">
-        กรุณาเลือกอย่างน้อย 1 รายการ
-      </p>
+    <!-- error -->
+    <p v-if="error" class="error">
+      กรุณาเลือกอย่างน้อย 1 รายการ
+    </p>
 
-      <!-- ปุ่ม -->
-     <div class="actions">
+    <!-- ปุ่มยืนยันและยกเลิก -->
+    <div class="actions">
         <button
         @click="close"
         class="px-4 py-2 text-sm text-red-600 transition duration-200 border border-red-300 rounded-md hover:bg-red-50">
         ยกเลิก
-      </button>
+        </button>
 
        <button
        @click="confirm"
        class="px-4 py-2 text-sm text-white transition duration-200 bg-blue-600 rounded-md hover:bg-blue-700">
        ยืนยัน
-      </button>
-      </div>
-
+       </button>
     </div>
+
+   </div>
   </div>
 </template>
 
@@ -150,7 +145,7 @@ function close() {
   photoPreviews.value = [] //เก็บไฟล์ไว้แสดงพรีวิว
 }
 
-
+//ฟังก์ชันสำหรับกดยืนยัน ต้องเลือกอย่างน้อย 1 ตัวเลือก ต้องอัปรูปอย่างน้อย 1 รูป
 async function confirm() {
   error.value = false
   imageError.value = false
@@ -176,7 +171,7 @@ async function confirm() {
 
 
 
-// พรีวิวบันทึกรูป
+// พรีวิวแสดงภาพก่อนบันทึกรูป
 const handleFileUpload = (event) => {
   const files = Array.from(event.target.files)
   if (!files.length) return
@@ -192,17 +187,17 @@ const handleFileUpload = (event) => {
     reader.readAsDataURL(file)
   })
 }
+
 //ลบรูปออก
 const removeImage = (index) => {
   photoPreviews.value.splice(index, 1)
   photoFiles.value.splice(index, 1)
 
-  // ถ้าไม่มีรูปแล้ว ล้าง input file ด้วย
+  // ถ้าไม่มีรูปแล้ว ล้าง input file
   if (photoFiles.value.length === 0 && fileInput.value) {
     fileInput.value.value = ''
   }
 }
-
 
 
 
@@ -322,7 +317,7 @@ const removeImage = (index) => {
 }
 
 .remove-btn {
-  position: absolute;   /*ลอยทับรูป */
+  position: absolute; 
   top: 4px;
   right: 4px;
   width: 20px;
@@ -339,8 +334,8 @@ const removeImage = (index) => {
 
 .actions {
   display: flex;
-  justify-content: flex-end; /* ดันปุ่มไปขวา */
-  gap: 12px; /* ระยะห่างระหว่างปุ่ม */
+  justify-content: flex-end; 
+  gap: 12px;
   margin-top: 16px;
 }
 
