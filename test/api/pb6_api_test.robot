@@ -6,7 +6,7 @@ Library           Collections
 ${BASE_URL}       http://localhost:3000/api
 # --- ใส่ค่าที่คุณมีตรงนี้ ---
 ${ADMIN_TOKEN}    Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxrbGFvcnAwMDAwNmQ4bG9lMHMyNW8yIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzcxMjYwMDkzLCJleHAiOjE3NzEyNjM2OTN9.519JyS7yXEjDnzmr6EklH4pjeGbbqaTs_4k4-sxQThU
-${REPORT_ID}      cmlpg67ug001adkc6qfmlizke
+${REPORT_ID}      cmlpg76qy001ldkc6pxjc14l1
 
 *** Test Cases ***
 TC001 - Get All Reports
