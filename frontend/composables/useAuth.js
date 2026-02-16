@@ -4,11 +4,14 @@ import { useRouter } from 'vue-router'
 export function useAuth() {
   const { $api } = useNuxtApp()
 
+  const isHttps = import.meta.client
+    ? window.location.protocol === 'https:'
+    : false
   const cookieOpts = {
     maxAge: 60 * 60 * 24 * 7,
     path: '/',
     sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production'
+    secure: isHttps
   }
   const token = useCookie('token', cookieOpts)
   const user = useCookie('user', cookieOpts)
