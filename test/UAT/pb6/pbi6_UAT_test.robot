@@ -23,6 +23,7 @@ TC001
     Click Element    xpath=//*[@id="sidebar"]/div/nav/a[6]
     Wait Until Location Contains    ${URL}/admin/reports    timeout=5s
     Location Should Be    ${URL}/admin/reports
+    Capture Page Screenshot    filename=TC001.png
 
 TC002
     Wait Until Element Is Visible    xpath=//*[@id="main-content"]/div/div[3]/div[2]/table/tbody/tr/td[6]/div/button[1]    timeout=10s
@@ -34,6 +35,7 @@ TC002
     Wait Until Location Contains    ${URL}/admin/reports    timeout=10s
     Sleep    1s
     Location Should Be    ${URL}/admin/reports
+    Capture Page Screenshot    filename=TC002.png
 
 TC003
     Wait Until Element Is Visible    xpath=//*[@id="main-content"]/div/div[3]/div[2]/table/tbody/tr/td[6]/div/button[1]    timeout=10s
@@ -48,6 +50,7 @@ TC003
     Click Element    xpath=//*[@id="main-content"]/div[1]/a
     Wait Until Location Contains    ${URL}/admin/reports    timeout=10s
     Location Should Be    ${URL}/admin/reports
+    Capture Page Screenshot    filename=TC003.png
 
 TC004
     Wait Until Element Is Visible    xpath=//*[@id="main-content"]/div/div[3]/div[2]/table/tbody/tr/td[6]/div/button[1]    timeout=10s
@@ -58,11 +61,7 @@ TC004
     Click Element    xpath=//*[@id="main-content"]/div[2]/div[2]/div/div[2]/button[3]
     Wait Until Element Contains    xpath=//*[@id="main-content"]/div[2]/div[2]/div/span    rejected    timeout=10s
     Element Should Contain    xpath=//*[@id="main-content"]/div[2]/div[2]/div/span    rejected
-
-
-
-
-
+    Capture Page Screenshot    filename=TC004.png
 
 *** Keywords ***
 I open the login page
