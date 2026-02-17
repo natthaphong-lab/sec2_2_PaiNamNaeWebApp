@@ -250,7 +250,7 @@ import buddhistEra from 'dayjs/plugin/buddhistEra'
 import ConfirmModal from '~/components/ConfirmModal.vue'
 import { useToast } from '~/composables/useToast'
 
-//เพิ่มModalรายงาน ink
+//เพิ่มModalรายงาน Thunchanok
 import ReportModal from '~/components/ReportModal.vue'
 
 
@@ -319,7 +319,7 @@ function closeReportModal() {
   isReportModalVisible.value = false
 }
 
-//ยิงAPI ส่งได้แค่ข้อความ Thunchanok
+//ส่งข้อมูลรายงานไปbackend Thunchanok
 async function handleSubmitReport(payload) {
   const formData = new FormData()
   formData.append('driverId', reportDriverId.value)
@@ -350,7 +350,7 @@ async function handleSubmitReport(payload) {
     )
   }
 }
- //End Modal Report By Thunchanok
+//End Modal Report Thunchanok
 
 const isCancelModalVisible = ref(false)
 const isSubmittingCancel = ref(false)
