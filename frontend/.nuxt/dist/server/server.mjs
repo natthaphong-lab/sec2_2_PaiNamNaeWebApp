@@ -1,1 +1,0 @@
-export { default } from "file:///D:/3Year/Term2/Main_Soften/sec2_2_PaiNamNaeWebApp/frontend/node_modules/@nuxt/vite-builder/dist/runtime/vite-node.mjs"
