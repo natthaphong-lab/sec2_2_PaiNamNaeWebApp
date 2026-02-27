@@ -49,7 +49,7 @@ router.delete(
   reportController.adminDeleteReport
 );
 
-// --- Passenger Routes ---
+// --- User Routes (Passenger or Driver) ---
 // GET /reports/me
 router.get(
   '/me',
@@ -65,11 +65,11 @@ router.get(
   reportController.getMyReportById
 );
 
-// POST /reports
+// POST /reports  (passenger or driver can create — max 3 media files)
 router.post(
   '/',
   protect,
-  upload.array('photos', 5),
+  upload.array('media', 3),
   validate({ body: createReportSchema }),
   reportController.createReport
 );

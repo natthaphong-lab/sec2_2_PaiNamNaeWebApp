@@ -61,21 +61,20 @@ enum NotificationType {
   REPORT
 }
 
-enum ReportType {
-  DANGEROUS_DRIVING
-  INAPPROPRIATE_COMMENTS
-  USING_PHONE_WHILE_DRIVING
-  HARASSMENT
-  LATE
-  OVERCHARGING
-  DECLINE_PASSENGER
-  TAKING_WRONG_ROUTE_INTENTIONALLY
-  OTHER
+enum ReportCategory {
+  safety
+  driverBehavior
+  vehicle
+  lostItem
+  passengerBehavior
+  damaged
+  other
 }
 
 enum ReportStatus {
   PENDING
-  APPROVED
+  ON_PROGRESS
+  COMPLETED
   REJECTED
 }
 
@@ -107,8 +106,8 @@ model User {
   notification          Notification[]
   createdRoutes         Route[]             @relation("DriverRoutes")
   bookings              Booking[]           @relation("PassengerBookings")
-  reportsMade           Report[]            @relation("PassengerReports")
-  reportsReceived       Report[]            @relation("DriverReports")
+  reportsMade           Report[]            @relation("ReportsMade")
+  reportsReceived       Report[]            @relation("ReportsReceived")
 
   @@index([role])
   @@index([isActive])
@@ -234,20 +233,22 @@ model Booking {
 }
 
 model Report {
-  id            String         @id @default(cuid())
-  passengerId   String
-  passenger     User           @relation("PassengerReports", fields: [passengerId], references: [id], onDelete: Cascade)
-  driverId      String
-  driver        User           @relation("DriverReports", fields: [driverId], references: [id], onDelete: Cascade)
-  types         ReportType[]
-  description   String?
-  photos        String[]
-  status        ReportStatus   @default(PENDING)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  id              String           @id @default(cuid())
+  reporterId      String
+  reporter        User             @relation("ReportsMade", fields: [reporterId], references: [id], onDelete: Cascade)
+  reportedUserId  String
+  reportedUser    User             @relation("ReportsReceived", fields: [reportedUserId], references: [id], onDelete: Cascade)
+  reporterRole    String           // "PASSENGER" or "DRIVER"
+  category        ReportCategory
+  types           String[]         // free-form strings from frontend
+  description     String?
+  mediaUrls       String[]         // up to 3 URLs (photo/video/mp3 via Cloudinary)
+  status          ReportStatus     @default(PENDING)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
 
-  @@index([passengerId])
-  @@index([driverId])
+  @@index([reporterId])
+  @@index([reportedUserId])
   @@index([status])
   @@index([createdAt])
 }

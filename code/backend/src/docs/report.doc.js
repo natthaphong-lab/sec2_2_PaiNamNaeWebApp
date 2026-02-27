@@ -2,41 +2,51 @@
  * @swagger
  * components:
  *   schemas:
- *     ReportType:
+ *     ReportCategory:
  *       type: string
+ *       description: |
+ *         Passenger categories: safety, driverBehavior, vehicle, lostItem, other
+ *         Driver categories: safety, passengerBehavior, damaged, lostItem, other
  *       enum:
- *         - DANGEROUS_DRIVING
- *         - INAPPROPRIATE_COMMENTS
- *         - USING_PHONE_WHILE_DRIVING
- *         - HARASSMENT
- *         - LATE
- *         - OVERCHARGING
- *         - DECLINE_PASSENGER
- *         - TAKING_WRONG_ROUTE_INTENTIONALLY
+ *         - safety
+ *         - driverBehavior
+ *         - vehicle
+ *         - lostItem
+ *         - passengerBehavior
+ *         - damaged
+ *         - other
  *     ReportStatus:
  *       type: string
- *       enum: [PENDING, APPROVED, REJECTED]
+ *       enum: [PENDING, ON_PROGRESS, COMPLETED, REJECTED]
  *     Report:
  *       type: object
  *       properties:
  *         id:
  *           type: string
- *         passengerId:
+ *         reporterId:
  *           type: string
- *         driverId:
+ *         reportedUserId:
  *           type: string
+ *         reporterRole:
+ *           type: string
+ *           enum: [PASSENGER, DRIVER]
+ *         category:
+ *           $ref: '#/components/schemas/ReportCategory'
  *         types:
  *           type: array
  *           items:
- *             $ref: '#/components/schemas/ReportType'
+ *             type: string
+ *           description: Free-form type strings provided by frontend
  *         description:
  *           type: string
  *           nullable: true
- *         photos:
+ *         mediaUrls:
  *           type: array
  *           items:
  *             type: string
  *             format: uri
+ *           maxItems: 3
+ *           description: Up to 3 Cloudinary URLs (photo/video/mp3)
  *         status:
  *           $ref: '#/components/schemas/ReportStatus'
  *         createdAt:
@@ -50,22 +60,28 @@
  *       properties:
  *         id:
  *           type: string
- *         passengerId:
+ *         reporterId:
  *           type: string
- *         driverId:
+ *         reportedUserId:
  *           type: string
+ *         reporterRole:
+ *           type: string
+ *           enum: [PASSENGER, DRIVER]
+ *         category:
+ *           $ref: '#/components/schemas/ReportCategory'
  *         types:
  *           type: array
  *           items:
- *             $ref: '#/components/schemas/ReportType'
+ *             type: string
  *         description:
  *           type: string
  *           nullable: true
- *         photos:
+ *         mediaUrls:
  *           type: array
  *           items:
  *             type: string
  *             format: uri
+ *           maxItems: 3
  *         status:
  *           $ref: '#/components/schemas/ReportStatus'
  *         createdAt:
@@ -74,7 +90,7 @@
  *         updatedAt:
  *           type: string
  *           format: date-time
- *         passenger:
+ *         reporter:
  *           type: object
  *           properties:
  *             id:
@@ -91,7 +107,7 @@
  *               type: string
  *             profilePicture:
  *               type: string
- *         driver:
+ *         reportedUser:
  *           type: object
  *           properties:
  *             id:
@@ -114,7 +130,7 @@
  * @swagger
  * /api/reports:
  *   post:
- *     summary: Create a new report (passenger reports a driver)
+ *     summary: Create a new report (passenger reports driver OR driver reports passenger)
  *     tags: [Reports]
  *     security:
  *       - bearerAuth: []
@@ -125,24 +141,26 @@
  *           schema:
  *             type: object
  *             required:
- *               - driverId
- *               - types
+ *               - reportedUserId
+ *               - category
  *             properties:
- *               driverId:
+ *               reportedUserId:
  *                 type: string
- *                 description: ID of the driver being reported
+ *                 description: ID of the user being reported
+ *               category:
+ *                 $ref: '#/components/schemas/ReportCategory'
  *               types:
  *                 type: string
- *                 description: 'JSON array of report types, e.g. ["DANGEROUS_DRIVING","LATE"]'
+ *                 description: 'JSON array of free-form type strings, e.g. ["speeding","rude"]'
  *               description:
  *                 type: string
  *                 description: Additional details about the report
- *               photos:
+ *               media:
  *                 type: array
  *                 items:
  *                   type: string
  *                   format: binary
- *                 description: Up to 5 image files as evidence
+ *                 description: Up to 3 files (photo/video/mp3) as evidence
  *     responses:
  *       201:
  *         description: Report created successfully
@@ -158,18 +176,20 @@
  *                 data:
  *                   $ref: '#/components/schemas/Report'
  *       400:
- *         description: Validation error
+ *         description: Validation error or invalid category for role
  *       401:
  *         description: Not authorized
+ *       403:
+ *         description: Only passengers and drivers can create reports
  *       404:
- *         description: Driver not found
+ *         description: Reported user not found
  */
 
 /**
  * @swagger
  * /api/reports/me:
  *   get:
- *     summary: Get my reports (as passenger)
+ *     summary: Get my reports (reports I created)
  *     tags: [Reports]
  *     security:
  *       - bearerAuth: []
@@ -197,7 +217,7 @@
  * @swagger
  * /api/reports/{id}:
  *   get:
- *     summary: Get a specific report by ID (passenger must own the report)
+ *     summary: Get a specific report by ID (must be the reporter)
  *     tags: [Reports]
  *     security:
  *       - bearerAuth: []
@@ -251,13 +271,22 @@
  *         schema:
  *           $ref: '#/components/schemas/ReportStatus'
  *       - in: query
- *         name: passengerId
+ *         name: reporterId
  *         schema:
  *           type: string
  *       - in: query
- *         name: driverId
+ *         name: reportedUserId
  *         schema:
  *           type: string
+ *       - in: query
+ *         name: reporterRole
+ *         schema:
+ *           type: string
+ *           enum: [PASSENGER, DRIVER]
+ *       - in: query
+ *         name: category
+ *         schema:
+ *           $ref: '#/components/schemas/ReportCategory'
  *       - in: query
  *         name: q
  *         schema:
@@ -358,7 +387,7 @@
  * @swagger
  * /api/reports/admin/{id}/status:
  *   patch:
- *     summary: Update report status (admin only — approve or reject)
+ *     summary: Update report status (admin only)
  *     tags: [Reports (Admin)]
  *     security:
  *       - bearerAuth: []
@@ -379,7 +408,7 @@
  *             properties:
  *               status:
  *                 type: string
- *                 enum: [APPROVED, REJECTED]
+ *                 enum: [PENDING, ON_PROGRESS, COMPLETED, REJECTED]
  *     responses:
  *       200:
  *         description: Report status updated
