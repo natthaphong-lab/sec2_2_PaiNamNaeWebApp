@@ -3,7 +3,12 @@ const reportService = require('../services/report.service');
 const ApiError = require('../utils/ApiError');
 
 const createReport = asyncHandler(async (req, res) => {
-  const passengerId = req.user.sub;
+  const reporterId = req.user.sub;
+  const reporterRole = req.user.role; // PASSENGER or DRIVER
+
+  if (reporterRole !== 'PASSENGER' && reporterRole !== 'DRIVER') {
+    throw new ApiError(403, 'Only passengers and drivers can create reports');
+  }
 
   // Parse types from body (could be JSON string if sent via multipart)
   let types = req.body.types;
@@ -16,24 +21,25 @@ const createReport = asyncHandler(async (req, res) => {
   }
 
   const payload = {
-    driverId: req.body.driverId,
-    types,
+    reportedUserId: req.body.reportedUserId,
+    category: req.body.category,
+    types: types || [],
     description: req.body.description,
   };
 
-  const report = await reportService.createReport(payload, passengerId, req.files);
+  const report = await reportService.createReport(payload, reporterId, reporterRole, req.files);
   res.status(201).json({ success: true, message: 'Report created successfully', data: report });
 });
 
 const getMyReports = asyncHandler(async (req, res) => {
-  const passengerId = req.user.sub;
-  const data = await reportService.getMyReports(passengerId);
+  const userId = req.user.sub;
+  const data = await reportService.getMyReports(userId);
   res.status(200).json({ success: true, message: 'Reports retrieved successfully', data });
 });
 
 const getMyReportById = asyncHandler(async (req, res) => {
-  const passengerId = req.user.sub;
-  const data = await reportService.getMyReportById(req.params.id, passengerId);
+  const userId = req.user.sub;
+  const data = await reportService.getMyReportById(req.params.id, userId);
   res.status(200).json({ success: true, message: 'Report retrieved successfully', data });
 });
 
@@ -53,7 +59,7 @@ const adminUpdateReportStatus = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
   const data = await reportService.adminUpdateReportStatus(id, status);
-  res.status(200).json({ success: true, message: `Report ${status.toLowerCase()} successfully`, data });
+  res.status(200).json({ success: true, message: `Report status updated to ${status}`, data });
 });
 
 const adminDeleteReport = asyncHandler(async (req, res) => {
