@@ -20,7 +20,8 @@ app.use(helmet());
 
 const allowedOrigins = [
   'http://csse2268.cpkku.com',
-  'https://csse2268.cpkku.com'
+  'https://csse2268.cpkku.com',
+  'http://localhost:3001'
 ];
 
 const corsOptions = {
