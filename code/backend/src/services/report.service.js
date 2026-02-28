@@ -1,26 +1,36 @@
 const prisma = require('../utils/prisma');
 const ApiError = require('../utils/ApiError');
 const { uploadToCloudinary } = require('../utils/cloudinary');
+const { passengerCategories, driverCategories } = require('../validations/report.validation');
+
+const MAX_MEDIA = 3;
 
 const baseSelect = {
   id: true,
-  passengerId: true,
-  driverId: true,
+  reporterId: true,
+  reportedUserId: true,
+  reporterRole: true,
+  category: true,
   types: true,
   description: true,
-  photos: true,
+  mediaUrls: true,
   status: true,
   createdAt: true,
   updatedAt: true,
 };
 
+const userBrief = { id: true, firstName: true, lastName: true, username: true, profilePicture: true };
+const userFull = { ...userBrief, email: true, phoneNumber: true };
+
 const buildWhere = (opts = {}) => {
-  const { q, status, passengerId, driverId, createdFrom, createdTo } = opts;
+  const { q, status, reporterId, reportedUserId, reporterRole, category, createdFrom, createdTo } = opts;
 
   return {
     ...(status && { status }),
-    ...(passengerId && { passengerId }),
-    ...(driverId && { driverId }),
+    ...(reporterId && { reporterId }),
+    ...(reportedUserId && { reportedUserId }),
+    ...(reporterRole && { reporterRole }),
+    ...(category && { category }),
     ...((createdFrom || createdTo)
       ? {
         createdAt: {
@@ -40,58 +50,90 @@ const buildWhere = (opts = {}) => {
 };
 
 /**
- * Passenger creates a report against a driver
+ * Upload media files (photo/video/mp3) to Cloudinary — max 3
  */
-const createReport = async (data, passengerId, files) => {
-  // Verify the driver exists and is actually a driver
-  const driver = await prisma.user.findUnique({
-    where: { id: data.driverId },
+const uploadMedia = async (files) => {
+  const urls = [];
+  if (!files || files.length === 0) return urls;
+  if (files.length > MAX_MEDIA) {
+    throw new ApiError(400, `You can upload at most ${MAX_MEDIA} files`);
+  }
+  for (const file of files) {
+    const result = await uploadToCloudinary(file.buffer, 'reports');
+    urls.push(result.url);
+  }
+  return urls;
+};
+
+/**
+ * Validate category matches reporter role
+ */
+const validateCategory = (reporterRole, category) => {
+  const allowed = reporterRole === 'PASSENGER' ? passengerCategories : driverCategories;
+  if (!allowed.includes(category)) {
+    throw new ApiError(400, `Invalid category "${category}" for ${reporterRole.toLowerCase()}. Allowed: ${allowed.join(', ')}`);
+  }
+};
+
+/**
+ * Create a report (passenger reports driver OR driver reports passenger)
+ */
+const createReport = async (data, reporterId, reporterRole, files) => {
+  // Validate category matches role
+  validateCategory(reporterRole, data.category);
+
+  // Verify reported user exists
+  const reportedUser = await prisma.user.findUnique({
+    where: { id: data.reportedUserId },
     select: { id: true, role: true },
   });
-  if (!driver) throw new ApiError(404, 'Driver not found');
-  if (driver.role !== 'DRIVER') throw new ApiError(400, 'The reported user is not a driver');
+  if (!reportedUser) throw new ApiError(404, 'Reported user not found');
+
+  // Validate direction: passenger must report a driver, driver must report a passenger
+  if (reporterRole === 'PASSENGER' && reportedUser.role !== 'DRIVER') {
+    throw new ApiError(400, 'Passengers can only report drivers');
+  }
+  if (reporterRole === 'DRIVER' && reportedUser.role !== 'PASSENGER') {
+    throw new ApiError(400, 'Drivers can only report passengers');
+  }
 
   // Cannot report yourself
-  if (data.driverId === passengerId) {
+  if (data.reportedUserId === reporterId) {
     throw new ApiError(400, 'You cannot report yourself');
   }
 
-  // Upload photos to Cloudinary
-  const photoUrls = [];
-  if (files && files.length > 0) {
-    for (const file of files) {
-      const result = await uploadToCloudinary(file.buffer, 'reports');
-      photoUrls.push(result.url);
-    }
-  }
+  // Upload media to Cloudinary (max 3)
+  const mediaUrls = await uploadMedia(files);
 
   const report = await prisma.$transaction(async (tx) => {
     const created = await tx.report.create({
       data: {
-        passengerId,
-        driverId: data.driverId,
-        types: data.types,
+        reporterId,
+        reportedUserId: data.reportedUserId,
+        reporterRole,
+        category: data.category,
+        types: data.types || [],
         description: data.description || null,
-        photos: photoUrls,
+        mediaUrls,
       },
       select: {
         ...baseSelect,
-        passenger: { select: { id: true, firstName: true, lastName: true, username: true } },
-        driver: { select: { id: true, firstName: true, lastName: true, username: true } },
+        reporter: { select: userBrief },
+        reportedUser: { select: userBrief },
       },
     });
 
-    // Send notification to passenger that report has been sent
+    // Send notification to reporter that report has been sent
     await tx.notification.create({
       data: {
-        userId: passengerId,
+        userId: reporterId,
         type: 'REPORT',
         title: 'รายงานของคุณถูกส่งแล้ว',
         body: 'รายงานของคุณถูกส่งเรียบร้อยแล้ว เราจะตรวจสอบและแจ้งผลให้ทราบ',
         metadata: {
           kind: 'REPORT_CREATED',
           reportId: created.id,
-          driverId: data.driverId,
+          reportedUserId: data.reportedUserId,
         },
       },
     });
@@ -103,34 +145,32 @@ const createReport = async (data, passengerId, files) => {
 };
 
 /**
- * Passenger gets their own reports
+ * Get my reports (reports I made)
  */
-const getMyReports = async (passengerId) => {
+const getMyReports = async (userId) => {
   return prisma.report.findMany({
-    where: { passengerId },
+    where: { reporterId: userId },
     select: {
       ...baseSelect,
-      driver: {
-        select: { id: true, firstName: true, lastName: true, username: true, profilePicture: true },
-      },
+      reportedUser: { select: userBrief },
     },
     orderBy: { createdAt: 'desc' },
   });
 };
 
 /**
- * Get report by ID (for passenger — must own the report)
+ * Get report by ID (must be the reporter)
  */
-const getMyReportById = async (id, passengerId) => {
+const getMyReportById = async (id, userId) => {
   const report = await prisma.report.findUnique({
     where: { id },
     select: {
       ...baseSelect,
-      passenger: { select: { id: true, firstName: true, lastName: true, username: true } },
-      driver: { select: { id: true, firstName: true, lastName: true, username: true, profilePicture: true } },
+      reporter: { select: userBrief },
+      reportedUser: { select: userBrief },
     },
   });
-  if (!report || report.passengerId !== passengerId) {
+  if (!report || report.reporterId !== userId) {
     throw new ApiError(404, 'Report not found');
   }
   return report;
@@ -161,8 +201,8 @@ const listReportsAdmin = async (opts = {}) => {
       take,
       select: {
         ...baseSelect,
-        passenger: { select: { id: true, firstName: true, lastName: true, email: true, username: true, phoneNumber: true, profilePicture: true } },
-        driver: { select: { id: true, firstName: true, lastName: true, email: true, username: true, phoneNumber: true, profilePicture: true } },
+        reporter: { select: userFull },
+        reportedUser: { select: userFull },
       },
     }),
   ]);
@@ -181,8 +221,8 @@ const adminGetReportById = async (id) => {
     where: { id },
     select: {
       ...baseSelect,
-      passenger: { select: { id: true, firstName: true, lastName: true, email: true, username: true, phoneNumber: true, profilePicture: true } },
-      driver: { select: { id: true, firstName: true, lastName: true, email: true, username: true, phoneNumber: true, profilePicture: true } },
+      reporter: { select: userFull },
+      reportedUser: { select: userFull },
     },
   });
   if (!report) throw new ApiError(404, 'Report not found');
@@ -190,7 +230,7 @@ const adminGetReportById = async (id) => {
 };
 
 /**
- * Admin: update report status (approve / reject)
+ * Admin: update report status (pending / onProgress / completed / rejected)
  */
 const adminUpdateReportStatus = async (id, status) => {
   const report = await prisma.report.findUnique({ where: { id } });
@@ -202,22 +242,33 @@ const adminUpdateReportStatus = async (id, status) => {
       data: { status },
       select: {
         ...baseSelect,
-        passenger: { select: { id: true, firstName: true, lastName: true, username: true, email: true, phoneNumber: true, profilePicture: true } },
-        driver: { select: { id: true, firstName: true, lastName: true, username: true, email: true, phoneNumber: true, profilePicture: true } },
+        reporter: { select: userFull },
+        reportedUser: { select: userFull },
       },
     });
 
-    // Send notification to passenger about status change
-    const statusText = status === 'APPROVED' ? 'ดำเนินการเรียบร้อย' : 'ปฏิเสธ';
-    const bodyText = status === 'APPROVED'
-      ? 'ทางทีมงานได้ตรวจสอบและดำเนินการตามแนวทางของระบบแล้ว ขอบคุณที่แจ้งข้อมูลให้เราทราบ'
-      : 'ขอขอบคุณสำหรับการรายงานหลังจากตรวจสอบแล้ว ทีมงานไม่พบการกระทำที่เข้าข่ายการละเมิดหรือผิดกฎของระบบ จึงขอปฏิเสธการรายงานในครั้งนี้ หากมีข้อมูลเพิ่มเติมสามารถแจ้งเข้ามาได้อีกครั้ง';
+    // Send notification to reporter about status change
+    const statusTextMap = {
+      PENDING: 'รอดำเนินการ',
+      ON_PROGRESS: 'กำลังดำเนินการ',
+      COMPLETED: 'ดำเนินการเรียบร้อย',
+      REJECTED: 'ปฏิเสธ',
+    };
+    const statusText = statusTextMap[status] || status;
+
+    const bodyTextMap = {
+      PENDING: 'รายงานของคุณถูกตั้งสถานะเป็นรอดำเนินการ',
+      ON_PROGRESS: 'ทีมงานกำลังตรวจสอบรายงานของคุณ จะแจ้งผลให้ทราบเร็วๆ นี้',
+      COMPLETED: 'ทางทีมงานได้ตรวจสอบและดำเนินการตามแนวทางของระบบแล้ว ขอบคุณที่แจ้งข้อมูลให้เราทราบ',
+      REJECTED: 'ขอขอบคุณสำหรับการรายงาน หลังจากตรวจสอบแล้ว ทีมงานไม่พบการกระทำที่เข้าข่ายการละเมิดหรือผิดกฎของระบบ จึงขอปฏิเสธการรายงานในครั้งนี้',
+    };
+    const bodyText = bodyTextMap[status] || '';
 
     await tx.notification.create({
       data: {
-        userId: report.passengerId,
+        userId: report.reporterId,
         type: 'REPORT',
-        title: `รายงานคนขับของคุณถูก${statusText}`,
+        title: `สถานะรายงานของคุณ: ${statusText}`,
         body: bodyText,
         metadata: {
           kind: 'REPORT_STATUS_UPDATED',

@@ -1,20 +1,17 @@
 const { z } = require('zod');
 const { ReportStatus } = require('@prisma/client');
 
-const reportTypes = [
-  'DANGEROUS_DRIVING',
-  'INAPPROPRIATE_COMMENTS',
-  'USING_PHONE_WHILE_DRIVING',
-  'HARASSMENT',
-  'LATE',
-  'OVERCHARGING',
-  'DECLINE_PASSENGER',
-  'TAKING_WRONG_ROUTE_INTENTIONALLY',
-  'OTHER'
-];
+// Categories allowed per reporter role
+const passengerCategories = ['safety', 'driverBehavior', 'vehicle', 'lostItem', 'other'];
+const driverCategories = ['safety', 'passengerBehavior', 'damaged', 'lostItem', 'other'];
+const allCategories = [...new Set([...passengerCategories, ...driverCategories])];
 
 const createReportSchema = z.object({
-  driverId: z.string().cuid({ message: 'Invalid driver ID format' }),
+  reportedUserId: z.string().cuid({ message: 'Invalid reported user ID format' }),
+  category: z.enum(allCategories, {
+    required_error: 'Category is required',
+    invalid_type_error: `Category must be one of: ${allCategories.join(', ')}`,
+  }),
   types: z
     .preprocess(
       (val) => {
@@ -23,8 +20,10 @@ const createReportSchema = z.object({
         }
         return val;
       },
-      z.array(z.enum(reportTypes, { message: 'Invalid report type' }))
-       .min(1, 'At least one report type is required'),
+      z.array(z.string().min(1).max(200))
+       .max(20, 'Too many types (max 20)')
+       .optional()
+       .default([]),
     ),
   description: z.string().max(2000, 'Description must not exceed 2000 characters').optional(),
 });
@@ -34,9 +33,9 @@ const idParamSchema = z.object({
 });
 
 const updateReportStatusSchema = z.object({
-  status: z.enum(['APPROVED', 'REJECTED'], {
+  status: z.enum(['PENDING', 'ON_PROGRESS', 'COMPLETED', 'REJECTED'], {
     required_error: 'Status is required',
-    invalid_type_error: 'Status must be APPROVED or REJECTED',
+    invalid_type_error: 'Status must be PENDING, ON_PROGRESS, COMPLETED, or REJECTED',
   }),
 });
 
@@ -46,8 +45,10 @@ const listReportsQuerySchema = z.object({
 
   q: z.string().trim().min(1).optional(),
   status: z.nativeEnum(ReportStatus).optional(),
-  passengerId: z.string().cuid().optional(),
-  driverId: z.string().cuid().optional(),
+  reporterId: z.string().cuid().optional(),
+  reportedUserId: z.string().cuid().optional(),
+  reporterRole: z.enum(['PASSENGER', 'DRIVER']).optional(),
+  category: z.enum(allCategories).optional(),
 
   createdFrom: z.string().refine(v => !isNaN(Date.parse(v)), { message: 'Invalid createdFrom' }).optional(),
   createdTo: z.string().refine(v => !isNaN(Date.parse(v)), { message: 'Invalid createdTo' }).optional(),
@@ -57,6 +58,8 @@ const listReportsQuerySchema = z.object({
 });
 
 module.exports = {
+  passengerCategories,
+  driverCategories,
   createReportSchema,
   idParamSchema,
   updateReportStatusSchema,
