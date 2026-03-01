@@ -35,6 +35,8 @@ const upload = multer({
       'image/jpg',
       'video/mp4',
       'video/quicktime',   // .mov
+      'audio/mpeg',        // .mp3
+      'audio/mp3'
     ];
 
     if (allowedTypes.includes(file.mimetype)) {
