@@ -160,11 +160,11 @@
                                             แชทกับผู้ขับ
                                         </button>
 
-                                    <!-- CONFIRMED: เพิ่มปุ่มรายงาน by Thunchanok -->
-                                    <button v-if="trip.status === 'confirmed'"
-                                        @click="openReportModal(trip)"
-                                        class="px-4 py-2 text-sm text-red-600 transition duration-200 border border-red-300 rounded-md hover:bg-red-50">
-                                        รายงานคนขับ
+                                     <!--Add  Report Button -Thunchanok -->
+                                     <button
+                                       @click.stop="goToReportCategory(trip)"
+                                       class="px-4 py-2 text-sm text-red-600 border border-red-300 rounded-md hover:bg-red-50">
+                                       รายงานคนขับ
                                     </button>
 
                                     </template>
@@ -229,17 +229,6 @@
             :confirmText="modalContent.confirmText" :variant="modalContent.variant" @confirm="handleConfirmAction"
             @cancel="closeConfirmModal" />
     </div>
-
-<!--Add  Report Modal -->
-    <ReportModal
-        :show="isReportModalVisible"
-        :driver-id="reportDriverId"
-        @submit="handleSubmitReport"
-        @close="closeReportModal"
-    />
-
-
-
 </template>
 
 <script setup>
@@ -250,8 +239,9 @@ import buddhistEra from 'dayjs/plugin/buddhistEra'
 import ConfirmModal from '~/components/ConfirmModal.vue'
 import { useToast } from '~/composables/useToast'
 
-//เพิ่มModalรายงาน Thunchanok
-import ReportModal from '~/components/ReportModal.vue'
+//Ink
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 
 // Setup dayjs for Thai locale
@@ -304,52 +294,51 @@ const cancelReasonOptions = [
     { value: 'COMMUNICATION_ISSUE', label: 'สื่อสารไม่สะดวก/ติดต่อไม่ได้' }
 ]
 
- //Modal Report By Thunchanok
- 
-const isReportModalVisible = ref(false)
-const reportDriverId = ref(null)
-
-function openReportModal(trip) {
-  reportDriverId.value = trip.driver.id
-  isReportModalVisible.value = true
+ //go to Report Category Page By Thunchanok
+function goToReportCategory(trip) {
+  router.push({
+    path: '/reportPassenger/reportCategory',
+    query: {
+      driverId: trip.driver.id,
+      bookingId: trip.id
+    }
+  })
 }
 
 
-function closeReportModal() {
-  isReportModalVisible.value = false
-}
+
 
 //ส่งข้อมูลรายงานไปbackend Thunchanok
-async function handleSubmitReport(payload) {
-  const formData = new FormData()
-  formData.append('driverId', reportDriverId.value)
-  formData.append('types', JSON.stringify(payload.types))
-  if (payload.description) {
-    formData.append('description', payload.description)
-  }
-  if (payload.photos && payload.photos.length > 0) {
-    for (const file of payload.photos) {
-      formData.append('photos', file)
-    }
-  }
+//async function handleSubmitReport(payload) {
+//  const formData = new FormData()
+//  formData.append('driverId', reportDriverId.value)
+//  formData.append('types', JSON.stringify(payload.types))
+//  if (payload.description) {
+//    formData.append('description', payload.description)
+//  }
+//  if (payload.photos && payload.photos.length > 0) {
+//    for (const file of payload.photos) {
+//      formData.append('photos', file)
+//    }
+//  }
 
-  try {
-    await $api('/reports', {
-      method: 'POST',
-      body: formData,
-    })
+//  try {
+//    await $api('/reports', {
+//      method: 'POST',
+ //     body: formData,
+ //   })
 
-    toast.success('ส่งรายงานสำเร็จ', 'ระบบได้รับข้อมูลแล้ว')
-    closeReportModal()
+//    toast.success('ส่งรายงานสำเร็จ', 'ระบบได้รับข้อมูลแล้ว')
+//    closeReportModal()
 
-  } catch (err) {
-    console.error('report failed:', err)
-    toast.error(
-      'ส่งรายงานไม่สำเร็จ',
-      err?.data?.message || 'กรุณาลองใหม่อีกครั้ง'
-    )
-  }
-}
+//  } catch (err) {
+//    console.error('report failed:', err)
+//    toast.error(
+//      'ส่งรายงานไม่สำเร็จ',
+//      err?.data?.message || 'กรุณาลองใหม่อีกครั้ง'
+//    )
+//  }
+//}
 //End Modal Report Thunchanok
 
 const isCancelModalVisible = ref(false)
