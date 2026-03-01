@@ -64,10 +64,10 @@
                                 </div>
 
                                 <div class="text-sm text-gray-600 mb-2">
-                                    <div>รายงานผู้ใช้: {{ r.reportedUser?.firstName || '-' }} {{ r.reportedUser?.lastName || '' }}</div>
-                                    <div v-if="r.reportedUser?.username">({{ r.reportedUser.username }})</div>
-                                    <div v-if="r.reportedUser?.phoneNumber">เบอร์โทรศัพท์: {{ r.reportedUser.phoneNumber }}</div>
-                                    <div v-if="r.reportedUser?.email">อีเมล: {{ r.reportedUser.email }}</div>
+                                  <span class="font-medium text-gray-700">ข้อมูลผู้ถูกรายงาน </span>
+                                  <div>ชื่อ-นามสกุล : {{ r.reportedUser?.firstName || '-' }} {{ r.reportedUser?.lastName || '' }} ({{ r.reportedUser?.username }})</div>
+                                  <div v-if="r.reportedUser?.phoneNumber">เบอร์โทรศัพท์: {{ r.reportedUser.phoneNumber }}</div>
+                                  <div v-if="r.reportedUser?.email">อีเมล: {{ r.reportedUser.email }}</div>
                                 </div>
 
                                 <div class="text-sm text-gray-500 mt-5">
@@ -84,7 +84,7 @@
                                         class="mt-4 pt-4 border-t border-gray-200 space-y-2 text-sm"
                                     >
                                         <div v-if="r.types && r.types.length" class="mt-2 text-sm text-gray-700">
-                                            <span class="font-medium text-gray-700">รายละเอียดเพิ่มเติม : </span>
+                                            <span class="font-medium text-gray-700">รายละเอียดหมวดหมู่ : </span>
                                             
                                             <ul class="list-disc ml-5 mt-1">
                                                 <li v-for="(type, index) in r.types" :key="index">
