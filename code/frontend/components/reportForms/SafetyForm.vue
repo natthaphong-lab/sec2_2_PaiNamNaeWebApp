@@ -2,6 +2,9 @@
 import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 const { $api } = useNuxtApp()
+import ToastNotification from '@/components/ToastNotification.vue'
+
+const toasts = ref([])
 
 const router = useRouter()
 const route = useRoute()
@@ -67,6 +70,21 @@ function removeFile(index) {
   files.value.splice(index, 1)
 }
 
+//show toast
+function showToast(type, title, message) {
+  toasts.value.push({
+    id: Date.now(),
+    type,
+    title,
+    message
+  })
+}
+
+function removeToast(id) {
+  toasts.value = toasts.value.filter(t => t.id !== id)
+}
+
+
 // ====== SUBMIT ======
 async function submitForm() {
   
@@ -110,15 +128,15 @@ async function submitForm() {
       body: formData,
     })
     
-    alert('ส่งสำเร็จ')
-
+    showToast('success', 'สำเร็จ', 'ส่งรายงานเรียบร้อยแล้ว จะนำท่านกลับไปหน้าเลือกหมวดหมู่รายงาน')
+    await new Promise(r => setTimeout(r, 5000))
     router.back()
 
   } catch (err) {
     console.error(err)
+    showToast('error', 'ผิดพลาด', 'ส่งรายงานไม่สำเร็จ กรุณาลองใหม่')
   }
-   // ✅ แจ้งผู้ใช้
-  alert('ส่งรายงานไม่สำเร็จ กรุณาลองใหม่อีกครั้ง')
+  
 }
 
 function cancel() {
@@ -136,7 +154,7 @@ function handleFileClick(e) {
 </script>
 
 <template>
-  <div>
+<div class="w-full max-w-6xl mx-auto px-8 py-10">
     <!-- HEADER -->
     <h2 class="text-xl font-bold">รายงานปัญหาด้านความปลอดภัย</h2>
     <p class="mt-1 text-sm text-gray-600">
@@ -253,5 +271,20 @@ function handleFileClick(e) {
         ยืนยัน
       </button>
     </div>
+
+ <!-- Toast Container -->
+<div class="fixed bottom-5 right-5 z-50 flex flex-col items-end space-y-3">
+  <ToastNotification
+    v-for="toast in toasts"
+    :key="toast.id"
+    :id="toast.id"
+    :type="toast.type"
+    :title="toast.title"
+    :message="toast.message"
+    @close="removeToast"
+    class="!w-auto !max-w-md !min-w-[300px] !whitespace-normal"
+  />
+</div>
   </div>
+
 </template>
