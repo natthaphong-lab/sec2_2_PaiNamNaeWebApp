@@ -19,7 +19,7 @@ const baseSelect = {
   updatedAt: true,
 };
 
-const userBrief = { id: true, firstName: true, lastName: true, username: true, profilePicture: true };
+const userBrief = { id: true, firstName: true, lastName: true, username: true, selfiePhotoUrl: true };
 const userFull = { ...userBrief, email: true, phoneNumber: true };
 
 const buildWhere = (opts = {}) => {
@@ -152,7 +152,7 @@ const getMyReports = async (userId) => {
     where: { reporterId: userId },
     select: {
       ...baseSelect,
-      reportedUser: { select: userBrief },
+      reportedUser: { select: userFull },
     },
     orderBy: { createdAt: 'desc' },
   });
@@ -166,8 +166,8 @@ const getMyReportById = async (id, userId) => {
     where: { id },
     select: {
       ...baseSelect,
-      reporter: { select: userBrief },
-      reportedUser: { select: userBrief },
+      reporter: { select: userFull },
+      reportedUser: { select: userFull },
     },
   });
   if (!report || report.reporterId !== userId) {
