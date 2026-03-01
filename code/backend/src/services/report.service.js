@@ -118,8 +118,8 @@ const createReport = async (data, reporterId, reporterRole, files) => {
       },
       select: {
         ...baseSelect,
-        reporter: { select: userBrief },
-        reportedUser: { select: userBrief },
+        reporter: { select: userFull },
+        reportedUser: { select: userFull },
       },
     });
 
