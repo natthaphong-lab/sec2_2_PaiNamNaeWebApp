@@ -27,24 +27,17 @@ const storage = multer.memoryStorage();
 const upload = multer({
   storage: storage,
   limits: { fileSize: 10 * 1024 * 1024 }, // ปรับเป็น 10MB ให้ตรงกับ frontend
-  fileFilter: (req, file, cb) => {
-
-    const allowedTypes = [
-      'image/jpeg',
-      'image/png',
-      'image/jpg',
-      'video/mp4',
-      'video/quicktime',   // .mov
-      'audio/mpeg',        // .mp3
-      'audio/mp3'
-    ];
-
-    if (allowedTypes.includes(file.mimetype)) {
-      cb(null, true);
-    } else {
-      cb(new ApiError(400, 'Only image, video, or audio files are allowed!'), false);
-    }
-  },
+ fileFilter: (req, file, cb) => {
+  if (
+    file.mimetype.startsWith('image/') ||
+    file.mimetype.startsWith('video/') ||
+    file.mimetype.startsWith('audio/')
+  ) {
+    cb(null, true)
+  } else {
+    cb(new ApiError(400, 'File type not supported'), false)
+  }
+},
 });
 
 module.exports = upload;
