@@ -103,7 +103,7 @@
 
                                     <td class="px-4 py-3">
                                         <div class="flex items-center gap-3">
-                                            <img :src="r.passenger.profilePicture || 'https://via.placeholder.com/80x80?text=Selfie'"
+                                            <img :src="r.passenger?.profilePicture || 'https://via.placeholder.com/80x80?text=Selfie'"
                                             class="object-cover w-12 h-12 rounded-full" alt="avatar" />
                                             <div>
                                                 <div class="font-medium text-gray-900">
@@ -124,7 +124,7 @@
 
                                     <td class="px-4 py-3">
                                         <div class="flex items-center gap-3">
-                                            <img :src="r.driver.profilePicture || 'https://via.placeholder.com/80x80?text=Selfie'"
+                                            <img :src="r.driver?.profilePicture || 'https://via.placeholder.com/80x80?text=Selfie'"
                                                 class="object-cover w-12 h-12 rounded-full" alt="avatar" />
                                             <div>
                                                 <div class="font-medium text-gray-900">

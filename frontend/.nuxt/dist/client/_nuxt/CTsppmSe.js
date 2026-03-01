@@ -1,0 +1,1 @@
+import{a0 as n,a1 as s,a2 as r,a3 as o,a4 as i}from"./BSkgiFbZ.js";function u(t){var a;const e=t||s();return((a=e==null?void 0:e.ssrContext)==null?void 0:a.head)||(e==null?void 0:e.runWithContext(()=>{if(r())return o(i)}))}function d(t,e={}){const a=u(e.nuxt);if(a)return n(t,{head:a,...e})}export{d as u};
