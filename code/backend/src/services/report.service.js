@@ -229,7 +229,7 @@ const adminGetReportById = async (id) => {
 /**
  * Admin: update report status (pending / onProgress / completed / rejected)
  */
-const adminUpdateReportStatus = async (id, status) => {
+const adminUpdateReportStatus = async (id, status, notificationBody) => {
   const report = await prisma.report.findUnique({ where: { id } });
   if (!report) throw new ApiError(404, 'Report not found');
 
@@ -253,13 +253,13 @@ const adminUpdateReportStatus = async (id, status) => {
     };
     const statusText = statusTextMap[status] || status;
 
-    const bodyTextMap = {
+    const defaultBodyTextMap = {
       PENDING: 'รายงานของคุณถูกตั้งสถานะเป็นรอดำเนินการ',
       ON_PROGRESS: 'ทีมงานกำลังตรวจสอบรายงานของคุณ จะแจ้งผลให้ทราบเร็วๆ นี้',
       COMPLETED: 'ทางทีมงานได้ตรวจสอบและดำเนินการตามแนวทางของระบบแล้ว ขอบคุณที่แจ้งข้อมูลให้เราทราบ',
       REJECTED: 'ขอขอบคุณสำหรับการรายงาน หลังจากตรวจสอบแล้ว ทีมงานไม่พบการกระทำที่เข้าข่ายการละเมิดหรือผิดกฎของระบบ จึงขอปฏิเสธการรายงานในครั้งนี้',
     };
-    const bodyText = bodyTextMap[status] || '';
+    const bodyText = notificationBody || defaultBodyTextMap[status] || '';
 
     await tx.notification.create({
       data: {

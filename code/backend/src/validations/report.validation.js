@@ -37,6 +37,7 @@ const updateReportStatusSchema = z.object({
     required_error: 'Status is required',
     invalid_type_error: 'Status must be PENDING, ON_PROGRESS, COMPLETED, or REJECTED',
   }),
+  notificationBody: z.string().trim().min(1).max(500).optional(),
 });
 
 const listReportsQuerySchema = z.object({
