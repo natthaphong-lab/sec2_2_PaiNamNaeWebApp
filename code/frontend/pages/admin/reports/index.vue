@@ -115,17 +115,17 @@
                                     <!-- ผู้รายงาน -->
                                     <td class="px-4 py-3">
                                         <div class="flex items-center gap-3">
-                                            <img :src="r.passenger?.profilePicture || 'https://via.placeholder.com/80x80?text=Selfie'"
+                                            <img :src="r.reporter?.selfiePhotoUrl || 'https://via.placeholder.com/80x80?text=Selfie'"
                                             class="object-cover w-12 h-12 rounded-full" alt="avatar" />
                                             <div>
                                                 <div class="font-medium text-gray-900">
-                                                    {{ r.passenger.firstName }} {{ r.passenger.lastName }}
-                                                    <span class="text-xs text-gray-500" v-if="r.passenger.username">(@{{
-                                                        r.passenger.username }})</span>
+                                                    {{ r.reporter.firstName }} {{ r.reporter.lastName }}
+                                                    <span class="text-xs text-gray-500" v-if="r.reporter.username">(@{{
+                                                        r.reporter.username }})</span>
                                                 </div>
-                                                <div class="text-xs text-gray-500">{{ r.passenger.email }}</div>
-                                                <div class="text-xs text-gray-400" v-if="r.passenger.phoneNumber">Tel: {{
-                                                    r.passenger.phoneNumber }}</div>
+                                                <div class="text-xs text-gray-500">{{ r.reporter.email }}</div>
+                                                <div class="text-xs text-gray-400" v-if="r.reporter.phoneNumber">Tel: {{
+                                                    r.reporter.phoneNumber }}</div>
                                             </div>
                                         </div>
                                     </td>
@@ -133,17 +133,18 @@
                                     <!-- ผู้ถูกรายงาน -->
                                     <td class="px-4 py-3">
                                         <div class="flex items-center gap-3">
-                                            <img :src="r.driver?.profilePicture || 'https://via.placeholder.com/80x80?text=Selfie'"
-                                                class="object-cover w-12 h-12 rounded-full" alt="avatar" />
+                                            <img :src="r.reportedUser?.selfiePhotoUrl || 'https://via.placeholder.com/80x80?text=Selfie'"
+                                            class="object-cover w-12 h-12 rounded-full" alt="avatar" />
+                                        
                                             <div>
                                                 <div class="font-medium text-gray-900">
-                                                    {{ r.driver.firstName }} {{ r.driver.lastName }}
-                                                    <span class="text-xs text-gray-500" v-if="r.driver.username">(@{{
-                                                        r.driver.username }})</span>
+                                                    {{ r.reportedUser.firstName }} {{ r.reportedUser.lastName }}
+                                                    <span class="text-xs text-gray-500" v-if="r.reportedUser.username">(@{{
+                                                        r.reportedUser.username }})</span>
                                                 </div>
-                                                <div class="text-xs text-gray-500">{{ r.driver.email }}</div>
-                                                <div class="text-xs text-gray-400" v-if="r.driver.phoneNumber">Tel: {{
-                                                    r.driver.phoneNumber }}</div>
+                                                <div class="text-xs text-gray-500">{{ r.reportedUser.email }}</div>
+                                                <div class="text-xs text-gray-400" v-if="r.reportedUser.phoneNumber">Tel: {{
+                                                    r.reportedUser.phoneNumber }}</div>
                                             </div>
                                         </div>
                                     </td>
