@@ -114,22 +114,36 @@
 
                                     <!-- ผู้รายงาน -->
                                     <td class="px-4 py-3">
-                                    <div class="font-medium text-gray-900">
-                                        {{ r.reporter.firstName }} {{ r.reporter.lastName }}
-                                        <span v-if="r.reporter.username" class="text-xs text-gray-500">
-                                        (@{{ r.reporter.username }})
-                                        </span>
+                                    <div class="font-medium text-gray-900 flex items-center gap-2">
+                                        <img 
+                                            :src="r.reporter.selfiePhotoUrl || '/default-avatar.png'"
+                                            alt="profile"
+                                            class="w-8 h-8 rounded-full object-cover"
+                                        />
+                                        <div>
+                                            {{ r.reporter.firstName }} {{ r.reporter.lastName }}
+                                            <span v-if="r.reporter.username" class="text-xs text-gray-500 ml-1">
+                                            (@{{ r.reporter.username }})
+                                            </span>
+                                        </div>
                                     </div>
                                     <div class="text-xs text-gray-500">{{ r.reporter.email }}</div>
                                     </td>
 
                                     <!-- ผู้ถูกรายงาน -->
-                                    <td class="px-4 py-3">
-                                    <div class="font-medium text-gray-900">
-                                        {{ r.reportedUser.firstName }} {{ r.reportedUser.lastName }}
-                                        <span v-if="r.reportedUser.username" class="text-xs text-gray-500">
-                                        (@{{ r.reportedUser.username }})
-                                        </span>
+                                    <td class="px-3 py-3">
+                                    <div class="font-medium text-gray-900 flex items-center gap-1">
+                                        <img 
+                                            :src="r.reportedUser.selfiePhotoUrl || '/default-avatar.png'"
+                                            alt="profile"
+                                            class="w-8 h-8 rounded-full object-cover"
+                                        />
+                                        <div>
+                                            {{ r.reportedUser.firstName }} {{ r.reportedUser.lastName }}
+                                            <span v-if="r.reportedUser.username" class="text-xs text-gray-500 ml-1">
+                                            (@{{ r.reportedUser.username }})
+                                            </span>
+                                        </div>
                                     </div>
                                     <div class="text-xs text-gray-500">{{ r.reportedUser.email }}</div>
                                     </td>

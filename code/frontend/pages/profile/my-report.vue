@@ -69,7 +69,7 @@
                                   <div v-if="r.reportedUser?.phoneNumber">เบอร์โทรศัพท์: {{ r.reportedUser.phoneNumber }}</div>
                                   <div v-if="r.reportedUser?.email">อีเมล: {{ r.reportedUser.email }}</div>
                                 </div>
-
+                                
                                 <div class="text-sm text-gray-500 mt-5">
                                     วันที่แจ้ง: {{ formatThaiDate(r.createdAt) }}
                                 </div>
