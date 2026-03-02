@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 
-import SafetyForm from '@/components/Passenger_report_Driver/SafetyForm.vue'
+import SafetyForm from '@/components/Driver_report_Passenger/SafetyForm.vue'
 
 const route = useRoute()
 
