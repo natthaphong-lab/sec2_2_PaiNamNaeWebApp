@@ -164,7 +164,7 @@
                                      <button
                                        @click.stop="goToReportCategory(trip)"
                                        class="px-4 py-2 text-sm text-red-600 border border-red-300 rounded-md hover:bg-red-50">
-                                       รายงานคนขับ
+                                       รายงานปัญหา
                                     </button>
 
                                     </template>
