@@ -20,10 +20,10 @@ CREATE TYPE "LicenseType" AS ENUM ('PRIVATE_CAR_TEMPORARY', 'PRIVATE_CAR', 'PUBL
 CREATE TYPE "NotificationType" AS ENUM ('SYSTEM', 'VERIFICATION', 'BOOKING', 'ROUTE', 'REPORT');
 
 -- CreateEnum
-CREATE TYPE "ReportType" AS ENUM ('DANGEROUS_DRIVING', 'INAPPROPRIATE_COMMENTS', 'USING_PHONE_WHILE_DRIVING', 'HARASSMENT', 'LATE', 'OVERCHARGING', 'DECLINE_PASSENGER', 'TAKING_WRONG_ROUTE_INTENTIONALLY', 'OTHER');
+CREATE TYPE "ReportCategory" AS ENUM ('safety', 'driverBehavior', 'vehicle', 'lostItem', 'passengerBehavior', 'damaged', 'other');
 
 -- CreateEnum
-CREATE TYPE "ReportStatus" AS ENUM ('PENDING', 'APPROVED', 'REJECTED');
+CREATE TYPE "ReportStatus" AS ENUM ('PENDING', 'ON_PROGRESS', 'COMPLETED', 'REJECTED');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -155,11 +155,13 @@ CREATE TABLE "Booking" (
 -- CreateTable
 CREATE TABLE "Report" (
     "id" TEXT NOT NULL,
-    "passengerId" TEXT NOT NULL,
-    "driverId" TEXT NOT NULL,
-    "types" "ReportType"[],
+    "reporterId" TEXT NOT NULL,
+    "reportedUserId" TEXT NOT NULL,
+    "reporterRole" TEXT NOT NULL,
+    "category" "ReportCategory" NOT NULL,
+    "types" TEXT[],
     "description" TEXT,
-    "photos" TEXT[],
+    "mediaUrls" TEXT[],
     "status" "ReportStatus" NOT NULL DEFAULT 'PENDING',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -249,10 +251,10 @@ CREATE INDEX "Route_createdAt_idx" ON "Route"("createdAt");
 CREATE INDEX "Route_departureTime_idx" ON "Route"("departureTime");
 
 -- CreateIndex
-CREATE INDEX "Report_passengerId_idx" ON "Report"("passengerId");
+CREATE INDEX "Report_reporterId_idx" ON "Report"("reporterId");
 
 -- CreateIndex
-CREATE INDEX "Report_driverId_idx" ON "Report"("driverId");
+CREATE INDEX "Report_reportedUserId_idx" ON "Report"("reportedUserId");
 
 -- CreateIndex
 CREATE INDEX "Report_status_idx" ON "Report"("status");
@@ -282,7 +284,7 @@ ALTER TABLE "Booking" ADD CONSTRAINT "Booking_routeId_fkey" FOREIGN KEY ("routeI
 ALTER TABLE "Booking" ADD CONSTRAINT "Booking_passengerId_fkey" FOREIGN KEY ("passengerId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Report" ADD CONSTRAINT "Report_passengerId_fkey" FOREIGN KEY ("passengerId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Report" ADD CONSTRAINT "Report_reporterId_fkey" FOREIGN KEY ("reporterId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Report" ADD CONSTRAINT "Report_driverId_fkey" FOREIGN KEY ("driverId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Report" ADD CONSTRAINT "Report_reportedUserId_fkey" FOREIGN KEY ("reportedUserId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
