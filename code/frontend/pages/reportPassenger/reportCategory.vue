@@ -40,5 +40,14 @@ function selectCategory(category) {
         {{ cat.label }}
       </button>
     </div>
+
+<button
+ @click="router.back()"
+ class="mt-8 inline-flex items-center px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
+>
+  <i class="fa-solid fa-arrow-left"></i>
+  <span>ย้อนกลับ</span>
+</button>
+
   </div>
 </template>
