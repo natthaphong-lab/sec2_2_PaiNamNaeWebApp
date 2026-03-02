@@ -30,8 +30,9 @@ const remaining_Other = computed(() => maxLengthOther - otherText.value.length)
 
 // ====== OPTIONS ======
 const issueOptions = [
-  { value: 'ผู้โดยสารพยายามรบกวนการขับขี่', label: 'ผู้โดยสารพยายามรบกวนการขับขี่' },
-  { value: 'ผู้โดยสารนำสิ่งของอันตรายขึ้นมาบนรถ', label: 'ผู้โดยสารนำสิ่งของอันตรายขึ้นมาบนรถ' },
+  { value: 'รถสกปรกจากผู้โดยสาร', label: 'รถสกปรกจากผู้โดยสาร' },
+  { value: 'อุปกรณ์ภายในรถเสียหาย เช่น เบาะมีรอยกรีด', label: 'อุปกรณ์ภายในรถเสียหาย เช่น เบาะมีรอยกรีด' },
+  { value: 'ทรัพย์สินส่วนตัวเสียหาย', label: 'ทรัพย์สินส่วนตัวเสียหาย' },
   { value: 'อื่น ๆ', label: 'อื่น ๆ' }
 ]
 // ====== FILE HANDLER ======
@@ -78,20 +79,6 @@ function handleFileUpload(e) {
   e.target.value = ''
 }
 
-function removeFile(index) {
-  files.value.splice(index, 1)
-}
-
-//show toast
-function showToast(type, title, message) {
-  toasts.value.push({
-    id: Date.now(),
-    type,
-    title,
-    message
-  })
-}
-
 function removeToast(id) {
   toasts.value = toasts.value.filter(t => t.id !== id)
 }
@@ -125,7 +112,7 @@ async function submitForm() {
     finalTypes.push(otherText.value.trim())
   }
 
-  formData.append('reportedUserId', passengerId)
+  formData.append('reportedUserId', driverId)
   formData.append('category', category)
   formData.append('types', JSON.stringify(finalTypes))
   formData.append('description', description.value)
@@ -168,9 +155,9 @@ function handleFileClick(e) {
 <template>
 <div class="w-full max-w-6xl mx-auto px-8 py-10">
     <!-- HEADER -->
-    <h2 class="text-xl font-bold">รายงานปัญหาด้านความปลอดภัย</h2>
+    <h2 class="text-xl font-bold">รายงานปัญหาเกี่ยวกับความเสียหายต่อยานพาหนะและทรัพย์สิน</h2>
     <p class="mt-1 text-sm text-gray-600">
-      แจ้งปัญหาที่เกี่ยวข้องกับความปลอดภัยระหว่างการเดินทาง
+      แจ้งปัญหาเกี่ยวกับยานพาหนะหรือทรัพย์สินได้รับความเสียหายระหว่างหรือภายหลังการเดินทางที่เกิดจากผู้โดยสาร
     </p>
 
     <!-- CHECKBOX -->
@@ -206,6 +193,7 @@ function handleFileClick(e) {
     />
   </div>
 </div>
+
 
     <!-- DESCRIPTION -->
     <div class="mt-6">

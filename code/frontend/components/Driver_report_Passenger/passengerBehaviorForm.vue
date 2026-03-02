@@ -30,8 +30,9 @@ const remaining_Other = computed(() => maxLengthOther - otherText.value.length)
 
 // ====== OPTIONS ======
 const issueOptions = [
-  { value: 'ผู้โดยสารพยายามรบกวนการขับขี่', label: 'ผู้โดยสารพยายามรบกวนการขับขี่' },
-  { value: 'ผู้โดยสารนำสิ่งของอันตรายขึ้นมาบนรถ', label: 'ผู้โดยสารนำสิ่งของอันตรายขึ้นมาบนรถ' },
+  { value: 'พูดจาไม่สุภาพ คุกคาม หรือ ข่มขู่', label: 'พูดจาไม่สุภาพ คุกคาม หรือ ข่มขู่' },
+  { value: 'รบกวนหรือก่อกวนผู้โดยสารคนอื่น', label: 'รบกวนหรือก่อกวนผู้โดยสารคนอื่น' },
+  { value: 'ไม่มาตามเวลาที่ตกลงกันไว้', label: 'ไม่มาตามเวลาที่ตกลงกันไว้' },
   { value: 'อื่น ๆ', label: 'อื่น ๆ' }
 ]
 // ====== FILE HANDLER ======
@@ -125,7 +126,7 @@ async function submitForm() {
     finalTypes.push(otherText.value.trim())
   }
 
-  formData.append('reportedUserId', passengerId)
+  formData.append('reportedUserId', driverId)
   formData.append('category', category)
   formData.append('types', JSON.stringify(finalTypes))
   formData.append('description', description.value)
@@ -168,9 +169,9 @@ function handleFileClick(e) {
 <template>
 <div class="w-full max-w-6xl mx-auto px-8 py-10">
     <!-- HEADER -->
-    <h2 class="text-xl font-bold">รายงานปัญหาด้านความปลอดภัย</h2>
+    <h2 class="text-xl font-bold">รายงานปัญหาด้านพฤติกรรมผู้โดยสาร</h2>
     <p class="mt-1 text-sm text-gray-600">
-      แจ้งปัญหาที่เกี่ยวข้องกับความปลอดภัยระหว่างการเดินทาง
+      แจ้งปัญหาด้านพฤติกรรมของผู้โดยสารที่ไม่เหมาะสม
     </p>
 
     <!-- CHECKBOX -->

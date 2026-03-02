@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 
-
+import SafetyForm from '@/components/Passenger_report_Driver/SafetyForm.vue'
 import driverBehaviorForm from '@/components/Passenger_report_Driver/driverBehaviorForm.vue'
 import vehicleForm from '@/components/Passenger_report_Driver/vehicleForm.vue'
 import lostFoundForm from '@/components/Passenger_report_Driver/lostFoundForm.vue'

@@ -12,7 +12,7 @@ const categories = [
   { key: 'driverBehavior', label: 'แจ้งปัญหาพฤติกรรมคนขับ' },
   { key: 'vehicle', label: 'แจ้งปัญหาเกี่ยวกับรถ' },
   { key: 'lostItem', label: 'แจ้งของหาย / ของตกหล่น' },
-  { key: 'other', label: 'อื่น ๆ' }
+  { key: 'other', label: 'แจ้งปัญหาอื่น ๆ' }
 ]
 
 function selectCategory(category) {
@@ -28,16 +28,29 @@ function selectCategory(category) {
 </script>
 
 <template>
-  <div class="max-w-xl p-6 mx-auto mt-10 bg-white rounded-lg shadow">
-    <h2 class="mb-6 text-xl font-bold">กรุณาเลือกหมวดหมู่การรายงาน</h2>
+  <div class="max-w-2xl p-6 mx-auto mt-10">
+    <h1 class="mb-2 text-2xl font-bold text-gray-900">รายงานปัญหา</h1>
+    <p class="mb-8 text-lg text-gray-700">กรุณาเลือกหัวข้อที่ท่านต้องการรายงาน</p>
 
-    <div class="space-y-3">
+    <div class="space-y-4">
       <button
         v-for="cat in categories"
         :key="cat.key"
         @click="selectCategory(cat.key)"
-        class="w-full px-4 py-3 text-left transition border rounded-md hover:bg-gray-50">
-        {{ cat.label }}
+        class="flex items-center justify-between w-full px-6 py-5 transition-all bg-white border border-gray-100 shadow-sm rounded-2xl hover:shadow-md hover:border-gray-200"
+      >
+        <span class="text-lg font-medium text-gray-800">{{ cat.label }}</span>
+        
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          fill="none" 
+          viewBox="0 0 24 24" 
+          stroke-width="2" 
+          stroke="currentColor" 
+          class="w-5 h-5 text-gray-400"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+        </svg>
       </button>
     </div>
   </div>
