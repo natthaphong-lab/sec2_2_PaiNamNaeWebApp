@@ -12,7 +12,7 @@ const categories = [
   { key: 'driverBehavior', label: 'แจ้งปัญหาพฤติกรรมคนขับ' },
   { key: 'vehicle', label: 'แจ้งปัญหาเกี่ยวกับรถ' },
   { key: 'lostItem', label: 'แจ้งของหาย / ของตกหล่น' },
-  { key: 'other', label: 'อื่น ๆ' }
+  { key: 'other', label: 'รายงานปัญหาอื่น ๆ ที่เกี่ยวข้องกับคนขับ' }
 ]
 
 function selectCategory(category) {

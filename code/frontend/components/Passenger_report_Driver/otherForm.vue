@@ -25,12 +25,6 @@ const fileError = ref('')
 const maxLength = 500
 const remaining = computed(() => maxLength - description.value.length)
 
-// ====== OPTIONS ======
-const issueOptions = [
-  { value: 'ฉันลืมของไว้บนรถ', label: 'ฉันลืมของไว้บนรถ' },
-  { value: 'ฉันพบสิ่งของของผู้อื่นภายหลังการเดินทาง', label: 'ฉันพบสิ่งของของผู้อื่นภายหลังการเดินทาง' },
-
-]
 // ====== FILE HANDLER ======
 function handleFileUpload(e) {
   const selected = Array.from(e.target.files)
