@@ -10,12 +10,12 @@ const router = useRouter()
 const route = useRoute()
 
 // รับค่าจาก query (เผื่อใช้ส่ง backend)
-const driverId = route.query.driverId
+const passengerId = route.query.passengerId
 const bookingId = route.query.bookingId
 const category = route.query.category
 
 // ====== FORM STATE ======
-const selectedIssues = ref([])
+const selectedIssue = ref('')
 const otherText = ref('')
 const description = ref('')
 const files = ref([])
@@ -25,16 +25,11 @@ const fileError = ref('')
 const maxLength = 500
 const remaining = computed(() => maxLength - description.value.length)
 
-const maxLengthOther = 100
-const remaining_Other = computed(() => maxLengthOther - otherText.value.length)
-
-
 // ====== OPTIONS ======
 const issueOptions = [
-  { value: 'ขับรถเร็วเกินที่กฎหมายกำหนด', label: 'ขับรถเร็วเกินที่กฎหมายกำหนด' },
-  { value: 'ผู้ขับขี่ใช้โทรศัพท์ขณะขับรถ', label: 'ผู้ขับขี่ใช้โทรศัพท์ขณะขับรถ' },
-  { value: 'ผู้ขับขี่ฝ่าฝืนกฎจราจร', label: 'ผู้ขับขี่ฝ่าฝืนกฎจราจร' },
-  { value: 'อื่น ๆ', label: 'อื่น ๆ' }
+  { value: 'ฉันลืมของไว้บนรถ', label: 'ฉันลืมของไว้บนรถ' },
+  { value: 'ฉันพบสิ่งของของผู้อื่นภายหลังการเดินทาง', label: 'ฉันพบสิ่งของของผู้อื่นภายหลังการเดินทาง' },
+
 ]
 // ====== FILE HANDLER ======
 function handleFileUpload(e) {
@@ -102,34 +97,24 @@ function removeToast(id) {
 // ====== SUBMIT ======
 async function submitForm() {
   
-    // ต้องเลือกอย่างน้อย 1 หัวข้อ
-  if (selectedIssues.value.length === 0) {
-    alert('กรุณาเลือกหัวข้ออย่างน้อย 1 รายการ')
+  // ต้องกรอกรายละเอียด
+  if (!description.value.trim()) {
+    alert('กรุณากรอกรายละเอียดเพิ่มเติม')
     return
   }
 
-  // ต้องแนบไฟล์อย่างน้อย 1 ไฟล์
-  if (files.value.length === 0) {
-    alert('กรุณาแนบสื่ออย่างน้อย 1 ไฟล์')
-    return
-  }
-
-
+  const isConfirm = confirm('ยืนยันการส่งรายงานหรือไม่?')
+     if (!isConfirm) {
+     return
+    }
 
   const formData = new FormData()
 
-  let finalTypes = [...selectedIssues.value]
-
-  // ถ้าเลือก "อื่น ๆ" ให้ลบคำว่า "อื่น ๆ" ออก
-  // แล้วแทนด้วยข้อความที่พิมพ์
-  if (finalTypes.includes('อื่น ๆ') && otherText.value.trim()) {
-    finalTypes = finalTypes.filter(t => t !== 'อื่น ๆ')
-    finalTypes.push(otherText.value.trim())
-  }
+let finalTypes = [selectedIssue.value]
 
   formData.append('reportedUserId', driverId)
   formData.append('category', category)
-  formData.append('types', JSON.stringify(finalTypes))
+  formData.append('types[]', 'ปัญหาอื่น ๆ')
   formData.append('description', description.value)
 
   files.value.forEach(file => {
@@ -170,50 +155,18 @@ function handleFileClick(e) {
 <template>
 <div class="w-full max-w-6xl mx-auto px-8 py-10">
     <!-- HEADER -->
-    <h2 class="text-xl font-bold">รายงานปัญหาด้านความปลอดภัย</h2>
+    <h2 class="text-xl font-bold">รายงานปัญหาอื่น ๆ ที่เกี่ยวข้องกับคนขับ</h2>
     <p class="mt-1 text-sm text-gray-600">
-      แจ้งปัญหาที่เกี่ยวข้องกับความปลอดภัยระหว่างการเดินทาง
+      ใช้สำหรับแจ้งปัญหาที่ไม่อยู่ในหมวดหมู่ข้างต้น กรุณาระบุรายละเอียดให้ชัดเจนเพื่อประกอบการตรวจสอบ
     </p>
 
-    <!-- CHECKBOX -->
-    <div class="m-4 space-y-2">
-  <div v-for="item in issueOptions" :key="item.value">
-    <div class="flex items-center justify-between">
-      <label class="flex items-center space-x-2 cursor-pointer">
-        <input
-          type="checkbox"
-          :value="item.value"
-          v-model="selectedIssues"
-        />
-        <span :class="{'font-medium': item.value === 'อื่น ๆ'}">
-          {{ item.label }}
-        </span>
-      </label>
-
-      <span 
-        v-if="item.value === 'อื่น ๆ' && selectedIssues.includes('อื่น ๆ')" 
-        class="text-xs text-gray-500"
-      >
-        ({{ otherText.length }} / {{maxLengthOther}} ตัวอักษร)
-      </span>
-    </div>
-
-    <input
-      v-if="item.value === 'อื่น ๆ' && selectedIssues.includes('อื่น ๆ')"
-      v-model="otherText"
-      type="text"
-      :maxlength= "maxLengthOther"
-      placeholder="โปรดระบุ"
-      class="w-full p-2 mt-2 border rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
-    />
-  </div>
-</div>
+    
 
     <!-- DESCRIPTION -->
     <div class="mt-6">
       <div class="flex justify-between mb-2">
         <label class="font-medium">
-          รายละเอียดเพิ่มเติม 
+          รายละเอียดเพิ่มเติม  <span class="text-red-500">*</span>
         </label>
         <span class="text-sm text-gray-500">
           ({{ description.length }} / {{ maxLength }} ตัวอักษร)
@@ -232,8 +185,7 @@ function handleFileClick(e) {
     <!-- FILE UPLOAD -->
     <div class="mt-6">
       <label class="font-medium">
-        อัปโหลดรูป วิดีโอ หรือ คลิปเสียง 
-        <span class="text-red-500">*</span>
+        อัปโหลดรูป วิดีโอ หรือ คลิปเสียง
         <span class="text-sm text-red-500">(ไม่เกิน 10 MB ต่อไฟล์)</span>
       </label>
 

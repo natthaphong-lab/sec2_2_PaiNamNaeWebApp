@@ -4,27 +4,23 @@ import { useRoute, useRouter } from 'vue-router'
 const route = useRoute()
 const router = useRouter()
 
-const driverId = route.query.driverId
+const passengerId = route.query.passengerId
 const bookingId = route.query.bookingId
 
 const categories = [
-  { key: 'safety', label: 'แจ้งปัญหาด้านความปลอดภัย' },
-  { key: 'driverBehavior', label: 'แจ้งปัญหาพฤติกรรมคนขับ' },
-  { key: 'vehicle', label: 'แจ้งปัญหาเกี่ยวกับรถ' },
+  { key: 'safety', label: 'แจ้งปัญหาด้านความปลอดภัยเกี่ยวกับการขับขี่' },
+  { key: 'passengerBehavior', label: 'แจ้งปัญหาพฤติกรรมผู้โดยสาร' },
+  { key: 'vehicle', label: 'แจ้งปัญหาเกี่ยวกับความเสียหายต่อรถและทรัพย์สิน' },
   { key: 'lostItem', label: 'แจ้งของหาย / ของตกหล่น' },
-<<<<<<< HEAD
-  { key: 'other', label: 'แจ้งรายงานปัญหาอื่น ๆ ที่เกี่ยวข้องกับคนขับ' }
-=======
   { key: 'other', label: 'แจ้งปัญหาอื่น ๆ' }
->>>>>>> 111ce84f091cd2111c7fe1f5cb4e4931b91bb0b4
 ]
 
 function selectCategory(category) {
   router.push({
-    path: '/reportPassenger/reportForm',
+    path: '/reportDriver/reportForm',
     query: {
       category,
-      driverId,
+      passengerId,
       bookingId
     }
   })
@@ -57,14 +53,5 @@ function selectCategory(category) {
         </svg>
       </button>
     </div>
-
-<button
- @click="router.back()"
- class="mt-8 inline-flex items-center px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
->
-  <i class="fa-solid fa-arrow-left"></i>
-  <span>ย้อนกลับ</span>
-</button>
-
   </div>
 </template>

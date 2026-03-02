@@ -10,7 +10,7 @@ const router = useRouter()
 const route = useRoute()
 
 // รับค่าจาก query (เผื่อใช้ส่ง backend)
-const driverId = route.query.driverId
+const passengerId = route.query.passengerId
 const bookingId = route.query.bookingId
 const category = route.query.category
 
@@ -28,12 +28,10 @@ const remaining = computed(() => maxLength - description.value.length)
 const maxLengthOther = 100
 const remaining_Other = computed(() => maxLengthOther - otherText.value.length)
 
-
 // ====== OPTIONS ======
 const issueOptions = [
-  { value: 'ขับรถเร็วเกินที่กฎหมายกำหนด', label: 'ขับรถเร็วเกินที่กฎหมายกำหนด' },
-  { value: 'ผู้ขับขี่ใช้โทรศัพท์ขณะขับรถ', label: 'ผู้ขับขี่ใช้โทรศัพท์ขณะขับรถ' },
-  { value: 'ผู้ขับขี่ฝ่าฝืนกฎจราจร', label: 'ผู้ขับขี่ฝ่าฝืนกฎจราจร' },
+  { value: 'ผู้โดยสารพยายามรบกวนการขับขี่', label: 'ผู้โดยสารพยายามรบกวนการขับขี่' },
+  { value: 'ผู้โดยสารนำสิ่งของอันตรายขึ้นมาบนรถ', label: 'ผู้โดยสารนำสิ่งของอันตรายขึ้นมาบนรถ' },
   { value: 'อื่น ๆ', label: 'อื่น ๆ' }
 ]
 // ====== FILE HANDLER ======
@@ -127,7 +125,7 @@ async function submitForm() {
     finalTypes.push(otherText.value.trim())
   }
 
-  formData.append('reportedUserId', driverId)
+  formData.append('reportedUserId', passengerId)
   formData.append('category', category)
   formData.append('types', JSON.stringify(finalTypes))
   formData.append('description', description.value)

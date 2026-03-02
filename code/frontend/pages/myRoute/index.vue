@@ -348,10 +348,20 @@
                                         </button>
                                     </template>
 
-                                    <button v-else-if="trip.status === 'confirmed'"
-                                        class="px-4 py-2 text-sm text-white transition duration-200 bg-blue-600 rounded-md hover:bg-blue-700">
-                                        แชทกับผู้โดยสาร
-                                    </button>
+                                    <!--Add  Report Button -Natthaphong -->
+                                    <template v-else-if="trip.status === 'confirmed'">
+                                     
+                                        <button
+                                        @click.stop="goToReportCategory(trip)"
+                                        class="px-4 py-2 text-sm text-red-600 border border-red-300 rounded-md hover:bg-red-50">
+                                        รายงานปัญหา
+                                        </button>
+
+                                        <button 
+                                            class="px-4 py-2 text-sm text-white transition duration-200 bg-blue-600 rounded-md hover:bg-blue-700">
+                                            แชทกับผู้โดยสาร
+                                        </button>
+                                    </template>
 
                                     <button v-else-if="['rejected', 'cancelled'].includes(trip.status)"
                                         @click.stop="openConfirmModal(trip, 'delete')"
@@ -429,6 +439,18 @@ const tabs = [
 ]
 
 definePageMeta({ middleware: 'auth' })
+
+const router = useRouter()
+//go to Report Category Page By Natthaphong copy
+function goToReportCategory(trip) {
+  router.push({
+    path: '/reportDriver/reportCategory',
+    query: {
+      driverId: trip.passenger.id,
+      bookingId: trip.id
+    }
+  })
+}
 
 // --- Helpers ---
 function cleanAddr(a) {

@@ -10,7 +10,7 @@ const router = useRouter()
 const route = useRoute()
 
 // รับค่าจาก query (เผื่อใช้ส่ง backend)
-const driverId = route.query.driverId
+const passengerId = route.query.passengerId
 const bookingId = route.query.bookingId
 const category = route.query.category
 
@@ -28,12 +28,11 @@ const remaining = computed(() => maxLength - description.value.length)
 const maxLengthOther = 100
 const remaining_Other = computed(() => maxLengthOther - otherText.value.length)
 
-
 // ====== OPTIONS ======
 const issueOptions = [
-  { value: 'ขับรถเร็วเกินที่กฎหมายกำหนด', label: 'ขับรถเร็วเกินที่กฎหมายกำหนด' },
-  { value: 'ผู้ขับขี่ใช้โทรศัพท์ขณะขับรถ', label: 'ผู้ขับขี่ใช้โทรศัพท์ขณะขับรถ' },
-  { value: 'ผู้ขับขี่ฝ่าฝืนกฎจราจร', label: 'ผู้ขับขี่ฝ่าฝืนกฎจราจร' },
+  { value: 'พูดจาไม่สุภาพ คุกคาม หรือ ข่มขู่', label: 'พูดจาไม่สุภาพ คุกคาม หรือ ข่มขู่' },
+  { value: 'รบกวนหรือก่อกวนผู้โดยสารคนอื่น', label: 'รบกวนหรือก่อกวนผู้โดยสารคนอื่น' },
+  { value: 'ไม่มาตามเวลาที่ตกลงกันไว้', label: 'ไม่มาตามเวลาที่ตกลงกันไว้' },
   { value: 'อื่น ๆ', label: 'อื่น ๆ' }
 ]
 // ====== FILE HANDLER ======
@@ -170,9 +169,9 @@ function handleFileClick(e) {
 <template>
 <div class="w-full max-w-6xl mx-auto px-8 py-10">
     <!-- HEADER -->
-    <h2 class="text-xl font-bold">รายงานปัญหาด้านความปลอดภัย</h2>
+    <h2 class="text-xl font-bold">รายงานปัญหาด้านพฤติกรรมผู้โดยสาร</h2>
     <p class="mt-1 text-sm text-gray-600">
-      แจ้งปัญหาที่เกี่ยวข้องกับความปลอดภัยระหว่างการเดินทาง
+      แจ้งปัญหาด้านพฤติกรรมของผู้โดยสารที่ไม่เหมาะสม
     </p>
 
     <!-- CHECKBOX -->

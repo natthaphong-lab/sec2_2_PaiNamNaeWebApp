@@ -30,7 +30,7 @@ function handleFileUpload(e) {
   const selected = Array.from(e.target.files)
   fileError.value = ''
 
-  //ถ้าครบ 3 แล้ว
+  // 1. เช็คจำนวนไฟล์สูงสุดก่อน
   if (files.value.length >= maxFiles) {
     fileError.value = `แนบไฟล์ได้สูงสุด ${maxFiles} ไฟล์`
     e.target.value = ''
@@ -41,22 +41,31 @@ function handleFileUpload(e) {
   const limitedFiles = selected.slice(0, availableSlots)
 
   const validFiles = []
-  const oversizedFiles = []
+  
+  // กำหนดประเภทที่ยอมรับ (Prefix ของ MIME type)
+  const allowedPrefixes = ['image/', 'video/', 'audio/']
 
   limitedFiles.forEach(file => {
+    // --- เพิ่มการเช็คประเภทไฟล์ตรงนี้ ---
+    const isRightType = allowedPrefixes.some(prefix => file.type.startsWith(prefix))
+    
+    if (!isRightType) {
+      fileError.value = 'รองรับเฉพาะไฟล์รูปภาพ วิดีโอ หรือเสียงเท่านั้น'
+      return // ข้ามไฟล์นี้ไป (ไม่ใส่ใน validFiles)
+    }
+
+    // --- เช็คขนาดไฟล์ (10MB) ---
     if (file.size > 10 * 1024 * 1024) {
-      oversizedFiles.push(file)
+      fileError.value = 'ไฟล์ต้องมีขนาดไม่เกิน 10MB ต่อไฟล์'
     } else {
       validFiles.push(file)
     }
   })
 
-  if (oversizedFiles.length > 0) {
-    fileError.value = 'ไฟล์ต้องมีขนาดไม่เกิน 10MB ต่อไฟล์'
-  }
-
+  // เพิ่มเฉพาะไฟล์ที่ผ่านการตรวจสอบทั้ง Type และ Size
   files.value.push(...validFiles)
 
+  // ล้างค่าเพื่อให้เลือกไฟล์เดิมซ้ำได้หลังจากลบ
   e.target.value = ''
 }
 
