@@ -25,6 +25,12 @@
                     <div class="ml-3 w-0 flex-1 pt-0.5">
                         <p class="text-sm font-medium text-gray-900">{{ title }}</p>
                         <p class="mt-1 text-sm text-gray-500">{{ message }}</p>
+                        <div v-if="actionText" class="mt-2">
+                            <button @click="handleAction"
+                                class="text-sm font-medium text-blue-600 hover:text-blue-700 underline">
+                                {{ actionText }}
+                            </button>
+                        </div>
                     </div>
                     <div class="ml-4 flex-shrink-0 flex">
                         <button @click="close"
@@ -44,17 +50,21 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
 
 const props = defineProps({
     id: { type: [String, Number], required: true },
     type: { type: String, default: 'info' },
     title: { type: String, required: true },
     message: { type: String, required: true },
-    duration: { type: Number, default: 5000 }
+    duration: { type: Number, default: 5000 },
+    actionText: { type: String, default: null },
+    actionLink: { type: String, default: null }
 })
 
 const emit = defineEmits(['close'])
 
+const router = useRouter()
 const show = ref(false)
 
 onMounted(() => {

@@ -17,7 +17,7 @@
         <!-- Title -->
         <div class="flex flex-col gap-3 mb-6 sm:flex-row sm:items-center sm:justify-between">
           <div class="flex items-center gap-3">
-            <h1 class="text-2xl font-semibold text-gray-800">รายละเอียดการรายงานผู้ขับขี่</h1>
+            <h1 class="text-2xl font-semibold text-gray-800">รายละเอียดการรายงาน</h1>
             <span class="text-sm text-gray-500">ดูข้อมูลการรายงานและเปลี่ยนสถานะได้จากหน้านี้</span>
           </div>
         </div>
@@ -27,36 +27,68 @@
             <div class="text-sm text-gray-700">สถานะปัจจุบัน:</div>
               <span
                 class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full"
-                :class="{
-                  'bg-amber-100 text-amber-700': report?.status === 'PENDING',
-                  'bg-green-100 text-green-700': report?.status === 'APPROVED',
-                  'bg-red-100 text-red-700': report?.status === 'REJECTED'
-                }"
+                :class="statusClass(report?.status)"
               >
               <i class="fa-solid fa-circle mr-1 text-[8px]"></i>
-                {{ statusLower(report?.status) }}
+                {{ statusReportTH(report?.status, report?.category , report?.reporterRole) }}
               </span>
               <div class="flex gap-2 ml-auto">
-                <button class="px-3 py-2 border rounded-md hover:bg-gray-50 disabled:opacity-50"
-                  :disabled="isPatchingStatus || !report" @click="patchStatus('PENDING')">
-                <i v-if="isPatchingStatus && targetStatus === 'PENDING'"
-                  class="mr-1 fa-solid fa-spinner fa-spin"></i>
-                  pending
-                </button>
+                <!-- PENDING -->
                 <button
-                  class="px-3 py-2 text-green-700 border border-green-300 rounded-md hover:bg-gray-50 disabled:opacity-50"
-                  :disabled="isPatchingStatus || !report" @click="patchStatus('APPROVED')">
-                  <i v-if="isPatchingStatus && targetStatus === 'APPROVED'"
-                    class="mr-1 fa-solid fa-spinner fa-spin"></i>
-                    approve
-                  </button>
-                  <button
-                    class="px-3 py-2 text-red-700 border border-red-300 rounded-md hover:bg-gray-50 disabled:opacity-50"
-                    :disabled="isPatchingStatus || !report" @click="patchStatus('REJECTED')">
-                    <i v-if="isPatchingStatus && targetStatus === 'REJECTED'"
-                      class="mr-1 fa-solid fa-spinner fa-spin"></i>
-                      reject
-                  </button>
+                  class="px-3 py-2 border rounded-md hover:bg-gray-50 disabled:opacity-50"
+                  :disabled="
+                              isPatchingStatus ||
+                              !report ||
+                              report.status !== 'PENDING' ||
+                              report.status === 'PENDING'
+                            "
+                  @click="patchStatus('PENDING')"
+                >
+                  <i
+                    v-if="isPatchingStatus && targetStatus === 'PENDING'"
+                    class="mr-1 fa-solid fa-spinner fa-spin"
+                  ></i>
+                  {{ statusReportTH("PENDING", report?.category , report?.reporterRole) }}
+                </button>
+
+                <!-- ON_PROGRESS -->
+                <button
+                  class="px-3 py-2 text-blue-700 border border-blue-300 rounded-md hover:bg-blue-50 disabled:opacity-50"
+                  :disabled="isPatchingStatus || !report || report.status === 'ON_PROGRESS' || report.status === 'COMPLETED' || report.status === 'REJECTED'"
+                  @click="patchStatus('ON_PROGRESS')"
+                >
+                  <i
+                    v-if="isPatchingStatus && targetStatus === 'ON_PROGRESS'"
+                    class="mr-1 fa-solid fa-spinner fa-spin"
+                  ></i>
+                  {{ statusReportTH("ON_PROGRESS", report?.category , report?.reporterRole) }}
+                </button>
+
+                <!-- COMPLETED -->
+                <button
+                  class="px-3 py-2 text-green-700 border border-green-300 rounded-md hover:bg-green-50 disabled:opacity-50"
+                  :disabled="isPatchingStatus || !report || report.status === 'COMPLETED' || report.status === 'REJECTED'"
+                  @click="patchStatus('COMPLETED')"
+                >
+                  <i
+                    v-if="isPatchingStatus && targetStatus === 'COMPLETED'"
+                    class="mr-1 fa-solid fa-spinner fa-spin"
+                  ></i>
+                  {{ statusReportTH("COMPLETED", report?.category , report?.reporterRole) }}
+                </button>
+
+                <!-- REJECTED -->
+                <button
+                  class="px-3 py-2 text-red-700 border border-red-300 rounded-md hover:bg-red-50 disabled:opacity-50"
+                  :disabled="isPatchingStatus || !report || report.status === 'REJECTED' || report.status === 'COMPLETED'"
+                  @click="patchStatus('REJECTED')"
+                >
+                  <i
+                    v-if="isPatchingStatus && targetStatus === 'REJECTED'"
+                    class="mr-1 fa-solid fa-spinner fa-spin"
+                  ></i>
+                  {{ statusReportTH("REJECTED", report?.category , report?.reporterRole) }}
+                </button>
                 </div>
               </div>
             </div>
@@ -70,43 +102,49 @@
                 <div class="w-full max-w-[80rem] mx-auto space-y-6">
                   <!-- ผู้ใช้ -->
                   <section>
-                    <h3 class="mb-3 text-sm font-semibold text-gray-700">ข้อมูลผู้โดยสาร (ผู้แจ้งรายงาน)</h3>
+                    <h3 class="mb-3 text-sm font-semibold text-gray-700">ข้อมูลผู้แจ้งรายงาน</h3>
                     <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
                       <InfoBox label="ชื่อ-นามสกุล">
-                        {{ (report.passenger?.firstName || '-') + ' ' + (report.passenger?.lastName || '') }}
+                        {{ (report.reporter?.firstName || '-') + ' ' + (report.reporter?.lastName || '') }}
                       </InfoBox>
 
                       <InfoBox label="อีเมล">
-                        {{ report.passenger?.email || '-' }}
+                        {{ report.reporter?.email || '-' }}
                       </InfoBox>
 
                       <InfoBox label="ชื่อผู้ใช้ (username)">
-                        {{ report.passenger?.username || '-' }}
+                        {{ report.reporter?.username || '-' }}
                       </InfoBox>
 
                       <InfoBox label="เบอร์โทรศัพท์">
-                        {{ report.passenger?.phoneNumber || '-' }}
+                        {{ report.reporter?.phoneNumber || '-' }}
+                      </InfoBox>
+                      <InfoBox label="บทบาท">
+                        {{ report.reporterRole === 'DRIVER' ? 'ไดรเวอร์' : 'ผู้โดยสาร' }}
                       </InfoBox>
                     </div>
                   </section>
 
                   <section>
-                    <h3 class="mb-3 text-sm font-semibold text-gray-700">ข้อมูลผู้ขับขี่ (ผู้ถูกรายงาน)</h3>
+                    <h3 class="mb-3 text-sm font-semibold text-gray-700">ข้อมูลผู้ถูกรายงาน</h3>
                     <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
                       <InfoBox label="ชื่อ-นามสกุล">
-                        {{ (report.driver?.firstName || '-') + ' ' + (report.driver?.lastName || '') }}
+                        {{ (report.reportedUser?.firstName || '-') + ' ' + (report.reportedUser?.lastName || '') }}
                       </InfoBox>
 
                       <InfoBox label="อีเมล">
-                        {{ report.driver?.email || '-' }}
+                        {{ report.reportedUser?.email || '-' }}
                       </InfoBox>
 
                       <InfoBox label="ชื่อผู้ใช้ (username)">
-                        {{ report.driver?.username || '-' }}
+                        {{ report.reportedUser?.username || '-' }}
                       </InfoBox>
 
                       <InfoBox label="เบอร์โทรศัพท์">
-                        {{ report.driver?.phoneNumber || '-' }}
+                        {{ report.reportedUser?.phoneNumber || '-' }}
+                      </InfoBox>
+                      <InfoBox label="บทบาท">
+                        {{ report.reporterRole === 'DRIVER' ? 'ผู้โดยสาร' : 'ไดรเวอร์'}}
                       </InfoBox>
                     </div>
                   </section>
@@ -115,8 +153,10 @@
                     <h3 class="mb-3 text-sm font-semibold text-gray-700">รายละเอียดการรายงาน</h3>
                     <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
                       <InfoBox label="ประเภท">
-                        {{ report.types?.map(type => mapReportType(type)).join(', ') }}
-
+                        {{ reportCategoryTH(report?.category) }}
+                        <span v-if="report?.types?.length">
+                          : {{ report.types.map(type => mapReportType(type)).join(', ') }}
+                        </span>
                       </InfoBox>
 
                       <InfoBox label="รายละเอียด">
@@ -130,19 +170,23 @@
                         {{formatDate(report.updatedAt)}}
                       </InfoBox> -->
 
-                      <InfoBox label="รูปภาพ">
-                        <div v-if="report.photos?.length" class="mt-2 grid grid-cols-2 md:grid-cols-3 gap-4">
+                      <InfoBox label="ไฟล์แนบ">
+                        <div
+                          v-if="report.mediaUrls?.length"
+                          class="mt-2 grid grid-cols-2 md:grid-cols-3 gap-4"
+                        >
                           <img
-                            v-for="(photo, index) in report.photos"
+                            v-for="(media, index) in report.mediaUrls"
                             :key="index"
-                            :src="photo"
+                            :src="media"
                             class="h-40 w-full rounded-lg object-cover border cursor-pointer hover:opacity-80"
-                            @click="selectedPhoto = photo"
+                            @click="selectedPhoto = media"
                           />
-
                         </div>
 
-                        <p v-else class="text-gray-400 mt-2">ไม่มีรูปแนบ</p>
+                        <p v-else class="text-gray-400 mt-2">
+                          ไม่มีไฟล์แนบ
+                        </p>
                       </InfoBox>
                     </div>
                   </section>
@@ -166,7 +210,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, defineComponent, h } from 'vue'
 import { useRoute, useRuntimeConfig, useCookie } from '#app'
 import AdminHeader from '~/components/admin/AdminHeader.vue'
 import AdminSidebar from '~/components/admin/AdminSidebar.vue'
@@ -175,7 +219,6 @@ import 'dayjs/locale/th'
 dayjs.locale('th')
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
-import 'dayjs/locale/th'
 
 definePageMeta({ middleware: ['admin-auth'] })
 
@@ -185,7 +228,7 @@ useHead({
 })
 
 /* ================= types ================= */
-type ReportStatus = 'PENDING' | 'APPROVED' | 'REJECTED'
+type ReportStatus = 'PENDING' | 'ON_PROGRESS' | 'COMPLETED' | 'REJECTED'
 
 interface ReportUser {
   id: string
@@ -199,16 +242,16 @@ interface ReportUser {
 
 interface Report {
   id: string
-  passengerId: string
-  driverId: string
+  reporter: ReportUser
+  reportedUser: ReportUser
+  reporterRole: 'PASSENGER' | 'DRIVER'
+  category: string
   types: string[]
   description?: string | null
-  photos?: string[]
-  status: ReportStatus
-  createdAt?: string | null
-  updatedAt?: string | null
-  passenger?: ReportUser | null
-  driver?: ReportUser | null
+  mediaUrls: string[]
+  status: string
+  createdAt: string
+  updatedAt: string
 }
 
 interface ApiResponse<T> {
@@ -275,6 +318,114 @@ function mapReportType(type: string) {
   return map[type] || type
 }
 
+const statusTextMap: Record<
+  string,
+  Record<string, Record<string, string>>
+> = {
+  // ================= DRIVER =================
+  DRIVER: {
+    passengerBehavior: {
+      PENDING: 'รอการดำเนินการ',
+      ON_PROGRESS: 'อยู่ระหว่างสอบสวน',
+      COMPLETED: 'ตักเตือนและลงโทษแล้ว',
+      REJECTED: 'ไม่พบความผิด'
+    },
+
+    safety: {
+      PENDING: 'รอการดำเนินการ',
+      ON_PROGRESS: 'อยู่ระหว่างสอบสวน',
+      COMPLETED: 'ตักเตือนและลงโทษแล้ว',
+      REJECTED: 'ไม่พบความผิด'
+    },
+
+    lostItem: {
+      PENDING: 'รอดำเนินการ',
+      ON_PROGRESS: 'อยู่ระหว่างการติดต่อ',
+      COMPLETED: 'แจ้งไปที่ผู้โดยสารเรียบร้อย',
+      REJECTED: 'ไม่พบของ'
+    },
+
+    damaged: {
+      PENDING: 'รอดำเนินการ',
+      ON_PROGRESS: 'อยู่ระหว่างการติดต่อ',
+      COMPLETED: 'แจ้งไปที่ผู้โดยสารเรียบร้อย',
+      REJECTED: 'ไม่พบความเสียหายที่เกิดขึ้น'
+    },
+
+    other: {
+      PENDING: 'รอดำเนินการ',
+      ON_PROGRESS: 'กำลังดำเนินการ',
+      COMPLETED: 'ดำเนินการเสร็จสิ้น',
+      REJECTED: 'ไม่พบความผิด'
+    }
+  },
+
+  // ================= PASSENGER =================
+  PASSENGER: {
+    safety: {
+      PENDING: 'รอการดำเนินการ',
+      ON_PROGRESS: 'อยู่ระหว่างสอบสวน',
+      COMPLETED: 'ตักเตือนและลงโทษแล้ว',
+      REJECTED: 'ไม่พบความผิด'
+    },
+
+    driverBehavior: {
+      PENDING: 'รอการดำเนินการ',
+      ON_PROGRESS: 'อยู่ระหว่างสอบสวน',
+      COMPLETED: 'ตักเตือนและลงโทษแล้ว',
+      REJECTED: 'ไม่พบความผิด'
+    },
+
+    vehicle: {
+      PENDING: 'รอการดำเนินการ',
+      ON_PROGRESS: 'อยู่ระหว่างสอบสวน',
+      COMPLETED: 'แจ้งให้แก้ไขแล้ว',
+      REJECTED: 'ไม่พบความผิด'
+    },
+
+    lostItem: {
+      PENDING: 'รอดำเนินการ',
+      ON_PROGRESS: 'อยู่ระหว่างการติดต่อ',
+      COMPLETED: 'แจ้งไปที่คนขับเรียบร้อยแล้ว',
+      REJECTED: 'ไม่พบของ'
+    },
+
+    other: {
+      PENDING: 'รอดำเนินการ',
+      ON_PROGRESS: 'กำลังดำเนินการ',
+      COMPLETED: 'ดำเนินการเสร็จสิ้น',
+      REJECTED: 'ไม่พบความผิด'
+    }
+  }
+}
+
+
+function statusReportTH(
+  status?: string | null,
+  category?: string | null,
+  role?: 'DRIVER' | 'PASSENGER' | null
+) {
+  if (!status) return '-'
+  if (
+    role &&
+    category &&
+    statusTextMap[role]?.[category]?.[status]
+  ) {
+    return statusTextMap[role][category][status]
+  }
+
+  // 2️⃣ fallback: default ตาม status
+  return defaultStatusText[status] ?? status
+}
+
+const defaultStatusText: Record<string, string> = {
+  PENDING: 'รอดำเนินการ',
+  ON_PROGRESS: 'กำลังดำเนินการ',
+  COMPLETED: 'เสร็จสิ้น',
+  REJECTED: 'ปฏิเสธ'
+}
+
+
 const isPatchingStatus = ref(false)
 const targetStatus = ref<ReportStatus | ''>('')
 
@@ -283,8 +434,57 @@ function statusLower(st?: ReportStatus | null) {
   return st.toLowerCase()
 }
 
+function reportCategoryTH(category?: string | null) {
+  if (!category) return '-'
+
+  const map: Record<string, string> = {
+    safety: 'ความปลอดภัย',
+    driverBehavior: 'พฤติกรรมคนขับ',
+    passengerBehavior: 'พฤติกรรมผู้โดยสาร',
+    vehicle: 'ปัญหายานพาหนะ',
+    lostItem: 'ของหาย',
+    damaged: 'ทรัพย์สินเสียหาย',
+    other: 'อื่น ๆ'
+  }
+
+  return map[category] ?? category
+}
+
+function statusLabel(st?: string | null) {
+  if (!st) return '-'
+  switch (st) {
+    case 'PENDING':
+      return 'รอดำเนินการ'
+    case 'ON_PROGRESS':
+      return 'กำลังดำเนินการ'
+    case 'COMPLETED':
+      return 'เสร็จสิ้น'
+    case 'REJECTED':
+      return 'ปฏิเสธ'
+    default:
+      return st
+  }
+}
+
+function statusClass(st?: string | null) {
+  if (!st) return 'bg-gray-100 text-gray-700'
+  switch (st) {
+    case 'PENDING':
+      return 'bg-amber-100 text-amber-700'
+    case 'ON_PROGRESS':
+      return 'bg-blue-100 text-blue-700'
+    case 'COMPLETED':
+      return 'bg-green-100 text-green-700'
+    case 'REJECTED':
+      return 'bg-red-100 text-red-700'
+    default:
+      return 'bg-gray-100 text-gray-700'
+  }
+}
+
 async function patchStatus(status: ReportStatus) {
   if (!report.value) return
+  if (!confirm(`ยืนยันเปลี่ยนสถานะเป็น "${statusLabel(status)}" ?`)) return
 
   isPatchingStatus.value = true
   targetStatus.value = status
