@@ -31,8 +31,21 @@
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500">
                                 <option value="">ทั้งหมด</option>
                                 <option value="PENDING">PENDING</option>
-                                <option value="APPROVED">APPROVED</option>
+                                <option value="ON_PROGRESS">ON_PROGRESS</option>
+                                <option value="COMPLETED">COMPLETED</option>
                                 <option value="REJECTED">REJECTED</option>
+                            </select>
+                        </div>
+
+                        <div class="lg:col-span-4">
+                            <label class="block mb-1 text-xs font-medium text-gray-600">
+                                รายงานจาก
+                            </label>
+                            <select v-model="filters.reporterRole"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500">
+                                <option value="">ทั้งหมด</option>
+                                <option value="DRIVER">ไดเวอร์</option>
+                                <option value="PASSENGER">ผู้โดยสาร</option>
                             </select>
                         </div>
 
@@ -55,7 +68,7 @@
                             </button>
                             <button @click="applyFilters"
                                 class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700">
-                                ใช้ตัวกรอง
+                                ใช้ตัวกรอง 
                             </button>
                         </div>
                     </div>
@@ -87,6 +100,8 @@
                                     <th class="px-4 py-3 text-xs font-medium text-left text-gray-500 uppercase">
                                         ประเภท</th>
                                     <th class="px-4 py-3 text-xs font-medium text-left text-gray-500 uppercase">
+                                        รายงานจาก</th>
+                                    <th class="px-4 py-3 text-xs font-medium text-left text-gray-500 uppercase">
                                         วันที่แจ้ง</th>
                                     <th class="px-4 py-3 text-xs font-medium text-left text-gray-500 uppercase">
                                         สถานะ</th>
@@ -97,54 +112,39 @@
                             <tbody class="bg-white divide-y divide-gray-200">
                                 <tr v-for="r in rows" :key="r.id" class="transition-colors hover:bg-gray-50">
 
-                                    <!-- <td class="px-4 py-3 text-sm text-gray-700">
-                                        {{ r.passenger.firstName}}
-                                    </td> -->
-
+                                    <!-- ผู้รายงาน -->
                                     <td class="px-4 py-3">
-                                        <div class="flex items-center gap-3">
-                                            <img :src="r.passenger.profilePicture || 'https://via.placeholder.com/80x80?text=Selfie'"
-                                            class="object-cover w-12 h-12 rounded-full" alt="avatar" />
-                                            <div>
-                                                <div class="font-medium text-gray-900">
-                                                    {{ r.passenger.firstName }} {{ r.passenger.lastName }}
-                                                    <span class="text-xs text-gray-500" v-if="r.passenger.username">(@{{
-                                                        r.passenger.username }})</span>
-                                                </div>
-                                                <div class="text-xs text-gray-500">{{ r.passenger.email }}</div>
-                                                <div class="text-xs text-gray-400" v-if="r.passenger.phoneNumber">Tel: {{
-                                                    r.passenger.phoneNumber }}</div>
-                                            </div>
-                                        </div>
+                                    <div class="font-medium text-gray-900">
+                                        {{ r.reporter.firstName }} {{ r.reporter.lastName }}
+                                        <span v-if="r.reporter.username" class="text-xs text-gray-500">
+                                        (@{{ r.reporter.username }})
+                                        </span>
+                                    </div>
+                                    <div class="text-xs text-gray-500">{{ r.reporter.email }}</div>
                                     </td>
 
-                                    <!-- <td class="px-4 py-3 text-sm text-gray-700">
-                                        {{ r.driverId }}
-                                    </td> -->
-
+                                    <!-- ผู้ถูกรายงาน -->
                                     <td class="px-4 py-3">
-                                        <div class="flex items-center gap-3">
-                                            <img :src="r.driver.profilePicture || 'https://via.placeholder.com/80x80?text=Selfie'"
-                                                class="object-cover w-12 h-12 rounded-full" alt="avatar" />
-                                            <div>
-                                                <div class="font-medium text-gray-900">
-                                                    {{ r.driver.firstName }} {{ r.driver.lastName }}
-                                                    <span class="text-xs text-gray-500" v-if="r.driver.username">(@{{
-                                                        r.driver.username }})</span>
-                                                </div>
-                                                <div class="text-xs text-gray-500">{{ r.driver.email }}</div>
-                                                <div class="text-xs text-gray-400" v-if="r.driver.phoneNumber">Tel: {{
-                                                    r.driver.phoneNumber }}</div>
-                                            </div>
-                                        </div>
+                                    <div class="font-medium text-gray-900">
+                                        {{ r.reportedUser.firstName }} {{ r.reportedUser.lastName }}
+                                        <span v-if="r.reportedUser.username" class="text-xs text-gray-500">
+                                        (@{{ r.reportedUser.username }})
+                                        </span>
+                                    </div>
+                                    <div class="text-xs text-gray-500">{{ r.reportedUser.email }}</div>
                                     </td>
 
                                     <td class="px-4 py-3 text-sm text-gray-700">
-                                        {{
-                                            r.types
-                                            ?.map(type => reportTypeTH[type] || type)
-                                            .join(', ')
-                                        }}
+                                        <!-- {{
+                                            // r.types
+                                            // ?.map(type => reportTypeTH[type] || type)
+                                            // .join(', ')
+                                        }} -->
+                                        {{ reportCategoryTH[r.category] || r.category }}
+                                    </td>
+
+                                    <td class="px-4 py-3 text-sm text-gray-700">
+                                        {{ r.reporterRole === 'DRIVER' ? 'ไดเวอร์' : 'ผู้โดยสาร' }}
                                     </td>
 
                                     <td class="px-4 py-3 text-sm text-gray-700">
@@ -156,11 +156,12 @@
                                             class="px-2 py-1 text-xs font-medium rounded-full"
                                             :class="{
                                                 'bg-yellow-100 text-yellow-700': r.status === 'PENDING',
-                                                'bg-green-100 text-green-700': r.status === 'APPROVED',
+                                                'bg-blue-100 text-blue-700': r.status === 'ON_PROGRESS',
+                                                'bg-green-100 text-green-700': r.status === 'COMPLETED',
                                                 'bg-red-100 text-red-700': r.status === 'REJECTED'
                                             }"
                                         >
-                                            {{ r.status }}
+                                            {{ statusReportTH(r.status, r.category, r.reporterRole) }}
                                         </span>
                                     </td>
 
@@ -231,6 +232,7 @@ import AdminSidebar from '~/components/admin/AdminSidebar.vue'
 import ConfirmModal from '~/components/ConfirmModal.vue'
 import { useToast } from '~/composables/useToast'
 import { useRouter } from 'vue-router'
+import { navigateTo } from '#app'
 
 const rows = ref([])
 const isLoading = ref(false)
@@ -265,16 +267,117 @@ const reportTypeTH = {
   OTHER: 'อื่น ๆ'
 }
 
+const reportCategoryTH = {
+  safety: 'ความปลอดภัย',
+  driverBehavior: 'พฤติกรรมคนขับ',
+  passengerBehavior: 'พฤติกรรมผู้โดยสาร',
+  vehicle: 'ปัญหายานพาหนะ',
+  lostItem: 'ของหาย',
+  damaged: 'ทรัพย์สินเสียหาย',
+  other: 'อื่น ๆ'
+}
 
 const totalPages = computed(() =>
     Math.max(1, pagination.totalPages || Math.ceil((pagination.total || 0) / (pagination.limit || 10)))
 )
 
+const statusTextMap = {
+  DRIVER: {
+    passengerBehavior: {
+      PENDING: 'รอการดำเนินการ',
+      ON_PROGRESS: 'อยู่ระหว่างสอบสวน',
+      COMPLETED: 'ตักเตือนและลงโทษแล้ว',
+      REJECTED: 'ไม่พบความผิด'
+    },
+    safety: {
+      PENDING: 'รอการดำเนินการ',
+      ON_PROGRESS: 'อยู่ระหว่างสอบสวน',
+      COMPLETED: 'ตักเตือนและลงโทษแล้ว',
+      REJECTED: 'ไม่พบความผิด'
+    },
+
+    lostItem: {
+      PENDING: 'รอดำเนินการ',
+      ON_PROGRESS: 'อยู่ระหว่างการติดต่อ',
+      COMPLETED: 'แจ้งไปที่ผู้โดยสารเรียบร้อย',
+      REJECTED: 'ไม่พบของ'
+    },
+
+    damaged: {
+      PENDING: 'รอดำเนินการ',
+      ON_PROGRESS: 'อยู่ระหว่างการติดต่อ',
+      COMPLETED: 'แจ้งไปที่ผู้โดยสารเรียบร้อย',
+      REJECTED: 'ไม่พบความเสียหายที่เกิดขึ้น'
+    },
+
+    other: {
+      PENDING: 'รอดำเนินการ',
+      ON_PROGRESS: 'กำลังดำเนินการ',
+      COMPLETED: 'ดำเนินการเสร็จสิ้น',
+      REJECTED: 'ไม่พบความผิด'
+    }
+  },
+
+  PASSENGER: {
+    safety: {
+      PENDING: 'รอการดำเนินการ',
+      ON_PROGRESS: 'อยู่ระหว่างสอบสวน',
+      COMPLETED: 'ตักเตือนและลงโทษแล้ว',
+      REJECTED: 'ไม่พบความผิด'
+    },
+    driverBehavior: {
+      PENDING: 'รอการดำเนินการ',
+      ON_PROGRESS: 'อยู่ระหว่างสอบสวน',
+      COMPLETED: 'ตักเตือนและลงโทษแล้ว',
+      REJECTED: 'ไม่พบความผิด'
+    },
+    vehicle: {
+      PENDING: 'รอการดำเนินการ',
+      ON_PROGRESS: 'อยู่ระหว่างสอบสวน',
+      COMPLETED: 'แจ้งให้แก้ไขแล้ว',
+      REJECTED: 'ไม่พบความผิด'
+    },
+    lostItem: {
+      PENDING: 'รอดำเนินการ',
+      ON_PROGRESS: 'อยู่ระหว่างการติดต่อ',
+      COMPLETED: 'แจ้งไปที่คนขับเรียบร้อยแล้ว',
+      REJECTED: 'ไม่พบของ'
+    },
+    other: {
+      PENDING: 'รอดำเนินการ',
+      ON_PROGRESS: 'กำลังดำเนินการ',
+      COMPLETED: 'ดำเนินการเสร็จสิ้น',
+      REJECTED: 'ไม่พบความผิด'
+    }
+  }
+}
+
+const defaultStatusText = {
+  PENDING: 'รอดำเนินการ',
+  ON_PROGRESS: 'กำลังดำเนินการ',
+  COMPLETED: 'เสร็จสิ้น',
+  REJECTED: 'ปฏิเสธ'
+}
+
+function statusReportTH(status, category, role) {
+  if (!status) return '-'
+
+  if (
+    role &&
+    category &&
+    statusTextMap[role]?.[category]?.[status]
+  ) {
+    return statusTextMap[role][category][status]
+  }
+
+  return defaultStatusText[status] ?? status
+}
+
 const filters = reactive({
     q: '',
     status: '',
-    typeOnLicense: '',
-    sort: 'createdAt:desc'
+    sort: 'createdAt:desc',
+    reporterRole: '' 
 })
 function applyFilters() {
     pagination.page = 1
@@ -283,8 +386,8 @@ function applyFilters() {
 function clearFilters() {
     filters.q = ''
     filters.status = ''
-    filters.typeOnLicense = ''
     filters.sort = 'createdAt:desc'
+    filters.reporterRole = ''
     pagination.page = 1
     fetchRows(1)
 }
@@ -301,28 +404,42 @@ async function fetchRows(page = pagination.page) {
     loadError.value = null
 
     try {
+        // แยก sort เช่น "createdAt:desc"
+        const [sortBy, sortOrder] = (filters.sort || 'createdAt:desc').split(':')
+
+        console.log('Fetching reports with:', { page, limit: pagination.limit, sortBy, sortOrder, q: filters.q, status: filters.status })
+
         const res = await $fetch(`${config.public.apiBase}/reports/admin`, {
             headers: {
-                Authorization: `Bearer ${token.value || token}`
+                Authorization: `Bearer ${token.value}`
             },
             params: {
                 page,
                 limit: pagination.limit,
-                q: filters.q || undefined,
-                status: filters.status || undefined,
-                sort: filters.sort || undefined
+                ...(filters.q && { q: filters.q }),
+                ...(filters.status && { status: filters.status }),
+                ...(filters.reporterRole && { reporterRole: filters.reporterRole }), 
+                sortBy,
+                sortOrder
             }
         })
 
+        console.log('Reports response:', res)
+
+        if (!res || !res.data) {
+            throw new Error('Invalid response format')
+        }
+
         rows.value = res.data
-        pagination.total = res.pagination?.total || res.data.length
-        pagination.totalPages = res.pagination?.totalPages ||
+        pagination.total = res.pagination?.total ?? res.data.length
+        pagination.totalPages =
+            res.pagination?.totalPages ??
             Math.ceil(pagination.total / pagination.limit)
         pagination.page = page
 
     } catch (err) {
-        console.error(err)
-        loadError.value = 'ไม่สามารถโหลดข้อมูลรายงานได้'
+        console.error('Error fetching reports:', err)
+        loadError.value = err?.data?.message || err?.message || 'ไม่สามารถโหลดข้อมูลรายงานได้'
     } finally {
         isLoading.value = false
     }
@@ -355,10 +472,11 @@ const deleteReport = async (reportId) => {
 
     rows.value = rows.value.filter(r => r.id !== reportId)
     pagination.total--
+    alert('ลบรายการสำเร็จ')
 
   } catch (err) {
-    console.error(err)
-    alert('ลบรายการไม่สำเร็จ')
+    console.error('Error deleting report:', err)
+    alert(err?.data?.message || 'ลบรายการไม่สำเร็จ')
   }
 }
 
