@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.4.1 (Python 3.14.3 on win32)" generated="2026-03-03T21:05:45.460568" rpa="false" schemaversion="5">
+<suite id="s1" name="Test" source="C:\Users\CHONWEEZZ\Documents\software enginerring\new\robot_test_pl11\test.robot">
+<test id="s1-t1" name="TC006" line="95">
+<kw name="Login" type="SETUP">
+<kw name="Open Browser" owner="SeleniumLibrary">
+<msg time="2026-03-03T21:05:45.606270" level="INFO">Opening browser 'chrome' to base url 'https://csse2268.cpkku.com/login'.</msg>
+<arg>${URL}</arg>
+<arg>${BROWSER}</arg>
+<doc>Opens a new browser instance to the optional ``url``.</doc>
+<status status="PASS" start="2026-03-03T21:05:45.606067" elapsed="0.748056"/>
+</kw>
+<kw name="Maximize Browser Window" owner="SeleniumLibrary">
+<doc>Maximizes current browser window.</doc>
+<status status="PASS" start="2026-03-03T21:05:46.354310" elapsed="0.031580"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>id=identifier</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2026-03-03T21:05:46.386048" elapsed="0.050677"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2026-03-03T21:05:46.437077" level="INFO">Typing text 'koeeyPassenger' into text field 'id=identifier'.</msg>
+<arg>id=identifier</arg>
+<arg>${USERNAME}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2026-03-03T21:05:46.436866" elapsed="0.058145"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>id=password</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2026-03-03T21:05:46.495161" elapsed="0.011384"/>
+</kw>
+<kw name="Input Password" owner="SeleniumLibrary">
+<msg time="2026-03-03T21:05:46.506890" level="INFO">Typing password into text field 'id=password'.</msg>
+<msg time="2026-03-03T21:05:46.534618" level="INFO">Temporally setting log level to: NONE</msg>
+<arg>id=password</arg>
+<arg>${PASSWORD}</arg>
+<doc>Types the given password into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2026-03-03T21:05:46.506691" elapsed="0.051726"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2026-03-03T21:05:46.558715" level="INFO">Clicking element 'xpath=//button[@type='submit']'.</msg>
+<arg>xpath=//button[@type='submit']</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2026-03-03T21:05:46.558555" elapsed="0.033505"/>
+</kw>
+<kw name="Wait Until Page Does Not Contain Element" owner="SeleniumLibrary">
+<arg>id=identifier</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` disappears from the current page.</doc>
+<status status="PASS" start="2026-03-03T21:05:46.592206" elapsed="0.871686"/>
+</kw>
+<status status="PASS" start="2026-03-03T21:05:45.605439" elapsed="1.858545"/>
+</kw>
+<kw name="Go To" owner="SeleniumLibrary">
+<msg time="2026-03-03T21:05:47.464472" level="INFO">Opening url 'https://csse2268.cpkku.com/profile'</msg>
+<arg>https://csse2268.cpkku.com/profile</arg>
+<doc>Navigates the current browser window to the provided ``url``.</doc>
+<status status="PASS" start="2026-03-03T21:05:47.464179" elapsed="0.058170"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2026-03-03T21:05:47.523866" level="INFO">Clicking element 'xpath=//*[normalize-space()='ประวัติการรายงานของฉัน']'.</msg>
+<arg>xpath=//*[normalize-space()='ประวัติการรายงานของฉัน']</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2026-03-03T21:05:47.523641" elapsed="0.090197"/>
+</kw>
+<kw name="Wait Until Page Contains" owner="SeleniumLibrary">
+<arg>ประวัติการรายงาน</arg>
+<arg>10s</arg>
+<doc>Waits until ``text`` appears on the current page.</doc>
+<status status="PASS" start="2026-03-03T21:05:47.614131" elapsed="0.007669"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2026-03-03T21:05:52.623027" level="INFO">Slept 5 seconds.</msg>
+<arg>5s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2026-03-03T21:05:47.622055" elapsed="5.001060"/>
+</kw>
+<kw name="Capture Page Screenshot" owner="SeleniumLibrary">
+<msg time="2026-03-03T21:05:52.695833" level="INFO" html="true">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="TC006.png"&gt;&lt;img src="TC006.png" width="800px"&gt;&lt;/a&gt;</msg>
+<arg>TC006.png</arg>
+<doc>Takes a screenshot of the current page and embeds it into a log file.</doc>
+<status status="PASS" start="2026-03-03T21:05:52.623324" elapsed="0.072593"/>
+</kw>
+<status status="PASS" start="2026-03-03T21:05:45.604859" elapsed="7.091244"/>
+</test>
+<status status="PASS" start="2026-03-03T21:05:45.461615" elapsed="7.234915"/>
+</suite>
+<statistics>
+<total>
+<stat pass="1" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat name="Test" id="s1" pass="1" fail="0" skip="0">Test</stat>
+</suite>
+</statistics>
+<errors>
+<msg time="2026-03-03T21:05:45.461746" level="ERROR">Error in file 'C:\Users\CHONWEEZZ\Documents\software enginerring\new\robot_test_pl11\test.robot' on line 7: Setting variable '${MYTRIP_URL} https://csse2268.cpkku.com/myTrip' failed: Invalid variable name '${MYTRIP_URL} https://csse2268.cpkku.com/myTrip'.</msg>
+<msg time="2026-03-03T21:05:45.461874" level="ERROR">Error in file 'C:\Users\CHONWEEZZ\Documents\software enginerring\new\robot_test_pl11\test.robot' on line 8: Setting variable '${PROFILE_URL} https://csse2268.cpkku.com/profile' failed: Invalid variable name '${PROFILE_URL} https://csse2268.cpkku.com/profile'.</msg>
+</errors>
+</robot>
