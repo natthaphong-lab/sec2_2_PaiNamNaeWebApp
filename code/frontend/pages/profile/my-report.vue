@@ -261,7 +261,6 @@ onMounted(async () => {
   }
 })
 
-
 const reportCategoryTH = {
   safety: 'ความปลอดภัย',
   driverBehavior: 'พฤติกรรมคนขับ',

@@ -101,6 +101,8 @@ async function submitForm() {
 
   const formData = new FormData()
 
+let finalTypes = [selectedIssue.value]
+
   formData.append('reportedUserId', passengerId)
   formData.append('category', category)
   formData.append('types', JSON.stringify(['ปัญหาอื่น ๆ']))
