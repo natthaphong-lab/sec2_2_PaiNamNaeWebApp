@@ -79,6 +79,20 @@ function handleFileUpload(e) {
   e.target.value = ''
 }
 
+function removeFile(index) {
+  files.value.splice(index, 1)
+}
+
+//show toast
+function showToast(type, title, message) {
+  toasts.value.push({
+    id: Date.now(),
+    type,
+    title,
+    message
+  })
+}
+
 function removeToast(id) {
   toasts.value = toasts.value.filter(t => t.id !== id)
 }
@@ -112,7 +126,7 @@ async function submitForm() {
     finalTypes.push(otherText.value.trim())
   }
 
-  formData.append('reportedUserId', driverId)
+  formData.append('reportedUserId', passengerId)
   formData.append('category', category)
   formData.append('types', JSON.stringify(finalTypes))
   formData.append('description', description.value)
