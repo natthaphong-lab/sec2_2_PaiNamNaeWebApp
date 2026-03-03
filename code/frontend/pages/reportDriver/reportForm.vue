@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router'
 
 import SafetyForm from '@/components/Driver_report_Passenger/SafetyForm.vue'
 import passengerBehaviorForm from '@/components/Driver_report_Passenger/passengerBehaviorForm.vue'
-import vehicleForm from '@/components/Driver_report_Passenger/damagedForm.vue'
+import damagedForm from '@/components/Driver_report_Passenger/damagedForm.vue'
 import lostFoundForm from '@/components/Driver_report_Passenger/lostFoundForm.vue'
 import otherForm from '@/components/Driver_report_Passenger/otherForm.vue'
 
