@@ -110,7 +110,8 @@
 
 <div v-for="(n, idx) in notifications" :key="n.id || idx" class="relative">
 <div
-  class="px-4 py-3 hover:bg-gray-50"
+  class="px-4 py-3 hover:bg-gray-50 cursor-pointer" 
+  @click="handleNotifClick(n)"
   :class="{
     'bg-red-50': getStatusType(n) === 'rejected',
     'bg-blue-50': getStatusType(n) === 'in_progress',
@@ -430,9 +431,10 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue'
-import { useRuntimeConfig, useCookie } from '#app'
+import { useRuntimeConfig, useCookie , useRouter } from '#app'
 import { useAuth } from '~/composables/useAuth'
 
+const router = useRouter()
 const { token, user, logout } = useAuth()
 
 /* ====== เมนูบนสุดเดิม ====== */
@@ -502,7 +504,9 @@ async function fetchUserNotifications() {
             title: it.title || '-',
             body: it.body || '',
             createdAt: it.createdAt || Date.now(),
-            readAt: it.readAt || null
+            readAt: it.readAt || null,
+            type: it.type || null,
+            metadata: it.metadata || null
         }))
     } catch (e) {
         console.error(e)
@@ -511,6 +515,27 @@ async function fetchUserNotifications() {
         loading.value = false
     }
 }
+
+/** คลิกที่รายการแจ้งเตือน: ถ้าเป็น REPORT ให้ไปหน้า my-report 3/3/2026*/
+async function handleNotifClick(n) {
+    // mark as read silently
+    if (!n.readAt) {
+        markAsRead(n)
+    }
+    // navigate based on metadata kind
+    const kind = n.metadata?.kind
+    const reportId = n.metadata?.reportId
+    if ((n.type === 'REPORT' || kind?.startsWith('REPORT')) && reportId) {
+        openNotif.value = false
+        openMenuId.value = null
+        await router.push({ path: '/profile/my-report', query: { reportId } })
+        return
+    }
+    // fallback: close panel
+    openNotif.value = false
+}
+
+
 
 /** เมนูย่อยของแต่ละรายการ */
 function toggleItemMenu(id) {
