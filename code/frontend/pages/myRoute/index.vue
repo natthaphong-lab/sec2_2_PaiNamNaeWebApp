@@ -448,7 +448,7 @@ function goToReportCategory(trip) {
   router.push({
     path: '/reportDriver/reportCategory',
     query: {
-      driverId: trip.passenger.id,
+      passengerId: trip.passenger.id,
       bookingId: trip.id
     }
   })
@@ -559,6 +559,7 @@ async function fetchMyRoutes() {
                     price: (r.pricePerSeat || 0) * (b.numberOfSeats || 0),
                     seats: b.numberOfSeats || 0,
                     passenger: {
+                        id: b.passenger?.id || b.passengerId,
                         name: `${b.passenger?.firstName || ''} ${b.passenger?.lastName || ''}`.trim() || 'ผู้โดยสาร',
                         image: b.passenger?.profilePicture || `https://ui-avatars.com/api/?name=${encodeURIComponent(b.passenger?.firstName || 'P')}&background=random&size=64`,
                         email: b.passenger?.email || '',

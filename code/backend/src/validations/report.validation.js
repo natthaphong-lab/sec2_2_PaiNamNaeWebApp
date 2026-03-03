@@ -3,7 +3,7 @@ const { ReportStatus } = require('@prisma/client');
 
 // Categories allowed per reporter role
 const passengerCategories = ['safety', 'driverBehavior', 'vehicle', 'lostItem', 'other'];
-const driverCategories = ['safety', 'passengerBehavior', 'vehicle','damaged', 'lostItem', 'other'];
+const driverCategories = ['safety', 'driverBehavior','passengerBehavior', 'vehicle','damaged', 'lostItem', 'other'];
 const allCategories = [...new Set([...passengerCategories, ...driverCategories])];
 
 const createReportSchema = z.object({
@@ -37,6 +37,7 @@ const updateReportStatusSchema = z.object({
     required_error: 'Status is required',
     invalid_type_error: 'Status must be PENDING, ON_PROGRESS, COMPLETED, or REJECTED',
   }),
+  notificationBody: z.string().trim().min(1).max(500).optional(),
 });
 
 const listReportsQuerySchema = z.object({

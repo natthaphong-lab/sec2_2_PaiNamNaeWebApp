@@ -111,7 +111,7 @@ async function submitForm() {
 
   // บังคับแนบไฟล์เฉพาะกรณี "พบของ"
   if (
-    selectedIssue.value === 'ฉันพบสิ่งของของผู้อื่นภายหลังการเดินทาง' &&
+    selectedIssue.value === 'ฉันพบสิ่งของของผู้โดยสารภายหลังการเดินทาง' &&
     files.value.length === 0
     ) {
      alert('กรุณาแนบรูปสิ่งของที่พบ อย่างน้อย 1 ไฟล์')
@@ -124,7 +124,7 @@ async function submitForm() {
 
 let finalTypes = [selectedIssue.value]
 
-  formData.append('reportedUserId', driverId)
+  formData.append('reportedUserId', passengerId)
   formData.append('category', category)
   formData.append('types', JSON.stringify(finalTypes))
   formData.append('description', description.value)
@@ -219,7 +219,7 @@ function handleFileClick(e) {
       <label class="font-medium">
         อัปโหลดรูป วิดีโอ หรือ คลิปเสียง
         <span 
-         v-if="selectedIssue === 'ฉันพบสิ่งของของผู้อื่นภายหลังการเดินทาง'" 
+         v-if="selectedIssue === 'ฉันพบสิ่งของของผู้โดยสารภายหลังการเดินทาง'" 
          class="text-red-500"
         >
          *
