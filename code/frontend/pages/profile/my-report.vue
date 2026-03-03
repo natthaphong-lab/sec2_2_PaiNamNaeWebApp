@@ -187,7 +187,7 @@
     </div>
 </template>
 <script setup>
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import { useRuntimeConfig, useCookie } from '#app'
 import dayjs from 'dayjs'
 import 'dayjs/locale/th'
@@ -248,6 +248,12 @@ import { useRouter, useRoute } from 'vue-router'
 const router = useRouter()
 const route = useRoute()
 
+function handleVisibilityChange() {
+  if (document.visibilityState === 'visible') {
+    fetchMyReports()
+  }
+}
+
 onMounted(async () => {
   await fetchMyReports()
   // Auto-expand report if reportId query param is present
@@ -259,6 +265,12 @@ onMounted(async () => {
     const el = document.getElementById(`report-${reportId}`)
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
   }
+  // Re-fetch when the user returns to this tab so admin deletions are reflected
+  document.addEventListener('visibilitychange', handleVisibilityChange)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('visibilitychange', handleVisibilityChange)
 })
 
 const reportCategoryTH = {
