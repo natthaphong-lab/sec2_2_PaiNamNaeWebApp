@@ -3,7 +3,7 @@ const { ReportStatus } = require('@prisma/client');
 
 // Categories allowed per reporter role
 const passengerCategories = ['safety', 'driverBehavior', 'vehicle', 'lostItem', 'other'];
-const driverCategories = ['safety', 'passengerBehavior', 'vehicle','damaged', 'lostItem', 'other'];
+const driverCategories = ['safety', 'driverBehavior','passengerBehavior', 'vehicle','damaged', 'lostItem', 'other'];
 const allCategories = [...new Set([...passengerCategories, ...driverCategories])];
 
 const createReportSchema = z.object({
