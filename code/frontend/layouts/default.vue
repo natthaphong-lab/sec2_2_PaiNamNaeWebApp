@@ -35,7 +35,7 @@
                         </div>
 
                         <!-- คนขับ: แสดงคำว่า การเดินทางทั้งหมด + ดรอปดาวน์ (การเดินทางของฉัน / คำขอจองเส้นทางของฉัน) -->
-                        <div v-if="user && (user.role === 'DRIVER' || user.role === 'ADMIN')">
+                        <div v-if="user && (user.role === 'DRIVER' || user.role === 'ADMIN' || user.role === 'PASSENGER')">
                             <div class="relative dropdown-trigger">
                                 <NuxtLink to="/myTrip"
                                     class="flex items-center text-gray-600 transition-colors duration-200 hover:text-blue-600"
@@ -108,20 +108,55 @@
                                             class="px-4 py-8 text-sm text-center text-gray-500">ไม่มีการแจ้งเตือน</div>
                                         <div v-if="loading" class="px-4 py-4 text-sm text-gray-500">กำลังโหลด…</div>
 
-                                        <div v-for="(n, idx) in notifications" :key="n.id || idx" class="relative">
-                                            <div class="px-4 py-3 hover:bg-gray-50">
-                                                <div class="flex items-start gap-3">
-                                                    <!-- จุดสถานะ: อ่านแล้วย้อมเทา -->
-                                                    <span class="inline-block w-2 h-2 mt-1 rounded-full"
-                                                        :class="n.readAt ? 'bg-gray-300' : 'bg-emerald-500'"></span>
+<div v-for="(n, idx) in notifications" :key="n.id || idx" class="relative">
+<div
+  class="px-4 py-3 hover:bg-gray-50 cursor-pointer" 
+  @click="handleNotifClick(n)"
+  :class="{
+    'bg-red-50': getStatusType(n) === 'rejected',
+    'bg-blue-50': getStatusType(n) === 'in_progress',
+    'bg-green-50': getStatusType(n) === 'completed'
+  }"
+>
+  <div class="flex items-start gap-3">
 
-                                                    <div class="flex-1 min-w-0">
-                                                        <p class="text-sm font-medium text-gray-900 truncate">{{ n.title
-                                                        }}</p>
-                                                        <p class="text-sm text-gray-600 line-clamp-2">{{ n.body }}</p>
-                                                        <p class="mt-1 text-xs text-gray-400">{{ timeAgo(n.createdAt) }}
-                                                        </p>
-                                                    </div>
+    <!-- จุดสถานะ -->
+    <span
+      class="inline-block w-2 h-2 mt-1 rounded-full"
+      :class="{
+        'bg-red-500': getStatusType(n) === 'rejected',
+        'bg-blue-500': getStatusType(n) === 'in_progress',
+        'bg-green-500': getStatusType(n) === 'completed',
+        'bg-gray-300': getStatusType(n) === 'default' && n.readAt,
+        'bg-emerald-500': getStatusType(n) === 'default' && !n.readAt
+      }"
+    ></span>
+            <div class="flex-1 min-w-0">
+                <p
+  class="text-sm font-medium truncate"
+  :class="{
+    'text-red-600': getStatusType(n) === 'rejected',
+    'text-blue-600': getStatusType(n) === 'in_progress',
+    'text-green-600': getStatusType(n) === 'completed',
+    'text-gray-900': getStatusType(n) === 'default'
+  }"
+>
+  {{ n.title }}
+</p>
+
+<p
+  class="text-sm line-clamp-2"
+  :class="{
+    'text-red-400': getStatusType(n) === 'rejected',
+    'text-blue-400': getStatusType(n) === 'in_progress',
+    'text-green-400': getStatusType(n) === 'completed',
+    'text-gray-600': getStatusType(n) === 'default'
+  }"
+>
+  {{ n.body }}
+</p>
+                <p class="mt-1 text-xs text-gray-400">{{ timeAgo(n.createdAt) }}</p>
+            </div>
 
                                                     <!-- เมนูสามจุด -->
                                                     <div class="relative shrink-0">
@@ -396,9 +431,10 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue'
-import { useRuntimeConfig, useCookie } from '#app'
+import { useRuntimeConfig, useCookie , useRouter } from '#app'
 import { useAuth } from '~/composables/useAuth'
 
+const router = useRouter()
 const { token, user, logout } = useAuth()
 
 /* ====== เมนูบนสุดเดิม ====== */
@@ -468,7 +504,9 @@ async function fetchUserNotifications() {
             title: it.title || '-',
             body: it.body || '',
             createdAt: it.createdAt || Date.now(),
-            readAt: it.readAt || null
+            readAt: it.readAt || null,
+            type: it.type || null,
+            metadata: it.metadata || null
         }))
     } catch (e) {
         console.error(e)
@@ -477,6 +515,27 @@ async function fetchUserNotifications() {
         loading.value = false
     }
 }
+
+/** คลิกที่รายการแจ้งเตือน: ถ้าเป็น REPORT ให้ไปหน้า my-report 3/3/2026*/
+async function handleNotifClick(n) {
+    // mark as read silently
+    if (!n.readAt) {
+        markAsRead(n)
+    }
+    // navigate based on metadata kind
+    const kind = n.metadata?.kind
+    const reportId = n.metadata?.reportId
+    if ((n.type === 'REPORT' || kind?.startsWith('REPORT')) && reportId) {
+        openNotif.value = false
+        openMenuId.value = null
+        await router.push({ path: '/profile/my-report', query: { reportId } })
+        return
+    }
+    // fallback: close panel
+    openNotif.value = false
+}
+
+
 
 /** เมนูย่อยของแต่ละรายการ */
 function toggleItemMenu(id) {
@@ -541,6 +600,27 @@ function timeAgo(ts) {
     if (h < 24) return `${h} hr ago`
     const d = Math.floor(h / 24)
     return `${d} d ago`
+}
+
+function getStatusType(n) {
+    const text = `${n.title ?? ''} ${n.body ?? ''}`.toLowerCase()
+
+    if (text.includes('ปฏิเสธ')) {
+        return 'rejected'
+    }
+
+    if (text.includes('กำลังดำเนินการ')) {
+        return 'in_progress'
+    }
+
+    if (
+        text.includes('ตักเตือนแล้ว') ||
+        text.includes('ลงโทษแล้ว')
+    ) {
+        return 'completed'
+    }
+
+    return 'default'
 }
 
 /* lifecycle */

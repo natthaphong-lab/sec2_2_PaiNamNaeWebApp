@@ -112,9 +112,9 @@ async function submitForm() {
 
 let finalTypes = [selectedIssue.value]
 
-  formData.append('reportedUserId', driverId)
+  formData.append('reportedUserId', passengerId)
   formData.append('category', category)
-  formData.append('types[]', 'ปัญหาอื่น ๆ')
+  formData.append('types', JSON.stringify(['ปัญหาอื่น ๆ']))
   formData.append('description', description.value)
 
   files.value.forEach(file => {
@@ -155,7 +155,7 @@ function handleFileClick(e) {
 <template>
 <div class="w-full max-w-6xl mx-auto px-8 py-10">
     <!-- HEADER -->
-    <h2 class="text-xl font-bold">รายงานปัญหาอื่น ๆ ที่เกี่ยวข้องกับคนขับ</h2>
+    <h2 class="text-xl font-bold">รายงานปัญหาอื่น ๆ ที่เกี่ยวข้องกับผู้โดยสาร</h2>
     <p class="mt-1 text-sm text-gray-600">
       ใช้สำหรับแจ้งปัญหาที่ไม่อยู่ในหมวดหมู่ข้างต้น กรุณาระบุรายละเอียดให้ชัดเจนเพื่อประกอบการตรวจสอบ
     </p>

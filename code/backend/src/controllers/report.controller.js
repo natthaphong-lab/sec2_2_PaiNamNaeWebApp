@@ -57,8 +57,8 @@ const adminGetReportById = asyncHandler(async (req, res) => {
 
 const adminUpdateReportStatus = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { status } = req.body;
-  const data = await reportService.adminUpdateReportStatus(id, status);
+  const { status, notificationBody } = req.body;
+  const data = await reportService.adminUpdateReportStatus(id, status, notificationBody);
   res.status(200).json({ success: true, message: `Report status updated to ${status}`, data });
 });
 

@@ -126,7 +126,7 @@ async function submitForm() {
     finalTypes.push(otherText.value.trim())
   }
 
-  formData.append('reportedUserId', driverId)
+  formData.append('reportedUserId', passengerId)
   formData.append('category', category)
   formData.append('types', JSON.stringify(finalTypes))
   formData.append('description', description.value)
