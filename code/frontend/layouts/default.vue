@@ -109,7 +109,7 @@
                                         <div v-if="loading" class="px-4 py-4 text-sm text-gray-500">กำลังโหลด…</div>
 
                                         <div v-for="(n, idx) in notifications" :key="n.id || idx" class="relative">
-                                            <div class="px-4 py-3 hover:bg-gray-50">
+                                            <div class="px-4 py-3 hover:bg-gray-50 cursor-pointer" @click="handleNotifClick(n)">
                                                 <div class="flex items-start gap-3">
                                                     <!-- จุดสถานะ: อ่านแล้วย้อมเทา -->
                                                     <span class="inline-block w-2 h-2 mt-1 rounded-full"
@@ -396,8 +396,10 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue'
-import { useRuntimeConfig, useCookie } from '#app'
+import { useRuntimeConfig, useCookie, useRouter } from '#app'
 import { useAuth } from '~/composables/useAuth'
+
+const router = useRouter()
 
 const { token, user, logout } = useAuth()
 
@@ -468,7 +470,9 @@ async function fetchUserNotifications() {
             title: it.title || '-',
             body: it.body || '',
             createdAt: it.createdAt || Date.now(),
-            readAt: it.readAt || null
+            readAt: it.readAt || null,
+            type: it.type || null,
+            metadata: it.metadata || null
         }))
     } catch (e) {
         console.error(e)
@@ -476,6 +480,25 @@ async function fetchUserNotifications() {
     } finally {
         loading.value = false
     }
+}
+
+/** คลิกที่รายการแจ้งเตือน: ถ้าเป็น REPORT ให้ไปหน้า my-report */
+async function handleNotifClick(n) {
+    // mark as read silently
+    if (!n.readAt) {
+        markAsRead(n)
+    }
+    // navigate based on metadata kind
+    const kind = n.metadata?.kind
+    const reportId = n.metadata?.reportId
+    if ((n.type === 'REPORT' || kind?.startsWith('REPORT')) && reportId) {
+        openNotif.value = false
+        openMenuId.value = null
+        await router.push({ path: '/profile/my-report', query: { reportId } })
+        return
+    }
+    // fallback: close panel
+    openNotif.value = false
 }
 
 /** เมนูย่อยของแต่ละรายการ */

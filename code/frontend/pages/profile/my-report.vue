@@ -41,6 +41,7 @@
                             <div
                                 v-for="r in reports"
                                 :key="r.id"
+                                :id="`report-${r.id}`"
                                 @click="toggleExpand(r.id)"
                                 class="p-4 border border-gray-200 rounded-lg shadow-sm cursor-pointer transition-all duration-300"
                                 :class="expandedReportId === r.id
@@ -186,7 +187,7 @@
     </div>
 </template>
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import { useRuntimeConfig, useCookie } from '#app'
 import dayjs from 'dayjs'
 import 'dayjs/locale/th'
@@ -242,12 +243,22 @@ async function fetchMyReports() {
   }
 }
 
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
+const route = useRoute()
 
-onMounted(() => {
-  fetchMyReports()
+onMounted(async () => {
+  await fetchMyReports()
+  // Auto-expand report if reportId query param is present
+  const reportId = route.query.reportId
+  if (reportId) {
+    expandedReportId.value = reportId
+    // Scroll to the report card after DOM update
+    await nextTick()
+    const el = document.getElementById(`report-${reportId}`)
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }
 })
 
 
