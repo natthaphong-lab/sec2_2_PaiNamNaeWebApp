@@ -448,7 +448,7 @@ function goToReportCategory(trip) {
   router.push({
     path: '/reportDriver/reportCategory',
     query: {
-      driverId: trip.passenger.id,
+      passengerId: trip.passenger.id,
       bookingId: trip.id
     }
   })

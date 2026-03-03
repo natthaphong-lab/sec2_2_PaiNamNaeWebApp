@@ -79,6 +79,20 @@ function handleFileUpload(e) {
   e.target.value = ''
 }
 
+function removeFile(index) {
+  files.value.splice(index, 1)
+}
+
+//show toast
+function showToast(type, title, message) {
+  toasts.value.push({
+    id: Date.now(),
+    type,
+    title,
+    message
+  })
+}
+
 function removeToast(id) {
   toasts.value = toasts.value.filter(t => t.id !== id)
 }

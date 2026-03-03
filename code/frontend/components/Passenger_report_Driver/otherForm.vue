@@ -108,7 +108,7 @@ let finalTypes = [selectedIssue.value]
 
   formData.append('reportedUserId', driverId)
   formData.append('category', category)
-  formData.append('types[]', "ปัญหาอื่น ๆ")
+  formData.append('types', JSON.stringify(['ปัญหาอื่น ๆ']))
   formData.append('description', description.value)
 
   files.value.forEach(file => {
