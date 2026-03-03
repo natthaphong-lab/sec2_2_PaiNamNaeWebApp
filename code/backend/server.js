@@ -16,26 +16,37 @@ const ensureAdmin = require('./src/bootstrap/ensureAdmin');
 const app = express();
 promClient.collectDefaultMetrics();
 
-app.use(helmet());
+// --- แก้ไขใน server.js ---
 
 const allowedOrigins = [
   'http://csse2268.cpkku.com',
   'https://csse2268.cpkku.com',
-  'http://localhost:3001'
+  'http://localhost:3001',
+  'https://api.painamnaeee.fun' // เพิ่มโดเมนของตัว API เองเข้าไปด้วยในบางกรณี
 ];
 
 const corsOptions = {
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
+    // !origin ช่วยให้พวก Postman หรือการเรียกตรงผ่าน Server-to-Server ใช้งานได้
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
+      // พ่น Log ออกมาดูเลยว่าตัวไหนที่หลุดเข้ามาแล้วโดน Block
+      console.log("CORS Blocked for origin:", origin);
       callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+  credentials: true,
+  optionsSuccessStatus: 200 // สำคัญสำหรับ Browser รุ่นเก่าและบางระบบ Proxy
 };
 
 app.use(cors(corsOptions));
+// ย้ายมาไว้ข้างล่าง CORS
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" } // อนุญาตให้ดึง Resource ข้ามโดเมน
+}));
 app.options('*', cors(corsOptions));
 
 app.use(express.json());

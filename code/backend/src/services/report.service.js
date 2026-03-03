@@ -89,7 +89,7 @@ const createReport = async (data, reporterId, reporterRole, files) => {
   });
   if (!reportedUser) throw new ApiError(404, 'Reported user not found');
 
-  // Validate direction: passenger must report a driver, driver must report a passenger
+  // Validate direction: passenger cannot report passenger
   if (reporterRole === 'PASSENGER' && reportedUser.role === 'PASSENGER') {
     throw new ApiError(400, 'Passengers cannot report other passengers');
   }

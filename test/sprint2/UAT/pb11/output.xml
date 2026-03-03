@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.4.1 (Python 3.14.3 on win32)" generated="2026-03-03T21:33:50.757903" rpa="false" schemaversion="5">
+<suite id="s1" name="Test" source="C:\Users\CHONWEEZZ\Documents\software enginerring\new\pl11\test.robot">
+<test id="s1-t1" name="TC004" line="75">
+<kw name="Login" type="SETUP">
+<kw name="Open Browser" owner="SeleniumLibrary">
+<msg time="2026-03-03T21:33:50.903196" level="INFO">Opening browser 'chrome' to base url 'https://csse2268.cpkku.com/login'.</msg>
+<arg>${URL}</arg>
+<arg>${BROWSER}</arg>
+<doc>Opens a new browser instance to the optional ``url``.</doc>
+<status status="PASS" start="2026-03-03T21:33:50.903010" elapsed="0.784778"/>
+</kw>
+<kw name="Maximize Browser Window" owner="SeleniumLibrary">
+<doc>Maximizes current browser window.</doc>
+<status status="PASS" start="2026-03-03T21:33:51.688003" elapsed="0.021866"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>id=identifier</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2026-03-03T21:33:51.710023" elapsed="0.255140"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2026-03-03T21:33:51.965484" level="INFO">Typing text 'koeeyDriver' into text field 'id=identifier'.</msg>
+<arg>id=identifier</arg>
+<arg>${USERNAME}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2026-03-03T21:33:51.965292" elapsed="0.051497"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>id=password</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2026-03-03T21:33:52.016931" elapsed="0.010179"/>
+</kw>
+<kw name="Input Password" owner="SeleniumLibrary">
+<msg time="2026-03-03T21:33:52.027438" level="INFO">Typing password into text field 'id=password'.</msg>
+<msg time="2026-03-03T21:33:52.040666" level="INFO">Temporally setting log level to: NONE</msg>
+<arg>id=password</arg>
+<arg>${PASSWORD}</arg>
+<doc>Types the given password into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2026-03-03T21:33:52.027245" elapsed="0.037112"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2026-03-03T21:33:52.064666" level="INFO">Clicking element 'xpath=//button[@type='submit']'.</msg>
+<arg>xpath=//button[@type='submit']</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2026-03-03T21:33:52.064495" elapsed="0.031630"/>
+</kw>
+<kw name="Wait Until Page Does Not Contain Element" owner="SeleniumLibrary">
+<arg>id=identifier</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` disappears from the current page.</doc>
+<status status="PASS" start="2026-03-03T21:33:52.096421" elapsed="0.830848"/>
+</kw>
+<status status="PASS" start="2026-03-03T21:33:50.902546" elapsed="2.024831"/>
+</kw>
+<kw name="Go To Report Page">
+<kw name="Go To" owner="SeleniumLibrary">
+<msg time="2026-03-03T21:33:52.928118" level="INFO">Opening url 'https://csse2268.cpkku.com/myRoute'</msg>
+<arg>https://csse2268.cpkku.com/myRoute</arg>
+<doc>Navigates the current browser window to the provided ``url``.</doc>
+<status status="PASS" start="2026-03-03T21:33:52.927987" elapsed="0.055006"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2026-03-03T21:33:54.983958" level="INFO">Slept 2 seconds.</msg>
+<arg>2s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2026-03-03T21:33:52.983139" elapsed="2.000904"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2026-03-03T21:33:54.984318" level="INFO">Clicking element 'xpath=//button[contains(text(),'ยืนยันแล้ว')]'.</msg>
+<arg>xpath=//button[contains(text(),'ยืนยันแล้ว')]</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2026-03-03T21:33:54.984163" elapsed="0.062923"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2026-03-03T21:33:57.047925" level="INFO">Slept 2 seconds.</msg>
+<arg>2s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2026-03-03T21:33:55.047288" elapsed="2.000727"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2026-03-03T21:33:57.048287" level="INFO">Clicking element 'xpath=//button[contains(text(),'รายงานปัญหา')]'.</msg>
+<arg>xpath=//button[contains(text(),'รายงานปัญหา')]</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2026-03-03T21:33:57.048138" elapsed="0.050554"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2026-03-03T21:33:59.099664" level="INFO">Slept 2 seconds.</msg>
+<arg>2s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2026-03-03T21:33:57.098859" elapsed="2.000890"/>
+</kw>
+<status status="PASS" start="2026-03-03T21:33:52.927694" elapsed="6.172134"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//button[contains(.,'แจ้งปัญหาอื่น')]</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2026-03-03T21:33:59.100967" elapsed="0.021620"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2026-03-03T21:33:59.123094" level="INFO">Clicking element 'xpath=//button[contains(.,'แจ้งปัญหาอื่น')]'.</msg>
+<arg>xpath=//button[contains(.,'แจ้งปัญหาอื่น')]</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2026-03-03T21:33:59.122799" elapsed="0.028592"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//textarea[@placeholder='อธิบายรายละเอียดเหตุการณ์']</arg>
+<arg>10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2026-03-03T21:33:59.151675" elapsed="0.232741"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2026-03-03T21:33:59.384964" level="INFO">Typing text 'พบซากหนูตาย' into text field 'xpath=//textarea[@placeholder='อธิบายรายละเอียดเหตุการณ์']'.</msg>
+<arg>xpath=//textarea[@placeholder='อธิบายรายละเอียดเหตุการณ์']</arg>
+<arg>พบซากหนูตาย</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2026-03-03T21:33:59.384665" elapsed="0.040003"/>
+</kw>
+<kw name="Choose File" owner="SeleniumLibrary">
+<msg time="2026-03-03T21:33:59.425087" level="INFO">Sending C:\Users\CHONWEEZZ\Documents\software enginerring\new\pl11\files\mouse.jpg to browser.</msg>
+<arg>xpath=//input[@type='file']</arg>
+<arg>C:\\Users\\CHONWEEZZ\\Documents\\software enginerring\\new\\pl11/files/mouse.jpg</arg>
+<doc>Inputs the ``file_path`` into the file input field ``locator``.</doc>
+<status status="PASS" start="2026-03-03T21:33:59.424899" elapsed="0.016615"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2026-03-03T21:33:59.441998" level="INFO">Clicking element 'xpath=//button[normalize-space()='ยืนยัน']'.</msg>
+<arg>xpath=//button[normalize-space()='ยืนยัน']</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2026-03-03T21:33:59.441755" elapsed="0.030506"/>
+</kw>
+<kw name="Handle Alert" owner="SeleniumLibrary">
+<msg time="2026-03-03T21:33:59.472627" level="INFO">HANDLE::&lt;class 'NoneType'&gt;::None</msg>
+<arg>ACCEPT</arg>
+<doc>Handles the current alert and returns its message.</doc>
+<status status="PASS" start="2026-03-03T21:33:59.472502" elapsed="0.003761"/>
+</kw>
+<kw name="Capture Page Screenshot" owner="SeleniumLibrary">
+<msg time="2026-03-03T21:33:59.545480" level="INFO" html="true">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="TC004.png"&gt;&lt;img src="TC004.png" width="800px"&gt;&lt;/a&gt;</msg>
+<arg>TC004.png</arg>
+<doc>Takes a screenshot of the current page and embeds it into a log file.</doc>
+<status status="PASS" start="2026-03-03T21:33:59.476799" elapsed="0.068775"/>
+</kw>
+<status status="PASS" start="2026-03-03T21:33:50.901901" elapsed="8.643907"/>
+</test>
+<status status="PASS" start="2026-03-03T21:33:50.758979" elapsed="8.787480"/>
+</suite>
+<statistics>
+<total>
+<stat pass="1" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat name="Test" id="s1" pass="1" fail="0" skip="0">Test</stat>
+</suite>
+</statistics>
+<errors>
+<msg time="2026-03-03T21:33:50.759101" level="ERROR">Error in file 'C:\Users\CHONWEEZZ\Documents\software enginerring\new\pl11\test.robot' on line 7: Setting variable '${MYROUTE_URL} https://csse2268.cpkku.com/myRoute' failed: Invalid variable name '${MYROUTE_URL} https://csse2268.cpkku.com/myRoute'.</msg>
+<msg time="2026-03-03T21:33:50.759363" level="ERROR">Error in file 'C:\Users\CHONWEEZZ\Documents\software enginerring\new\pl11\test.robot' on line 8: Setting variable '${PROFILE_URL} https://csse2268.cpkku.com/profile' failed: Invalid variable name '${PROFILE_URL} https://csse2268.cpkku.com/profile'.</msg>
+</errors>
+</robot>

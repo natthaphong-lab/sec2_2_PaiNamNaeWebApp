@@ -1,0 +1,880 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.4.1 (Python 3.11.8 on win32)" generated="2026-03-03T16:09:32.599208" rpa="false" schemaversion="5">
+<suite id="s1" name="Pbi6 Api Test" source="D:\มข\ปี3\เทอม2\software eng\projectP2\sec2_2_PaiNamNaeWebApp\test\sprint2\api\pbi6\pbi6_api_test.robot">
+<kw name="Setup Admin Context" type="SETUP">
+<kw name="Login As Admin">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-03-03T16:09:32.712292" level="INFO">&amp;{payload} = { username=admin123 | password=123456789 }</msg>
+<var>&amp;{payload}</var>
+<arg>username=${ADMIN_USERNAME}</arg>
+<arg>password=${ADMIN_PASSWORD}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-03-03T16:09:32.712292" elapsed="0.000000"/>
+</kw>
+<kw name="POST" owner="RequestsLibrary">
+<msg time="2026-03-03T16:09:32.780136" level="INFO">POST Request : url=http://localhost:3000/api/auth/login 
+ path_url=/api/auth/login 
+ headers={'User-Agent': 'python-requests/2.32.5', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Length': '49', 'Content-Type': 'application/json'} 
+ body=b'{"username": "admin123", "password": "123456789"}' 
+ </msg>
+<msg time="2026-03-03T16:09:32.780136" level="INFO">POST Response : url=http://localhost:3000/api/auth/login 
+ status=200, reason=OK 
+ headers={'Content-Security-Policy': "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests", 'Cross-Origin-Opener-Policy': 'same-origin', 'Cross-Origin-Resource-Policy': 'same-origin', 'Origin-Agent-Cluster': '?1', 'Referrer-Policy': 'no-referrer', 'Strict-Transport-Security': 'max-age=15552000; includeSubDomains', 'X-Content-Type-Options': 'nosniff', 'X-DNS-Prefetch-Control': 'off', 'X-Download-Options': 'noopen', 'X-Frame-Options': 'SAMEORIGIN', 'X-Permitted-Cross-Domain-Policies': 'none', 'X-XSS-Protection': '0', 'Vary': 'Origin', 'Access-Control-Allow-Credentials': 'true', 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': '444', 'ETag': 'W/"1bc-ubbnVVRmN/r8o+lvgLFo5wTWrz0"', 'Date': 'Tue, 03 Mar 2026 09:09:32 GMT', 'Connection': 'keep-alive', 'Keep-Alive': 'timeout=5'} 
+ body={"success":true,"message":"Login successful","data":{"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hMzlncmgwMDAwMTM4bWxpM3gxOTU1Iiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzcyNTI4OTcyLCJleHAiOjE3NzI1MzI1NzJ9.eYie-knJGkkL93Dls9Pr4XKyyaPzDriru1_ClsrGwL8","user":{"id":"cmma39grh0000138mli3x1955","firstName":"System","lastName":"Administrator","profilePicture":null,"role":"ADMIN","passengerSuspendedUntil":null,"driverSuspendedUntil":null}}} 
+ </msg>
+<msg time="2026-03-03T16:09:32.780136" level="INFO">${resp} = &lt;Response [200]&gt;</msg>
+<var>${resp}</var>
+<arg>url=${BASE_URL}/auth/login</arg>
+<arg>json=${payload}</arg>
+<doc>Sends a POST request.</doc>
+<status status="PASS" start="2026-03-03T16:09:32.712292" elapsed="0.067844"/>
+</kw>
+<kw name="Status Should Be" owner="RequestsLibrary">
+<arg>200</arg>
+<arg>${resp}</arg>
+<doc>Fails if response status code is different than the expected.</doc>
+<status status="PASS" start="2026-03-03T16:09:32.780136" elapsed="0.001002"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-03-03T16:09:32.781138" level="INFO">${token} = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hMzlncmgwMDAwMTM4bWxpM3gxOTU1Iiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzcyNTI4OTcyLCJleHAiOjE3NzI1MzI1NzJ9.eYie-knJGkkL93Dls9Pr4XKyyaPzDriru1_ClsrGwL8</msg>
+<var>${token}</var>
+<arg>Bearer ${resp.json()['data']['token']}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-03-03T16:09:32.781138" elapsed="0.000000"/>
+</kw>
+<kw name="Set Suite Variable" owner="BuiltIn">
+<msg time="2026-03-03T16:09:32.782136" level="INFO">${ADMIN_TOKEN} = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hMzlncmgwMDAwMTM4bWxpM3gxOTU1Iiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzcyNTI4OTcyLCJleHAiOjE3NzI1MzI1NzJ9.eYie-knJGkkL93Dls9Pr4XKyyaPzDriru1_ClsrGwL8</msg>
+<arg>${ADMIN_TOKEN}</arg>
+<arg>${token}</arg>
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<status status="PASS" start="2026-03-03T16:09:32.781138" elapsed="0.000998"/>
+</kw>
+<kw name="Set Suite Variable" owner="BuiltIn">
+<msg time="2026-03-03T16:09:32.782136" level="INFO">${ADMIN_ID} = cmma39grh0000138mli3x1955</msg>
+<arg>${ADMIN_ID}</arg>
+<arg>${resp.json()['data']['user']['id']}</arg>
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<status status="PASS" start="2026-03-03T16:09:32.782136" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2026-03-03T16:09:32.711293" elapsed="0.070843"/>
+</kw>
+<kw name="Create PBI6 Test User And Report">
+<kw name="File Should Exist" owner="OperatingSystem">
+<msg time="2026-03-03T16:09:32.783137" level="INFO" html="true">File '&lt;a href="file://D:\มข\ปี3\เทอม2\software eng\projectP2\sec2_2_PaiNamNaeWebApp\code\backend\scripts\pbi6_setup.js"&gt;D:\มข\ปี3\เทอม2\software eng\projectP2\sec2_2_PaiNamNaeWebApp\code\backend\scripts\pbi6_setup.js&lt;/a&gt;' exists.</msg>
+<arg>${PBI6_SETUP_SCRIPT}</arg>
+<doc>Fails unless the given ``path`` points to an existing file.</doc>
+<status status="PASS" start="2026-03-03T16:09:32.783137" elapsed="0.000000"/>
+</kw>
+<kw name="Run Process" owner="Process">
+<msg time="2026-03-03T16:09:32.784138" level="INFO">Starting process:
+node --no-warnings "D:\มข\ปี3\เทอม2\software eng\projectP2\sec2_2_PaiNamNaeWebApp\test\sprint2\api\pbi6/../../../../code/backend/scripts/pbi6_setup.js" --reportedUserId cmma39grh0000138mli3x1955</msg>
+<msg time="2026-03-03T16:09:32.791200" level="INFO">Waiting for process to complete.</msg>
+<msg time="2026-03-03T16:09:32.995874" level="INFO">Process completed.</msg>
+<msg time="2026-03-03T16:09:32.995874" level="INFO">${result} = &lt;result object with rc 0&gt;</msg>
+<var>${result}</var>
+<arg>node</arg>
+<arg>--no-warnings</arg>
+<arg>${PBI6_SETUP_SCRIPT}</arg>
+<arg>--reportedUserId</arg>
+<arg>${ADMIN_ID}</arg>
+<arg>cwd=${BACKEND_CWD}</arg>
+<arg>stdout=PIPE</arg>
+<arg>stderr=PIPE</arg>
+<doc>Runs a process and waits for it to complete.</doc>
+<status status="PASS" start="2026-03-03T16:09:32.783137" elapsed="0.212737"/>
+</kw>
+<kw name="Should Be Equal As Integers" owner="BuiltIn">
+<msg time="2026-03-03T16:09:32.996873" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${result.rc}</arg>
+<arg>0</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<status status="PASS" start="2026-03-03T16:09:32.996873" elapsed="0.000000"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2026-03-03T16:09:33.003957" level="INFO">${out} = {"testUserId":"cmmadzgrn0000jknwh9x6g4uy","testUsername":"robot_pbi6_1772528972914_318b4","testPassword":"Test123456789","reportId":"cmmadzgrq0002jknw1oc1jtbq","reportedUserId":"cmma39grh0000138mli3x1...</msg>
+<var>${out}</var>
+<arg>"""${result.stdout}""".strip()</arg>
+<arg>json</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2026-03-03T16:09:32.996873" elapsed="0.007084"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2026-03-03T16:09:33.004965" level="INFO">${data} = {'testUserId': 'cmmadzgrn0000jknwh9x6g4uy', 'testUsername': 'robot_pbi6_1772528972914_318b4', 'testPassword': 'Test123456789', 'reportId': 'cmmadzgrq0002jknw1oc1jtbq', 'reportedUserId': 'cmma39grh0000...</msg>
+<var>${data}</var>
+<arg>json.loads("""${out}""")</arg>
+<arg>json</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.004965" elapsed="0.000000"/>
+</kw>
+<kw name="Set Suite Variable" owner="BuiltIn">
+<msg time="2026-03-03T16:09:33.005961" level="INFO">${TEST_USER_ID} = cmmadzgrn0000jknwh9x6g4uy</msg>
+<arg>${TEST_USER_ID}</arg>
+<arg>${data['testUserId']}</arg>
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.004965" elapsed="0.000996"/>
+</kw>
+<kw name="Set Suite Variable" owner="BuiltIn">
+<msg time="2026-03-03T16:09:33.005961" level="INFO">${TEST_USERNAME} = robot_pbi6_1772528972914_318b4</msg>
+<arg>${TEST_USERNAME}</arg>
+<arg>${data['testUsername']}</arg>
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.005961" elapsed="0.000000"/>
+</kw>
+<kw name="Set Suite Variable" owner="BuiltIn">
+<msg time="2026-03-03T16:09:33.006962" level="INFO">${TEST_PASSWORD} = Test123456789</msg>
+<arg>${TEST_PASSWORD}</arg>
+<arg>${data['testPassword']}</arg>
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.005961" elapsed="0.001001"/>
+</kw>
+<kw name="Set Suite Variable" owner="BuiltIn">
+<msg time="2026-03-03T16:09:33.007960" level="INFO">${REPORT_ID} = cmmadzgrq0002jknw1oc1jtbq</msg>
+<arg>${REPORT_ID}</arg>
+<arg>${data['reportId']}</arg>
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.006962" elapsed="0.000998"/>
+</kw>
+<status status="PASS" start="2026-03-03T16:09:32.783137" elapsed="0.224823"/>
+</kw>
+<status status="PASS" start="2026-03-03T16:09:32.711293" elapsed="0.296667"/>
+</kw>
+<test id="s1-t1" name="TC001 - Get All Reports" line="18">
+<kw name="Create Admin Headers">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-03-03T16:09:33.008961" level="INFO">${headers} = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hMzlncmgwMDAwMTM4bWxpM3gxOTU1Iiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzcyNTI4OTcyLCJleHAiOjE3NzI1MzI1NzJ9.eYie-knJGkkL93Dls9Pr4XKy...</msg>
+<var>${headers}</var>
+<arg>Authorization=${ADMIN_TOKEN}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.007960" elapsed="0.001001"/>
+</kw>
+<return>
+<value>${headers}</value>
+<status status="PASS" start="2026-03-03T16:09:33.008961" elapsed="0.000000"/>
+</return>
+<msg time="2026-03-03T16:09:33.008961" level="INFO">${headers} = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hMzlncmgwMDAwMTM4bWxpM3gxOTU1Iiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzcyNTI4OTcyLCJleHAiOjE3NzI1MzI1NzJ9.eYie-knJGkkL93Dls9Pr4XKy...</msg>
+<var>${headers}</var>
+<status status="PASS" start="2026-03-03T16:09:33.007960" elapsed="0.001001"/>
+</kw>
+<kw name="GET" owner="RequestsLibrary">
+<msg time="2026-03-03T16:09:33.020040" level="INFO">GET Request : url=http://localhost:3000/api/reports/admin 
+ path_url=/api/reports/admin 
+ headers={'User-Agent': 'python-requests/2.32.5', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hMzlncmgwMDAwMTM4bWxpM3gxOTU1Iiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzcyNTI4OTcyLCJleHAiOjE3NzI1MzI1NzJ9.eYie-knJGkkL93Dls9Pr4XKyyaPzDriru1_ClsrGwL8'} 
+ body=None 
+ </msg>
+<msg time="2026-03-03T16:09:33.020040" level="INFO">GET Response : url=http://localhost:3000/api/reports/admin 
+ status=200, reason=OK 
+ headers={'Content-Security-Policy': "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests", 'Cross-Origin-Opener-Policy': 'same-origin', 'Cross-Origin-Resource-Policy': 'same-origin', 'Origin-Agent-Cluster': '?1', 'Referrer-Policy': 'no-referrer', 'Strict-Transport-Security': 'max-age=15552000; includeSubDomains', 'X-Content-Type-Options': 'nosniff', 'X-DNS-Prefetch-Control': 'off', 'X-Download-Options': 'noopen', 'X-Frame-Options': 'SAMEORIGIN', 'X-Permitted-Cross-Domain-Policies': 'none', 'X-XSS-Protection': '0', 'Vary': 'Origin', 'Access-Control-Allow-Credentials': 'true', 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': '2493', 'ETag': 'W/"9bd-GlRC2cAHTHgcPNUHZQsvpFVSW7Y"', 'Date': 'Tue, 03 Mar 2026 09:09:33 GMT', 'Connection': 'keep-alive', 'Keep-Alive': 'timeout=5'} 
+ body={"success":true,"message":"Reports (admin) retrieved successfully","data":[{"id":"cmmadzgrq0002jknw1oc1jtbq","reporterId":"cmmadzgrn0000jknwh9x6g4uy","reportedUserId":"cmma39grh0000138mli3x1955","reporterRole":"PASSENGER","category":"safety","types":["robot","pbi6"],"description":"Robot Framework PBI6 API test report","mediaUrls":[],"status":"PENDING","createdAt":"2026-03-03T09:09:32.967Z","updatedAt":"2026-03-03T09:09:32.967Z","reporter":{"id":"cmmadzgrn0000jknwh9x6g4uy","firstName":"Robot","lastName":"PBI6","username":"robot_pbi6_1772528972914_318b4","selfiePhotoUrl":null,"email":"robot_pbi6_1772528972914_318b4fc2895838@example.com","phoneNumber":"0899999999"},"reportedUser":{"id":"cmma39grh0000138mli3x1955","firstName":"System","lastName":"Administrator","username":"admin123","selfiePhotoUrl":null,"email":"admin@example.com","phoneNumber":null}},{"id":"cmmablnpw0002ywx4iblc02ap","reporterId":"cmmablnpt0000ywx47wdvj0r9","reportedUserId":"cmma39grh0000138mli3x1955","reporterRole":"PASSENGER","category":"safety","types":["robot","pbi6"],"description":"Robot Framework PBI6 API test report","mediaUrls":[],"status":"PENDING","createdAt":"2026-03-03T08:02:49.557Z","updatedAt":"2026-03-03T08:02:49.557Z","reporter":{"id":"cmmablnpt0000ywx47wdvj0r9","firstName":"Robot","lastName":"PBI6","username":"robot_pbi6_1772524969503_daa43","selfiePhotoUrl":null,"email":"robot_pbi6_1772524969503_daa43d2480132@example.com","phoneNumber":"0899999999"},"reportedUser":{"id":"cmma39grh0000138mli3x1955","firstName":"System","lastName":"Administrator","username":"admin123","selfiePhotoUrl":null,"email":"admin@example.com","phoneNumber":null}},{"id":"cmmablejr0002l62ls0opig9j","reporterId":"cmmablegt0000l62l0g2stm7z","reportedUserId":"cmma39grh0000138mli3x1955","reporterRole":"PASSENGER","category":"safety","types":["robot","pbi6"],"description":"Robot Framework PBI6 API test report","mediaUrls":[],"status":"PENDING","createdAt":"2026-03-03T08:02:37.663Z","updatedAt":"2026-03-03T08:02:37.663Z","reporter":{"id":"cmmablegt0000l62l0g2stm7z","firstName":"Robot","lastName":"PBI6","username":"robot_pbi6_1772524957491_f379e","selfiePhotoUrl":null,"email":"robot_pbi6_1772524957491_f379ecc0bef138@example.com","phoneNumber":"0899999999"},"reportedUser":{"id":"cmma39grh0000138mli3x1955","firstName":"System","lastName":"Administrator","username":"admin123","selfiePhotoUrl":null,"email":"admin@example.com","phoneNumber":null}}],"pagination":{"page":1,"limit":20,"total":3,"totalPages":1}} 
+ </msg>
+<msg time="2026-03-03T16:09:33.020040" level="INFO">${resp} = &lt;Response [200]&gt;</msg>
+<var>${resp}</var>
+<arg>url=${BASE_URL}/reports/admin</arg>
+<arg>headers=${headers}</arg>
+<doc>Sends a GET request.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.008961" elapsed="0.011079"/>
+</kw>
+<kw name="Status Should Be" owner="RequestsLibrary">
+<arg>200</arg>
+<arg>${resp}</arg>
+<doc>Fails if response status code is different than the expected.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.021045" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2026-03-03T16:09:33.007960" elapsed="0.013085"/>
+</test>
+<test id="s1-t2" name="TC002 - Filter Reports by Status" line="23">
+<kw name="Create Admin Headers">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-03-03T16:09:33.022043" level="INFO">${headers} = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hMzlncmgwMDAwMTM4bWxpM3gxOTU1Iiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzcyNTI4OTcyLCJleHAiOjE3NzI1MzI1NzJ9.eYie-knJGkkL93Dls9Pr4XKy...</msg>
+<var>${headers}</var>
+<arg>Authorization=${ADMIN_TOKEN}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.022043" elapsed="0.000000"/>
+</kw>
+<return>
+<value>${headers}</value>
+<status status="PASS" start="2026-03-03T16:09:33.022043" elapsed="0.000000"/>
+</return>
+<msg time="2026-03-03T16:09:33.022043" level="INFO">${headers} = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hMzlncmgwMDAwMTM4bWxpM3gxOTU1Iiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzcyNTI4OTcyLCJleHAiOjE3NzI1MzI1NzJ9.eYie-knJGkkL93Dls9Pr4XKy...</msg>
+<var>${headers}</var>
+<status status="PASS" start="2026-03-03T16:09:33.022043" elapsed="0.000000"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-03-03T16:09:33.022043" level="INFO">${params} = {'status': 'PENDING'}</msg>
+<var>${params}</var>
+<arg>status=PENDING</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.022043" elapsed="0.000000"/>
+</kw>
+<kw name="GET" owner="RequestsLibrary">
+<msg time="2026-03-03T16:09:33.030971" level="INFO">GET Request : url=http://localhost:3000/api/reports/admin?status=PENDING 
+ path_url=/api/reports/admin?status=PENDING 
+ headers={'User-Agent': 'python-requests/2.32.5', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hMzlncmgwMDAwMTM4bWxpM3gxOTU1Iiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzcyNTI4OTcyLCJleHAiOjE3NzI1MzI1NzJ9.eYie-knJGkkL93Dls9Pr4XKyyaPzDriru1_ClsrGwL8'} 
+ body=None 
+ </msg>
+<msg time="2026-03-03T16:09:33.030971" level="INFO">GET Response : url=http://localhost:3000/api/reports/admin?status=PENDING 
+ status=200, reason=OK 
+ headers={'Content-Security-Policy': "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests", 'Cross-Origin-Opener-Policy': 'same-origin', 'Cross-Origin-Resource-Policy': 'same-origin', 'Origin-Agent-Cluster': '?1', 'Referrer-Policy': 'no-referrer', 'Strict-Transport-Security': 'max-age=15552000; includeSubDomains', 'X-Content-Type-Options': 'nosniff', 'X-DNS-Prefetch-Control': 'off', 'X-Download-Options': 'noopen', 'X-Frame-Options': 'SAMEORIGIN', 'X-Permitted-Cross-Domain-Policies': 'none', 'X-XSS-Protection': '0', 'Vary': 'Origin', 'Access-Control-Allow-Credentials': 'true', 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': '2493', 'ETag': 'W/"9bd-GlRC2cAHTHgcPNUHZQsvpFVSW7Y"', 'Date': 'Tue, 03 Mar 2026 09:09:33 GMT', 'Connection': 'keep-alive', 'Keep-Alive': 'timeout=5'} 
+ body={"success":true,"message":"Reports (admin) retrieved successfully","data":[{"id":"cmmadzgrq0002jknw1oc1jtbq","reporterId":"cmmadzgrn0000jknwh9x6g4uy","reportedUserId":"cmma39grh0000138mli3x1955","reporterRole":"PASSENGER","category":"safety","types":["robot","pbi6"],"description":"Robot Framework PBI6 API test report","mediaUrls":[],"status":"PENDING","createdAt":"2026-03-03T09:09:32.967Z","updatedAt":"2026-03-03T09:09:32.967Z","reporter":{"id":"cmmadzgrn0000jknwh9x6g4uy","firstName":"Robot","lastName":"PBI6","username":"robot_pbi6_1772528972914_318b4","selfiePhotoUrl":null,"email":"robot_pbi6_1772528972914_318b4fc2895838@example.com","phoneNumber":"0899999999"},"reportedUser":{"id":"cmma39grh0000138mli3x1955","firstName":"System","lastName":"Administrator","username":"admin123","selfiePhotoUrl":null,"email":"admin@example.com","phoneNumber":null}},{"id":"cmmablnpw0002ywx4iblc02ap","reporterId":"cmmablnpt0000ywx47wdvj0r9","reportedUserId":"cmma39grh0000138mli3x1955","reporterRole":"PASSENGER","category":"safety","types":["robot","pbi6"],"description":"Robot Framework PBI6 API test report","mediaUrls":[],"status":"PENDING","createdAt":"2026-03-03T08:02:49.557Z","updatedAt":"2026-03-03T08:02:49.557Z","reporter":{"id":"cmmablnpt0000ywx47wdvj0r9","firstName":"Robot","lastName":"PBI6","username":"robot_pbi6_1772524969503_daa43","selfiePhotoUrl":null,"email":"robot_pbi6_1772524969503_daa43d2480132@example.com","phoneNumber":"0899999999"},"reportedUser":{"id":"cmma39grh0000138mli3x1955","firstName":"System","lastName":"Administrator","username":"admin123","selfiePhotoUrl":null,"email":"admin@example.com","phoneNumber":null}},{"id":"cmmablejr0002l62ls0opig9j","reporterId":"cmmablegt0000l62l0g2stm7z","reportedUserId":"cmma39grh0000138mli3x1955","reporterRole":"PASSENGER","category":"safety","types":["robot","pbi6"],"description":"Robot Framework PBI6 API test report","mediaUrls":[],"status":"PENDING","createdAt":"2026-03-03T08:02:37.663Z","updatedAt":"2026-03-03T08:02:37.663Z","reporter":{"id":"cmmablegt0000l62l0g2stm7z","firstName":"Robot","lastName":"PBI6","username":"robot_pbi6_1772524957491_f379e","selfiePhotoUrl":null,"email":"robot_pbi6_1772524957491_f379ecc0bef138@example.com","phoneNumber":"0899999999"},"reportedUser":{"id":"cmma39grh0000138mli3x1955","firstName":"System","lastName":"Administrator","username":"admin123","selfiePhotoUrl":null,"email":"admin@example.com","phoneNumber":null}}],"pagination":{"page":1,"limit":20,"total":3,"totalPages":1}} 
+ </msg>
+<msg time="2026-03-03T16:09:33.030971" level="INFO">${resp} = &lt;Response [200]&gt;</msg>
+<var>${resp}</var>
+<arg>url=${BASE_URL}/reports/admin</arg>
+<arg>headers=${headers}</arg>
+<arg>params=${params}</arg>
+<doc>Sends a GET request.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.022043" elapsed="0.008928"/>
+</kw>
+<kw name="Status Should Be" owner="RequestsLibrary">
+<arg>200</arg>
+<arg>${resp}</arg>
+<doc>Fails if response status code is different than the expected.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.031973" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2026-03-03T16:09:33.021045" elapsed="0.010928"/>
+</test>
+<test id="s1-t3" name="TC003 - Get Report Detail by ID" line="29">
+<kw name="Create Admin Headers">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-03-03T16:09:33.032972" level="INFO">${headers} = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hMzlncmgwMDAwMTM4bWxpM3gxOTU1Iiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzcyNTI4OTcyLCJleHAiOjE3NzI1MzI1NzJ9.eYie-knJGkkL93Dls9Pr4XKy...</msg>
+<var>${headers}</var>
+<arg>Authorization=${ADMIN_TOKEN}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.032972" elapsed="0.000000"/>
+</kw>
+<return>
+<value>${headers}</value>
+<status status="PASS" start="2026-03-03T16:09:33.032972" elapsed="0.000000"/>
+</return>
+<msg time="2026-03-03T16:09:33.032972" level="INFO">${headers} = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hMzlncmgwMDAwMTM4bWxpM3gxOTU1Iiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzcyNTI4OTcyLCJleHAiOjE3NzI1MzI1NzJ9.eYie-knJGkkL93Dls9Pr4XKy...</msg>
+<var>${headers}</var>
+<status status="PASS" start="2026-03-03T16:09:33.032972" elapsed="0.000000"/>
+</kw>
+<kw name="GET" owner="RequestsLibrary">
+<msg time="2026-03-03T16:09:33.039303" level="INFO">GET Request : url=http://localhost:3000/api/reports/admin/cmmadzgrq0002jknw1oc1jtbq 
+ path_url=/api/reports/admin/cmmadzgrq0002jknw1oc1jtbq 
+ headers={'User-Agent': 'python-requests/2.32.5', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hMzlncmgwMDAwMTM4bWxpM3gxOTU1Iiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzcyNTI4OTcyLCJleHAiOjE3NzI1MzI1NzJ9.eYie-knJGkkL93Dls9Pr4XKyyaPzDriru1_ClsrGwL8'} 
+ body=None 
+ </msg>
+<msg time="2026-03-03T16:09:33.039303" level="INFO">GET Response : url=http://localhost:3000/api/reports/admin/cmmadzgrq0002jknw1oc1jtbq 
+ status=200, reason=OK 
+ headers={'Content-Security-Policy': "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests", 'Cross-Origin-Opener-Policy': 'same-origin', 'Cross-Origin-Resource-Policy': 'same-origin', 'Origin-Agent-Cluster': '?1', 'Referrer-Policy': 'no-referrer', 'Strict-Transport-Security': 'max-age=15552000; includeSubDomains', 'X-Content-Type-Options': 'nosniff', 'X-DNS-Prefetch-Control': 'off', 'X-Download-Options': 'noopen', 'X-Frame-Options': 'SAMEORIGIN', 'X-Permitted-Cross-Domain-Policies': 'none', 'X-XSS-Protection': '0', 'Vary': 'Origin', 'Access-Control-Allow-Credentials': 'true', 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': '851', 'ETag': 'W/"353-BlR3CCqR3GDReTCrAt1cNddK29w"', 'Date': 'Tue, 03 Mar 2026 09:09:33 GMT', 'Connection': 'keep-alive', 'Keep-Alive': 'timeout=5'} 
+ body={"success":true,"message":"Report retrieved successfully","data":{"id":"cmmadzgrq0002jknw1oc1jtbq","reporterId":"cmmadzgrn0000jknwh9x6g4uy","reportedUserId":"cmma39grh0000138mli3x1955","reporterRole":"PASSENGER","category":"safety","types":["robot","pbi6"],"description":"Robot Framework PBI6 API test report","mediaUrls":[],"status":"PENDING","createdAt":"2026-03-03T09:09:32.967Z","updatedAt":"2026-03-03T09:09:32.967Z","reporter":{"id":"cmmadzgrn0000jknwh9x6g4uy","firstName":"Robot","lastName":"PBI6","username":"robot_pbi6_1772528972914_318b4","selfiePhotoUrl":null,"email":"robot_pbi6_1772528972914_318b4fc2895838@example.com","phoneNumber":"0899999999"},"reportedUser":{"id":"cmma39grh0000138mli3x1955","firstName":"System","lastName":"Administrator","username":"admin123","selfiePhotoUrl":null,"email":"admin@example.com","phoneNumber":null}}} 
+ </msg>
+<msg time="2026-03-03T16:09:33.039303" level="INFO">${resp} = &lt;Response [200]&gt;</msg>
+<var>${resp}</var>
+<arg>url=${BASE_URL}/reports/admin/${REPORT_ID}</arg>
+<arg>headers=${headers}</arg>
+<doc>Sends a GET request.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.032972" elapsed="0.007332"/>
+</kw>
+<kw name="Status Should Be" owner="RequestsLibrary">
+<arg>200</arg>
+<arg>${resp}</arg>
+<doc>Fails if response status code is different than the expected.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.040304" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2026-03-03T16:09:33.031973" elapsed="0.008331"/>
+</test>
+<test id="s1-t4" name="TC004 - Get Report Detail with Non-existent ID" line="34">
+<kw name="Create Admin Headers">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-03-03T16:09:33.041303" level="INFO">${headers} = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hMzlncmgwMDAwMTM4bWxpM3gxOTU1Iiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzcyNTI4OTcyLCJleHAiOjE3NzI1MzI1NzJ9.eYie-knJGkkL93Dls9Pr4XKy...</msg>
+<var>${headers}</var>
+<arg>Authorization=${ADMIN_TOKEN}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.041303" elapsed="0.000000"/>
+</kw>
+<return>
+<value>${headers}</value>
+<status status="PASS" start="2026-03-03T16:09:33.041303" elapsed="0.000000"/>
+</return>
+<msg time="2026-03-03T16:09:33.041303" level="INFO">${headers} = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hMzlncmgwMDAwMTM4bWxpM3gxOTU1Iiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzcyNTI4OTcyLCJleHAiOjE3NzI1MzI1NzJ9.eYie-knJGkkL93Dls9Pr4XKy...</msg>
+<var>${headers}</var>
+<status status="PASS" start="2026-03-03T16:09:33.040304" elapsed="0.000999"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-03-03T16:09:33.041303" level="INFO">${fake_id} = cmlpxzy4f0002dkc6ub2pxzzz</msg>
+<var>${fake_id}</var>
+<arg>cmlpxzy4f0002dkc6ub2pxzzz</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.041303" elapsed="0.000000"/>
+</kw>
+<kw name="GET" owner="RequestsLibrary">
+<msg time="2026-03-03T16:09:33.045586" level="INFO">GET Request : url=http://localhost:3000/api/reports/admin/cmlpxzy4f0002dkc6ub2pxzzz 
+ path_url=/api/reports/admin/cmlpxzy4f0002dkc6ub2pxzzz 
+ headers={'User-Agent': 'python-requests/2.32.5', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hMzlncmgwMDAwMTM4bWxpM3gxOTU1Iiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzcyNTI4OTcyLCJleHAiOjE3NzI1MzI1NzJ9.eYie-knJGkkL93Dls9Pr4XKyyaPzDriru1_ClsrGwL8'} 
+ body=None 
+ </msg>
+<msg time="2026-03-03T16:09:33.045586" level="INFO">GET Response : url=http://localhost:3000/api/reports/admin/cmlpxzy4f0002dkc6ub2pxzzz 
+ status=404, reason=Not Found 
+ headers={'Content-Security-Policy': "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests", 'Cross-Origin-Opener-Policy': 'same-origin', 'Cross-Origin-Resource-Policy': 'same-origin', 'Origin-Agent-Cluster': '?1', 'Referrer-Policy': 'no-referrer', 'Strict-Transport-Security': 'max-age=15552000; includeSubDomains', 'X-Content-Type-Options': 'nosniff', 'X-DNS-Prefetch-Control': 'off', 'X-Download-Options': 'noopen', 'X-Frame-Options': 'SAMEORIGIN', 'X-Permitted-Cross-Domain-Policies': 'none', 'X-XSS-Protection': '0', 'Vary': 'Origin', 'Access-Control-Allow-Credentials': 'true', 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': '58', 'ETag': 'W/"3a-GR+7uys6EIbD0Cm2cD1fcM67ars"', 'Date': 'Tue, 03 Mar 2026 09:09:33 GMT', 'Connection': 'keep-alive', 'Keep-Alive': 'timeout=5'} 
+ body={"success":false,"message":"Report not found","data":null} 
+ </msg>
+<msg time="2026-03-03T16:09:33.045586" level="INFO">${resp} = &lt;Response [404]&gt;</msg>
+<var>${resp}</var>
+<arg>url=${BASE_URL}/reports/admin/${fake_id}</arg>
+<arg>headers=${headers}</arg>
+<arg>expected_status=any</arg>
+<doc>Sends a GET request.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.041303" elapsed="0.004283"/>
+</kw>
+<kw name="Status Should Be" owner="RequestsLibrary">
+<arg>404</arg>
+<arg>${resp}</arg>
+<doc>Fails if response status code is different than the expected.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.046587" elapsed="0.000000"/>
+</kw>
+<kw name="Run Keyword And Ignore Error" owner="BuiltIn">
+<kw name="Set Variable" owner="BuiltIn">
+<arg>${resp.json()['message']}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.046587" elapsed="0.001001"/>
+</kw>
+<msg time="2026-03-03T16:09:33.047588" level="INFO">${status} = PASS</msg>
+<msg time="2026-03-03T16:09:33.047588" level="INFO">${value} = Report not found</msg>
+<var>${status}</var>
+<var>${value}</var>
+<arg>Set Variable</arg>
+<arg>${resp.json()['message']}</arg>
+<doc>Runs the given keyword with the given arguments and ignores possible error.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.046587" elapsed="0.001001"/>
+</kw>
+<if>
+<branch type="IF" condition="'${status}' == 'PASS'">
+<kw name="Should Be Equal As Strings" owner="BuiltIn">
+<arg>${value}</arg>
+<arg>Report not found</arg>
+<doc>Fails if objects are unequal after converting them to strings.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.047588" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2026-03-03T16:09:33.047588" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2026-03-03T16:09:33.047588" elapsed="0.000000"/>
+</if>
+<status status="PASS" start="2026-03-03T16:09:33.040304" elapsed="0.007284"/>
+</test>
+<test id="s1-t5" name="TC005 - Update Status To Completed" line="44">
+<kw name="Create Admin Json Headers">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-03-03T16:09:33.048585" level="INFO">${headers} = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hMzlncmgwMDAwMTM4bWxpM3gxOTU1Iiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzcyNTI4OTcyLCJleHAiOjE3NzI1MzI1NzJ9.eYie-knJGkkL93Dls9Pr4XKy...</msg>
+<var>${headers}</var>
+<arg>Authorization=${ADMIN_TOKEN}</arg>
+<arg>Content-Type=application/json</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.048585" elapsed="0.000000"/>
+</kw>
+<return>
+<value>${headers}</value>
+<status status="PASS" start="2026-03-03T16:09:33.048585" elapsed="0.000000"/>
+</return>
+<msg time="2026-03-03T16:09:33.048585" level="INFO">${headers} = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hMzlncmgwMDAwMTM4bWxpM3gxOTU1Iiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzcyNTI4OTcyLCJleHAiOjE3NzI1MzI1NzJ9.eYie-knJGkkL93Dls9Pr4XKy...</msg>
+<var>${headers}</var>
+<status status="PASS" start="2026-03-03T16:09:33.048585" elapsed="0.000000"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-03-03T16:09:33.048585" level="INFO">${body} = {'status': 'COMPLETED'}</msg>
+<var>${body}</var>
+<arg>status=COMPLETED</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.048585" elapsed="0.000000"/>
+</kw>
+<kw name="PATCH" owner="RequestsLibrary">
+<msg time="2026-03-03T16:09:33.060740" level="INFO">PATCH Request : url=http://localhost:3000/api/reports/admin/cmmadzgrq0002jknw1oc1jtbq/status 
+ path_url=/api/reports/admin/cmmadzgrq0002jknw1oc1jtbq/status 
+ headers={'User-Agent': 'python-requests/2.32.5', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hMzlncmgwMDAwMTM4bWxpM3gxOTU1Iiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzcyNTI4OTcyLCJleHAiOjE3NzI1MzI1NzJ9.eYie-knJGkkL93Dls9Pr4XKyyaPzDriru1_ClsrGwL8', 'Content-Type': 'application/json', 'Content-Length': '23'} 
+ body=b'{"status": "COMPLETED"}' 
+ </msg>
+<msg time="2026-03-03T16:09:33.060740" level="INFO">PATCH Response : url=http://localhost:3000/api/reports/admin/cmmadzgrq0002jknw1oc1jtbq/status 
+ status=200, reason=OK 
+ headers={'Content-Security-Policy': "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests", 'Cross-Origin-Opener-Policy': 'same-origin', 'Cross-Origin-Resource-Policy': 'same-origin', 'Origin-Agent-Cluster': '?1', 'Referrer-Policy': 'no-referrer', 'Strict-Transport-Security': 'max-age=15552000; includeSubDomains', 'X-Content-Type-Options': 'nosniff', 'X-DNS-Prefetch-Control': 'off', 'X-Download-Options': 'noopen', 'X-Frame-Options': 'SAMEORIGIN', 'X-Permitted-Cross-Domain-Policies': 'none', 'X-XSS-Protection': '0', 'Vary': 'Origin', 'Access-Control-Allow-Credentials': 'true', 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': '858', 'ETag': 'W/"35a-98dHe4QQHo/2k8wE3CPJsZfHp0g"', 'Date': 'Tue, 03 Mar 2026 09:09:33 GMT', 'Connection': 'keep-alive', 'Keep-Alive': 'timeout=5'} 
+ body={"success":true,"message":"Report status updated to COMPLETED","data":{"id":"cmmadzgrq0002jknw1oc1jtbq","reporterId":"cmmadzgrn0000jknwh9x6g4uy","reportedUserId":"cmma39grh0000138mli3x1955","reporterRole":"PASSENGER","category":"safety","types":["robot","pbi6"],"description":"Robot Framework PBI6 API test report","mediaUrls":[],"status":"COMPLETED","createdAt":"2026-03-03T09:09:32.967Z","updatedAt":"2026-03-03T09:09:33.054Z","reporter":{"id":"cmmadzgrn0000jknwh9x6g4uy","firstName":"Robot","lastName":"PBI6","username":"robot_pbi6_1772528972914_318b4","selfiePhotoUrl":null,"email":"robot_pbi6_1772528972914_318b4fc2895838@example.com","phoneNumber":"0899999999"},"reportedUser":{"id":"cmma39grh0000138mli3x1955","firstName":"System","lastName":"Administrator","username":"admin123","selfiePhotoUrl":null,"email":"admin@example.com","phoneNumber":null}}} 
+ </msg>
+<msg time="2026-03-03T16:09:33.060740" level="INFO">${resp} = &lt;Response [200]&gt;</msg>
+<var>${resp}</var>
+<arg>url=${BASE_URL}/reports/admin/${REPORT_ID}/status</arg>
+<arg>json=${body}</arg>
+<arg>headers=${headers}</arg>
+<doc>Sends a PUT request.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.048585" elapsed="0.013156"/>
+</kw>
+<kw name="Status Should Be" owner="RequestsLibrary">
+<arg>200</arg>
+<arg>${resp}</arg>
+<doc>Fails if response status code is different than the expected.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.061741" elapsed="0.000000"/>
+</kw>
+<kw name="Should Be Equal As Strings" owner="BuiltIn">
+<arg>${resp.json()['data']['status']}</arg>
+<arg>COMPLETED</arg>
+<doc>Fails if objects are unequal after converting them to strings.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.061741" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2026-03-03T16:09:33.047588" elapsed="0.015154"/>
+</test>
+<test id="s1-t6" name="TC006 - Update Status To Rejected" line="51">
+<kw name="Create Admin Json Headers">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-03-03T16:09:33.063741" level="INFO">${headers} = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hMzlncmgwMDAwMTM4bWxpM3gxOTU1Iiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzcyNTI4OTcyLCJleHAiOjE3NzI1MzI1NzJ9.eYie-knJGkkL93Dls9Pr4XKy...</msg>
+<var>${headers}</var>
+<arg>Authorization=${ADMIN_TOKEN}</arg>
+<arg>Content-Type=application/json</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.062742" elapsed="0.000999"/>
+</kw>
+<return>
+<value>${headers}</value>
+<status status="PASS" start="2026-03-03T16:09:33.063741" elapsed="0.000000"/>
+</return>
+<msg time="2026-03-03T16:09:33.063741" level="INFO">${headers} = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hMzlncmgwMDAwMTM4bWxpM3gxOTU1Iiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzcyNTI4OTcyLCJleHAiOjE3NzI1MzI1NzJ9.eYie-knJGkkL93Dls9Pr4XKy...</msg>
+<var>${headers}</var>
+<status status="PASS" start="2026-03-03T16:09:33.062742" elapsed="0.000999"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-03-03T16:09:33.065244" level="INFO">${body} = {'status': 'REJECTED'}</msg>
+<var>${body}</var>
+<arg>status=REJECTED</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.065244" elapsed="0.000000"/>
+</kw>
+<kw name="PATCH" owner="RequestsLibrary">
+<msg time="2026-03-03T16:09:33.075326" level="INFO">PATCH Request : url=http://localhost:3000/api/reports/admin/cmmadzgrq0002jknw1oc1jtbq/status 
+ path_url=/api/reports/admin/cmmadzgrq0002jknw1oc1jtbq/status 
+ headers={'User-Agent': 'python-requests/2.32.5', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hMzlncmgwMDAwMTM4bWxpM3gxOTU1Iiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzcyNTI4OTcyLCJleHAiOjE3NzI1MzI1NzJ9.eYie-knJGkkL93Dls9Pr4XKyyaPzDriru1_ClsrGwL8', 'Content-Type': 'application/json', 'Content-Length': '22'} 
+ body=b'{"status": "REJECTED"}' 
+ </msg>
+<msg time="2026-03-03T16:09:33.075326" level="INFO">PATCH Response : url=http://localhost:3000/api/reports/admin/cmmadzgrq0002jknw1oc1jtbq/status 
+ status=200, reason=OK 
+ headers={'Content-Security-Policy': "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests", 'Cross-Origin-Opener-Policy': 'same-origin', 'Cross-Origin-Resource-Policy': 'same-origin', 'Origin-Agent-Cluster': '?1', 'Referrer-Policy': 'no-referrer', 'Strict-Transport-Security': 'max-age=15552000; includeSubDomains', 'X-Content-Type-Options': 'nosniff', 'X-DNS-Prefetch-Control': 'off', 'X-Download-Options': 'noopen', 'X-Frame-Options': 'SAMEORIGIN', 'X-Permitted-Cross-Domain-Policies': 'none', 'X-XSS-Protection': '0', 'Vary': 'Origin', 'Access-Control-Allow-Credentials': 'true', 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': '856', 'ETag': 'W/"358-6xSCY8zOHOjG3K3zq8sYN6QHY1M"', 'Date': 'Tue, 03 Mar 2026 09:09:33 GMT', 'Connection': 'keep-alive', 'Keep-Alive': 'timeout=5'} 
+ body={"success":true,"message":"Report status updated to REJECTED","data":{"id":"cmmadzgrq0002jknw1oc1jtbq","reporterId":"cmmadzgrn0000jknwh9x6g4uy","reportedUserId":"cmma39grh0000138mli3x1955","reporterRole":"PASSENGER","category":"safety","types":["robot","pbi6"],"description":"Robot Framework PBI6 API test report","mediaUrls":[],"status":"REJECTED","createdAt":"2026-03-03T09:09:32.967Z","updatedAt":"2026-03-03T09:09:33.071Z","reporter":{"id":"cmmadzgrn0000jknwh9x6g4uy","firstName":"Robot","lastName":"PBI6","username":"robot_pbi6_1772528972914_318b4","selfiePhotoUrl":null,"email":"robot_pbi6_1772528972914_318b4fc2895838@example.com","phoneNumber":"0899999999"},"reportedUser":{"id":"cmma39grh0000138mli3x1955","firstName":"System","lastName":"Administrator","username":"admin123","selfiePhotoUrl":null,"email":"admin@example.com","phoneNumber":null}}} 
+ </msg>
+<msg time="2026-03-03T16:09:33.075326" level="INFO">${resp} = &lt;Response [200]&gt;</msg>
+<var>${resp}</var>
+<arg>url=${BASE_URL}/reports/admin/${REPORT_ID}/status</arg>
+<arg>json=${body}</arg>
+<arg>headers=${headers}</arg>
+<doc>Sends a PUT request.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.065244" elapsed="0.010082"/>
+</kw>
+<kw name="Status Should Be" owner="RequestsLibrary">
+<arg>200</arg>
+<arg>${resp}</arg>
+<doc>Fails if response status code is different than the expected.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.076331" elapsed="0.000000"/>
+</kw>
+<kw name="Should Be Equal As Strings" owner="BuiltIn">
+<arg>${resp.json()['data']['status']}</arg>
+<arg>REJECTED</arg>
+<doc>Fails if objects are unequal after converting them to strings.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.076331" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2026-03-03T16:09:33.062742" elapsed="0.013589"/>
+</test>
+<test id="s1-t7" name="TC007 - Update Status with Invalid Value" line="58">
+<kw name="Create Admin Json Headers">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-03-03T16:09:33.077329" level="INFO">${headers} = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hMzlncmgwMDAwMTM4bWxpM3gxOTU1Iiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzcyNTI4OTcyLCJleHAiOjE3NzI1MzI1NzJ9.eYie-knJGkkL93Dls9Pr4XKy...</msg>
+<var>${headers}</var>
+<arg>Authorization=${ADMIN_TOKEN}</arg>
+<arg>Content-Type=application/json</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.077329" elapsed="0.000000"/>
+</kw>
+<return>
+<value>${headers}</value>
+<status status="PASS" start="2026-03-03T16:09:33.077329" elapsed="0.001001"/>
+</return>
+<msg time="2026-03-03T16:09:33.078330" level="INFO">${headers} = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hMzlncmgwMDAwMTM4bWxpM3gxOTU1Iiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzcyNTI4OTcyLCJleHAiOjE3NzI1MzI1NzJ9.eYie-knJGkkL93Dls9Pr4XKy...</msg>
+<var>${headers}</var>
+<status status="PASS" start="2026-03-03T16:09:33.077329" elapsed="0.001001"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-03-03T16:09:33.078330" level="INFO">${body} = {'status': 'WAITING'}</msg>
+<var>${body}</var>
+<arg>status=WAITING</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.078330" elapsed="0.000000"/>
+</kw>
+<kw name="PATCH" owner="RequestsLibrary">
+<msg time="2026-03-03T16:09:33.081330" level="INFO">PATCH Request : url=http://localhost:3000/api/reports/admin/cmmadzgrq0002jknw1oc1jtbq/status 
+ path_url=/api/reports/admin/cmmadzgrq0002jknw1oc1jtbq/status 
+ headers={'User-Agent': 'python-requests/2.32.5', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hMzlncmgwMDAwMTM4bWxpM3gxOTU1Iiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzcyNTI4OTcyLCJleHAiOjE3NzI1MzI1NzJ9.eYie-knJGkkL93Dls9Pr4XKyyaPzDriru1_ClsrGwL8', 'Content-Type': 'application/json', 'Content-Length': '21'} 
+ body=b'{"status": "WAITING"}' 
+ </msg>
+<msg time="2026-03-03T16:09:33.081330" level="INFO">PATCH Response : url=http://localhost:3000/api/reports/admin/cmmadzgrq0002jknw1oc1jtbq/status 
+ status=400, reason=Bad Request 
+ headers={'Content-Security-Policy': "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests", 'Cross-Origin-Opener-Policy': 'same-origin', 'Cross-Origin-Resource-Policy': 'same-origin', 'Origin-Agent-Cluster': '?1', 'Referrer-Policy': 'no-referrer', 'Strict-Transport-Security': 'max-age=15552000; includeSubDomains', 'X-Content-Type-Options': 'nosniff', 'X-DNS-Prefetch-Control': 'off', 'X-Download-Options': 'noopen', 'X-Frame-Options': 'SAMEORIGIN', 'X-Permitted-Cross-Domain-Policies': 'none', 'X-XSS-Protection': '0', 'Vary': 'Origin', 'Access-Control-Allow-Credentials': 'true', 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': '175', 'ETag': 'W/"af-BB5CLLrPgoy4WxYX8n8KdoxHZrk"', 'Date': 'Tue, 03 Mar 2026 09:09:33 GMT', 'Connection': 'keep-alive', 'Keep-Alive': 'timeout=5'} 
+ body={"success":false,"message":"Validation error: body.status - Invalid enum value. Expected 'PENDING' | 'ON_PROGRESS' | 'COMPLETED' | 'REJECTED', received 'WAITING'","data":null} 
+ </msg>
+<msg time="2026-03-03T16:09:33.081330" level="INFO">${resp} = &lt;Response [400]&gt;</msg>
+<var>${resp}</var>
+<arg>url=${BASE_URL}/reports/admin/${REPORT_ID}/status</arg>
+<arg>json=${body}</arg>
+<arg>headers=${headers}</arg>
+<arg>expected_status=400</arg>
+<doc>Sends a PUT request.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.078330" elapsed="0.003000"/>
+</kw>
+<kw name="Run Keyword And Ignore Error" owner="BuiltIn">
+<kw name="Set Variable" owner="BuiltIn">
+<arg>${resp.json()['message']}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.082330" elapsed="0.000000"/>
+</kw>
+<msg time="2026-03-03T16:09:33.082890" level="INFO">${status} = PASS</msg>
+<msg time="2026-03-03T16:09:33.082890" level="INFO">${msg} = Validation error: body.status - Invalid enum value. Expected 'PENDING' | 'ON_PROGRESS' | 'COMPLETED' | 'REJECTED', received 'WAITING'</msg>
+<var>${status}</var>
+<var>${msg}</var>
+<arg>Set Variable</arg>
+<arg>${resp.json()['message']}</arg>
+<doc>Runs the given keyword with the given arguments and ignores possible error.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.082330" elapsed="0.000560"/>
+</kw>
+<if>
+<branch type="IF" condition="'${status}' == 'PASS'">
+<kw name="Should Contain" owner="BuiltIn">
+<arg>${msg}</arg>
+<arg>status</arg>
+<doc>Fails if ``container`` does not contain ``item`` one or more times.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.082890" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2026-03-03T16:09:33.082890" elapsed="0.000000"/>
+</branch>
+<status status="PASS" start="2026-03-03T16:09:33.082890" elapsed="0.000000"/>
+</if>
+<status status="PASS" start="2026-03-03T16:09:33.077329" elapsed="0.005561"/>
+</test>
+<test id="s1-t8" name="TC008 - Access Admin API Without Token" line="67">
+<kw name="GET" owner="RequestsLibrary">
+<msg time="2026-03-03T16:09:33.085896" level="INFO">GET Request : url=http://localhost:3000/api/reports/admin 
+ path_url=/api/reports/admin 
+ headers={'User-Agent': 'python-requests/2.32.5', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive'} 
+ body=None 
+ </msg>
+<msg time="2026-03-03T16:09:33.085896" level="INFO">GET Response : url=http://localhost:3000/api/reports/admin 
+ status=401, reason=Unauthorized 
+ headers={'Content-Security-Policy': "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests", 'Cross-Origin-Opener-Policy': 'same-origin', 'Cross-Origin-Resource-Policy': 'same-origin', 'Origin-Agent-Cluster': '?1', 'Referrer-Policy': 'no-referrer', 'Strict-Transport-Security': 'max-age=15552000; includeSubDomains', 'X-Content-Type-Options': 'nosniff', 'X-DNS-Prefetch-Control': 'off', 'X-Download-Options': 'noopen', 'X-Frame-Options': 'SAMEORIGIN', 'X-Permitted-Cross-Domain-Policies': 'none', 'X-XSS-Protection': '0', 'Vary': 'Origin', 'Access-Control-Allow-Credentials': 'true', 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': '66', 'ETag': 'W/"42-VIvuqXCkSos5B2HjVRGsrV8/u7s"', 'Date': 'Tue, 03 Mar 2026 09:09:33 GMT', 'Connection': 'keep-alive', 'Keep-Alive': 'timeout=5'} 
+ body={"success":false,"message":"Not authorized, no token","data":null} 
+ </msg>
+<msg time="2026-03-03T16:09:33.085896" level="INFO">${resp} = &lt;Response [401]&gt;</msg>
+<var>${resp}</var>
+<arg>url=${BASE_URL}/reports/admin</arg>
+<arg>expected_status=401</arg>
+<doc>Sends a GET request.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.083897" elapsed="0.001999"/>
+</kw>
+<status status="PASS" start="2026-03-03T16:09:33.082890" elapsed="0.004066"/>
+</test>
+<test id="s1-t9" name="TC009 - Access Admin API With Invalid Token" line="70">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-03-03T16:09:33.086956" level="INFO">${headers} = {'Authorization': 'Bearer invalid.jwt.token.value'}</msg>
+<var>${headers}</var>
+<arg>Authorization=Bearer invalid.jwt.token.value</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.086956" elapsed="0.000000"/>
+</kw>
+<kw name="GET" owner="RequestsLibrary">
+<msg time="2026-03-03T16:09:33.089954" level="INFO">GET Request : url=http://localhost:3000/api/reports/admin 
+ path_url=/api/reports/admin 
+ headers={'User-Agent': 'python-requests/2.32.5', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Authorization': 'Bearer invalid.jwt.token.value'} 
+ body=None 
+ </msg>
+<msg time="2026-03-03T16:09:33.089954" level="INFO">GET Response : url=http://localhost:3000/api/reports/admin 
+ status=401, reason=Unauthorized 
+ headers={'Content-Security-Policy': "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests", 'Cross-Origin-Opener-Policy': 'same-origin', 'Cross-Origin-Resource-Policy': 'same-origin', 'Origin-Agent-Cluster': '?1', 'Referrer-Policy': 'no-referrer', 'Strict-Transport-Security': 'max-age=15552000; includeSubDomains', 'X-Content-Type-Options': 'nosniff', 'X-DNS-Prefetch-Control': 'off', 'X-Download-Options': 'noopen', 'X-Frame-Options': 'SAMEORIGIN', 'X-Permitted-Cross-Domain-Policies': 'none', 'X-XSS-Protection': '0', 'Vary': 'Origin', 'Access-Control-Allow-Credentials': 'true', 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': '70', 'ETag': 'W/"46-w2Z3gATrNC7hMBgk4VM6pVfFyx8"', 'Date': 'Tue, 03 Mar 2026 09:09:33 GMT', 'Connection': 'keep-alive', 'Keep-Alive': 'timeout=5'} 
+ body={"success":false,"message":"Not authorized, token failed","data":null} 
+ </msg>
+<msg time="2026-03-03T16:09:33.089954" level="INFO">${resp} = &lt;Response [401]&gt;</msg>
+<var>${resp}</var>
+<arg>url=${BASE_URL}/reports/admin</arg>
+<arg>headers=${headers}</arg>
+<arg>expected_status=any</arg>
+<doc>Sends a GET request.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.087954" elapsed="0.002000"/>
+</kw>
+<kw name="Should Be True" owner="BuiltIn">
+<arg>${resp.status_code} in [401, 403]</arg>
+<doc>Fails if the given condition is not true.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.089954" elapsed="0.001000"/>
+</kw>
+<status status="PASS" start="2026-03-03T16:09:33.086956" elapsed="0.003998"/>
+</test>
+<test id="s1-t10" name="TC010 - Notification Created After Status Update" line="75">
+<kw name="Create Admin Json Headers">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-03-03T16:09:33.091953" level="INFO">${headers} = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hMzlncmgwMDAwMTM4bWxpM3gxOTU1Iiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzcyNTI4OTcyLCJleHAiOjE3NzI1MzI1NzJ9.eYie-knJGkkL93Dls9Pr4XKy...</msg>
+<var>${headers}</var>
+<arg>Authorization=${ADMIN_TOKEN}</arg>
+<arg>Content-Type=application/json</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.091953" elapsed="0.000000"/>
+</kw>
+<return>
+<value>${headers}</value>
+<status status="PASS" start="2026-03-03T16:09:33.091953" elapsed="0.000000"/>
+</return>
+<msg time="2026-03-03T16:09:33.091953" level="INFO">${headers_admin} = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hMzlncmgwMDAwMTM4bWxpM3gxOTU1Iiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzcyNTI4OTcyLCJleHAiOjE3NzI1MzI1NzJ9.eYie-knJGkkL93Dls9Pr4XKy...</msg>
+<var>${headers_admin}</var>
+<status status="PASS" start="2026-03-03T16:09:33.091953" elapsed="0.000000"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-03-03T16:09:33.091953" level="INFO">${body} = {'status': 'ON_PROGRESS'}</msg>
+<var>${body}</var>
+<arg>status=ON_PROGRESS</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.091953" elapsed="0.000000"/>
+</kw>
+<kw name="PATCH" owner="RequestsLibrary">
+<msg time="2026-03-03T16:09:33.101590" level="INFO">PATCH Request : url=http://localhost:3000/api/reports/admin/cmmadzgrq0002jknw1oc1jtbq/status 
+ path_url=/api/reports/admin/cmmadzgrq0002jknw1oc1jtbq/status 
+ headers={'User-Agent': 'python-requests/2.32.5', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hMzlncmgwMDAwMTM4bWxpM3gxOTU1Iiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzcyNTI4OTcyLCJleHAiOjE3NzI1MzI1NzJ9.eYie-knJGkkL93Dls9Pr4XKyyaPzDriru1_ClsrGwL8', 'Content-Type': 'application/json', 'Content-Length': '25'} 
+ body=b'{"status": "ON_PROGRESS"}' 
+ </msg>
+<msg time="2026-03-03T16:09:33.101590" level="INFO">PATCH Response : url=http://localhost:3000/api/reports/admin/cmmadzgrq0002jknw1oc1jtbq/status 
+ status=200, reason=OK 
+ headers={'Content-Security-Policy': "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests", 'Cross-Origin-Opener-Policy': 'same-origin', 'Cross-Origin-Resource-Policy': 'same-origin', 'Origin-Agent-Cluster': '?1', 'Referrer-Policy': 'no-referrer', 'Strict-Transport-Security': 'max-age=15552000; includeSubDomains', 'X-Content-Type-Options': 'nosniff', 'X-DNS-Prefetch-Control': 'off', 'X-Download-Options': 'noopen', 'X-Frame-Options': 'SAMEORIGIN', 'X-Permitted-Cross-Domain-Policies': 'none', 'X-XSS-Protection': '0', 'Vary': 'Origin', 'Access-Control-Allow-Credentials': 'true', 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': '862', 'ETag': 'W/"35e-6wnbFIxJdga5J/rXo0V8A5iSFJc"', 'Date': 'Tue, 03 Mar 2026 09:09:33 GMT', 'Connection': 'keep-alive', 'Keep-Alive': 'timeout=5'} 
+ body={"success":true,"message":"Report status updated to ON_PROGRESS","data":{"id":"cmmadzgrq0002jknw1oc1jtbq","reporterId":"cmmadzgrn0000jknwh9x6g4uy","reportedUserId":"cmma39grh0000138mli3x1955","reporterRole":"PASSENGER","category":"safety","types":["robot","pbi6"],"description":"Robot Framework PBI6 API test report","mediaUrls":[],"status":"ON_PROGRESS","createdAt":"2026-03-03T09:09:32.967Z","updatedAt":"2026-03-03T09:09:33.097Z","reporter":{"id":"cmmadzgrn0000jknwh9x6g4uy","firstName":"Robot","lastName":"PBI6","username":"robot_pbi6_1772528972914_318b4","selfiePhotoUrl":null,"email":"robot_pbi6_1772528972914_318b4fc2895838@example.com","phoneNumber":"0899999999"},"reportedUser":{"id":"cmma39grh0000138mli3x1955","firstName":"System","lastName":"Administrator","username":"admin123","selfiePhotoUrl":null,"email":"admin@example.com","phoneNumber":null}}} 
+ </msg>
+<msg time="2026-03-03T16:09:33.102590" level="INFO">${resp} = &lt;Response [200]&gt;</msg>
+<var>${resp}</var>
+<arg>url=${BASE_URL}/reports/admin/${REPORT_ID}/status</arg>
+<arg>json=${body}</arg>
+<arg>headers=${headers_admin}</arg>
+<doc>Sends a PUT request.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.091953" elapsed="0.010637"/>
+</kw>
+<kw name="Status Should Be" owner="RequestsLibrary">
+<arg>200</arg>
+<arg>${resp}</arg>
+<doc>Fails if response status code is different than the expected.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.102590" elapsed="0.000000"/>
+</kw>
+<kw name="Should Be Equal As Strings" owner="BuiltIn">
+<arg>${resp.json()['data']['status']}</arg>
+<arg>ON_PROGRESS</arg>
+<doc>Fails if objects are unequal after converting them to strings.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.102590" elapsed="0.001000"/>
+</kw>
+<kw name="Login As Reporter">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-03-03T16:09:33.103590" level="INFO">&amp;{payload} = { username=robot_pbi6_1772528972914_318b4 | password=Test123456789 }</msg>
+<var>&amp;{payload}</var>
+<arg>username=${TEST_USERNAME}</arg>
+<arg>password=${TEST_PASSWORD}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.103590" elapsed="0.000000"/>
+</kw>
+<kw name="POST" owner="RequestsLibrary">
+<msg time="2026-03-03T16:09:33.155832" level="INFO">POST Request : url=http://localhost:3000/api/auth/login 
+ path_url=/api/auth/login 
+ headers={'User-Agent': 'python-requests/2.32.5', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Length': '75', 'Content-Type': 'application/json'} 
+ body=b'{"username": "robot_pbi6_1772528972914_318b4", "password": "Test123456789"}' 
+ </msg>
+<msg time="2026-03-03T16:09:33.155832" level="INFO">POST Response : url=http://localhost:3000/api/auth/login 
+ status=200, reason=OK 
+ headers={'Content-Security-Policy': "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests", 'Cross-Origin-Opener-Policy': 'same-origin', 'Cross-Origin-Resource-Policy': 'same-origin', 'Origin-Agent-Cluster': '?1', 'Referrer-Policy': 'no-referrer', 'Strict-Transport-Security': 'max-age=15552000; includeSubDomains', 'X-Content-Type-Options': 'nosniff', 'X-DNS-Prefetch-Control': 'off', 'X-Download-Options': 'noopen', 'X-Frame-Options': 'SAMEORIGIN', 'X-Permitted-Cross-Domain-Policies': 'none', 'X-XSS-Protection': '0', 'Vary': 'Origin', 'Access-Control-Allow-Credentials': 'true', 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': '444', 'ETag': 'W/"1bc-+IkJA8YwlSSFOBiY6aLj4SR+ULo"', 'Date': 'Tue, 03 Mar 2026 09:09:33 GMT', 'Connection': 'keep-alive', 'Keep-Alive': 'timeout=5'} 
+ body={"success":true,"message":"Login successful","data":{"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hZHpncm4wMDAwamtud2g5eDZnNHV5Iiwicm9sZSI6IlBBU1NFTkdFUiIsImlhdCI6MTc3MjUyODk3MywiZXhwIjoxNzcyNTMyNTczfQ.qb4mH2SATpC-LWtY8sTJRmNBUsOpuDcq_r5iBQqDLLs","user":{"id":"cmmadzgrn0000jknwh9x6g4uy","firstName":"Robot","lastName":"PBI6","profilePicture":null,"role":"PASSENGER","passengerSuspendedUntil":null,"driverSuspendedUntil":null}}} 
+ </msg>
+<msg time="2026-03-03T16:09:33.155832" level="INFO">${resp} = &lt;Response [200]&gt;</msg>
+<var>${resp}</var>
+<arg>url=${BASE_URL}/auth/login</arg>
+<arg>json=${payload}</arg>
+<doc>Sends a POST request.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.103590" elapsed="0.052242"/>
+</kw>
+<kw name="Status Should Be" owner="RequestsLibrary">
+<arg>200</arg>
+<arg>${resp}</arg>
+<doc>Fails if response status code is different than the expected.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.155832" elapsed="0.001504"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-03-03T16:09:33.157336" level="INFO">${token} = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hZHpncm4wMDAwamtud2g5eDZnNHV5Iiwicm9sZSI6IlBBU1NFTkdFUiIsImlhdCI6MTc3MjUyODk3MywiZXhwIjoxNzcyNTMyNTczfQ.qb4mH2SATpC-LWtY8sTJRmNBUsOpuDcq_r5iB...</msg>
+<var>${token}</var>
+<arg>Bearer ${resp.json()['data']['token']}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.157336" elapsed="0.000000"/>
+</kw>
+<kw name="Set Suite Variable" owner="BuiltIn">
+<msg time="2026-03-03T16:09:33.158340" level="INFO">${REPORTER_TOKEN} = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hZHpncm4wMDAwamtud2g5eDZnNHV5Iiwicm9sZSI6IlBBU1NFTkdFUiIsImlhdCI6MTc3MjUyODk3MywiZXhwIjoxNzcyNTMyNTczfQ.qb4mH2SATpC-LWtY8sTJRmNBUsOpuDcq_r5iB...</msg>
+<arg>${REPORTER_TOKEN}</arg>
+<arg>${token}</arg>
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.157336" elapsed="0.001004"/>
+</kw>
+<status status="PASS" start="2026-03-03T16:09:33.103590" elapsed="0.054750"/>
+</kw>
+<kw name="Create Reporter Headers">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-03-03T16:09:33.158340" level="INFO">${headers} = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hZHpncm4wMDAwamtud2g5eDZnNHV5Iiwicm9sZSI6IlBBU1NFTkdFUiIsImlhdCI6MTc3MjUyODk3MywiZXhwIjoxNzcyNTMyNTczfQ.qb4mH2SATpC-LWtY8s...</msg>
+<var>${headers}</var>
+<arg>Authorization=${REPORTER_TOKEN}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.158340" elapsed="0.000000"/>
+</kw>
+<return>
+<value>${headers}</value>
+<status status="PASS" start="2026-03-03T16:09:33.158340" elapsed="0.000000"/>
+</return>
+<msg time="2026-03-03T16:09:33.158340" level="INFO">${headers_reporter} = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hZHpncm4wMDAwamtud2g5eDZnNHV5Iiwicm9sZSI6IlBBU1NFTkdFUiIsImlhdCI6MTc3MjUyODk3MywiZXhwIjoxNzcyNTMyNTczfQ.qb4mH2SATpC-LWtY8s...</msg>
+<var>${headers_reporter}</var>
+<status status="PASS" start="2026-03-03T16:09:33.158340" elapsed="0.000000"/>
+</kw>
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-03-03T16:09:33.159341" level="INFO">${params} = {'type': 'REPORT'}</msg>
+<var>${params}</var>
+<arg>type=REPORT</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.159341" elapsed="0.000000"/>
+</kw>
+<kw name="GET" owner="RequestsLibrary">
+<msg time="2026-03-03T16:09:33.165897" level="INFO">GET Request : url=http://localhost:3000/api/notifications?type=REPORT 
+ path_url=/api/notifications?type=REPORT 
+ headers={'User-Agent': 'python-requests/2.32.5', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hZHpncm4wMDAwamtud2g5eDZnNHV5Iiwicm9sZSI6IlBBU1NFTkdFUiIsImlhdCI6MTc3MjUyODk3MywiZXhwIjoxNzcyNTMyNTczfQ.qb4mH2SATpC-LWtY8sTJRmNBUsOpuDcq_r5iBQqDLLs'} 
+ body=None 
+ </msg>
+<msg time="2026-03-03T16:09:33.165897" level="INFO">GET Response : url=http://localhost:3000/api/notifications?type=REPORT 
+ status=200, reason=OK 
+ headers={'Content-Security-Policy': "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests", 'Cross-Origin-Opener-Policy': 'same-origin', 'Cross-Origin-Resource-Policy': 'same-origin', 'Origin-Agent-Cluster': '?1', 'Referrer-Policy': 'no-referrer', 'Strict-Transport-Security': 'max-age=15552000; includeSubDomains', 'X-Content-Type-Options': 'nosniff', 'X-DNS-Prefetch-Control': 'off', 'X-Download-Options': 'noopen', 'X-Frame-Options': 'SAMEORIGIN', 'X-Permitted-Cross-Domain-Policies': 'none', 'X-XSS-Protection': '0', 'Vary': 'Origin', 'Access-Control-Allow-Credentials': 'true', 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': '2094', 'ETag': 'W/"82e-03aERvBYW+jlZk4acu6MHDTJMm4"', 'Date': 'Tue, 03 Mar 2026 09:09:33 GMT', 'Connection': 'keep-alive', 'Keep-Alive': 'timeout=5'} 
+ body={"success":true,"message":"Notifications retrieved successfully","data":[{"id":"cmmadzgvf000q11oh97hz14tk","userId":"cmmadzgrn0000jknwh9x6g4uy","type":"REPORT","title":"สถานะรายงานของคุณ: กำลังดำเนินการ","body":"ทีมงานกำลังตรวจสอบรายงานของคุณ จะแจ้งผลให้ทราบเร็วๆ นี้","link":null,"metadata":{"kind":"REPORT_STATUS_UPDATED","reportId":"cmmadzgrq0002jknw1oc1jtbq","status":"ON_PROGRESS"},"readAt":null,"adminReviewedAt":null,"createdAt":"2026-03-03T09:09:33.100Z"},{"id":"cmmadzgup000n11ohw0sf0zrw","userId":"cmmadzgrn0000jknwh9x6g4uy","type":"REPORT","title":"สถานะรายงานของคุณ: ปฏิเสธ","body":"ขอขอบคุณสำหรับการรายงาน หลังจากตรวจสอบแล้ว ทีมงานไม่พบการกระทำที่เข้าข่ายการละเมิดหรือผิดกฎของระบบ จึงขอปฏิเสธการรายงานในครั้งนี้","link":null,"metadata":{"kind":"REPORT_STATUS_UPDATED","reportId":"cmmadzgrq0002jknw1oc1jtbq","status":"REJECTED"},"readAt":null,"adminReviewedAt":null,"createdAt":"2026-03-03T09:09:33.073Z"},{"id":"cmmadzgua000k11ohao0mfmj3","userId":"cmmadzgrn0000jknwh9x6g4uy","type":"REPORT","title":"สถานะรายงานของคุณ: ดำเนินการเรียบร้อย","body":"ทางทีมงานได้ตรวจสอบและดำเนินการตามแนวทางของระบบแล้ว ขอบคุณที่แจ้งข้อมูลให้เราทราบ","link":null,"metadata":{"kind":"REPORT_STATUS_UPDATED","reportId":"cmmadzgrq0002jknw1oc1jtbq","status":"COMPLETED"},"readAt":null,"adminReviewedAt":null,"createdAt":"2026-03-03T09:09:33.058Z"}],"pagination":{"page":1,"limit":20,"total":3,"totalPages":1}} 
+ </msg>
+<msg time="2026-03-03T16:09:33.165897" level="INFO">${resp_notifs} = &lt;Response [200]&gt;</msg>
+<var>${resp_notifs}</var>
+<arg>url=${BASE_URL}/notifications</arg>
+<arg>headers=${headers_reporter}</arg>
+<arg>params=${params}</arg>
+<doc>Sends a GET request.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.159341" elapsed="0.006556"/>
+</kw>
+<kw name="Status Should Be" owner="RequestsLibrary">
+<arg>200</arg>
+<arg>${resp_notifs}</arg>
+<doc>Fails if response status code is different than the expected.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.165897" elapsed="0.000000"/>
+</kw>
+<kw name="Set Variable" owner="BuiltIn">
+<msg time="2026-03-03T16:09:33.167401" level="INFO">${notifications} = [{'id': 'cmmadzgvf000q11oh97hz14tk', 'userId': 'cmmadzgrn0000jknwh9x6g4uy', 'type': 'REPORT', 'title': 'สถานะรายงานของคุณ: กำลังดำเนินการ', 'body': 'ทีมงานกำลังตรวจสอบรายงานของคุณ จะแจ้งผลให้ทราบเร็วๆ...</msg>
+<var>${notifications}</var>
+<arg>${resp_notifs.json()['data']}</arg>
+<doc>Returns the given values which can then be assigned to a variables.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.165897" elapsed="0.001504"/>
+</kw>
+<kw name="Evaluate" owner="BuiltIn">
+<msg time="2026-03-03T16:09:33.168409" level="INFO">${filtered} = [{'id': 'cmmadzgvf000q11oh97hz14tk', 'userId': 'cmmadzgrn0000jknwh9x6g4uy', 'type': 'REPORT', 'title': 'สถานะรายงานของคุณ: กำลังดำเนินการ', 'body': 'ทีมงานกำลังตรวจสอบรายงานของคุณ จะแจ้งผลให้ทราบเร็วๆ...</msg>
+<var>${filtered}</var>
+<arg>[n for n in ${notifications} if n.get('metadata', {}).get('reportId') == '${REPORT_ID}' and n.get('metadata', {}).get('status') == 'ON_PROGRESS']</arg>
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.167401" elapsed="0.001008"/>
+</kw>
+<kw name="Get Length" owner="BuiltIn">
+<msg time="2026-03-03T16:09:33.168409" level="INFO">Length is 1.</msg>
+<msg time="2026-03-03T16:09:33.168409" level="INFO">${count} = 1</msg>
+<var>${count}</var>
+<arg>${filtered}</arg>
+<doc>Returns and logs the length of the given item as an integer.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.168409" elapsed="0.000000"/>
+</kw>
+<kw name="Should Be True" owner="BuiltIn">
+<arg>${count} &gt; 0</arg>
+<doc>Fails if the given condition is not true.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.169406" elapsed="0.000000"/>
+</kw>
+<doc>Verify reporter receives REPORT notification after admin status update (see notification.doc.js).</doc>
+<status status="PASS" start="2026-03-03T16:09:33.090954" elapsed="0.078452"/>
+</test>
+<test id="s1-t11" name="TC011 - Delete Report by ID" line="93">
+<kw name="Create Admin Headers">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2026-03-03T16:09:33.170406" level="INFO">${headers} = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hMzlncmgwMDAwMTM4bWxpM3gxOTU1Iiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzcyNTI4OTcyLCJleHAiOjE3NzI1MzI1NzJ9.eYie-knJGkkL93Dls9Pr4XKy...</msg>
+<var>${headers}</var>
+<arg>Authorization=${ADMIN_TOKEN}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.169406" elapsed="0.001000"/>
+</kw>
+<return>
+<value>${headers}</value>
+<status status="PASS" start="2026-03-03T16:09:33.170406" elapsed="0.000000"/>
+</return>
+<msg time="2026-03-03T16:09:33.170406" level="INFO">${headers} = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hMzlncmgwMDAwMTM4bWxpM3gxOTU1Iiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzcyNTI4OTcyLCJleHAiOjE3NzI1MzI1NzJ9.eYie-knJGkkL93Dls9Pr4XKy...</msg>
+<var>${headers}</var>
+<status status="PASS" start="2026-03-03T16:09:33.169406" elapsed="0.001000"/>
+</kw>
+<kw name="DELETE" owner="RequestsLibrary">
+<msg time="2026-03-03T16:09:33.176406" level="INFO">DELETE Request : url=http://localhost:3000/api/reports/admin/cmmadzgrq0002jknw1oc1jtbq 
+ path_url=/api/reports/admin/cmmadzgrq0002jknw1oc1jtbq 
+ headers={'User-Agent': 'python-requests/2.32.5', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbW1hMzlncmgwMDAwMTM4bWxpM3gxOTU1Iiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzcyNTI4OTcyLCJleHAiOjE3NzI1MzI1NzJ9.eYie-knJGkkL93Dls9Pr4XKyyaPzDriru1_ClsrGwL8', 'Content-Length': '0'} 
+ body=None 
+ </msg>
+<msg time="2026-03-03T16:09:33.176406" level="INFO">DELETE Response : url=http://localhost:3000/api/reports/admin/cmmadzgrq0002jknw1oc1jtbq 
+ status=200, reason=OK 
+ headers={'Content-Security-Policy': "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests", 'Cross-Origin-Opener-Policy': 'same-origin', 'Cross-Origin-Resource-Policy': 'same-origin', 'Origin-Agent-Cluster': '?1', 'Referrer-Policy': 'no-referrer', 'Strict-Transport-Security': 'max-age=15552000; includeSubDomains', 'X-Content-Type-Options': 'nosniff', 'X-DNS-Prefetch-Control': 'off', 'X-Download-Options': 'noopen', 'X-Frame-Options': 'SAMEORIGIN', 'X-Permitted-Cross-Domain-Policies': 'none', 'X-XSS-Protection': '0', 'Vary': 'Origin', 'Access-Control-Allow-Credentials': 'true', 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': '98', 'ETag': 'W/"62-pQQ+JWm2vGaC5EtDmTnF/+xCgBM"', 'Date': 'Tue, 03 Mar 2026 09:09:33 GMT', 'Connection': 'keep-alive', 'Keep-Alive': 'timeout=5'} 
+ body={"success":true,"message":"Report deleted successfully","data":{"id":"cmmadzgrq0002jknw1oc1jtbq"}} 
+ </msg>
+<msg time="2026-03-03T16:09:33.176406" level="INFO">${resp} = &lt;Response [200]&gt;</msg>
+<var>${resp}</var>
+<arg>url=${BASE_URL}/reports/admin/${REPORT_ID}</arg>
+<arg>headers=${headers}</arg>
+<doc>Sends a DELETE request.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.170406" elapsed="0.006000"/>
+</kw>
+<kw name="Status Should Be" owner="RequestsLibrary">
+<arg>200</arg>
+<arg>${resp}</arg>
+<doc>Fails if response status code is different than the expected.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.176406" elapsed="0.000000"/>
+</kw>
+<status status="PASS" start="2026-03-03T16:09:33.169406" elapsed="0.007000"/>
+</test>
+<kw name="Teardown PBI6 Test Data" type="TEARDOWN">
+<kw name="Run Keyword And Ignore Error" owner="BuiltIn">
+<kw name="Delete PBI6 Test Report And User">
+<kw name="File Should Exist" owner="OperatingSystem">
+<msg time="2026-03-03T16:09:33.177912" level="INFO" html="true">File '&lt;a href="file://D:\มข\ปี3\เทอม2\software eng\projectP2\sec2_2_PaiNamNaeWebApp\code\backend\scripts\pbi6_teardown.js"&gt;D:\มข\ปี3\เทอม2\software eng\projectP2\sec2_2_PaiNamNaeWebApp\code\backend\scripts\pbi6_teardown.js&lt;/a&gt;' exists.</msg>
+<arg>${PBI6_TEARDOWN_SCRIPT}</arg>
+<doc>Fails unless the given ``path`` points to an existing file.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.177912" elapsed="0.000579"/>
+</kw>
+<kw name="Run Process" owner="Process">
+<msg time="2026-03-03T16:09:33.178491" level="INFO">Starting process:
+node --no-warnings "D:\มข\ปี3\เทอม2\software eng\projectP2\sec2_2_PaiNamNaeWebApp\test\sprint2\api\pbi6/../../../../code/backend/scripts/pbi6_teardown.js" --reportId cmmadzgrq0002jknw1oc1jtbq --testUserId cmmadzgrn0000jknwh9x6g4uy</msg>
+<msg time="2026-03-03T16:09:33.184496" level="INFO">Waiting for process to complete.</msg>
+<msg time="2026-03-03T16:09:33.278467" level="INFO">Process completed.</msg>
+<msg time="2026-03-03T16:09:33.278467" level="INFO">${result} = &lt;result object with rc 0&gt;</msg>
+<var>${result}</var>
+<arg>node</arg>
+<arg>--no-warnings</arg>
+<arg>${PBI6_TEARDOWN_SCRIPT}</arg>
+<arg>--reportId</arg>
+<arg>${REPORT_ID}</arg>
+<arg>--testUserId</arg>
+<arg>${TEST_USER_ID}</arg>
+<arg>cwd=${BACKEND_CWD}</arg>
+<arg>stdout=PIPE</arg>
+<arg>stderr=PIPE</arg>
+<doc>Runs a process and waits for it to complete.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.178491" elapsed="0.099976"/>
+</kw>
+<status status="PASS" start="2026-03-03T16:09:33.177912" elapsed="0.100555"/>
+</kw>
+<arg>Delete PBI6 Test Report And User</arg>
+<doc>Runs the given keyword with the given arguments and ignores possible error.</doc>
+<status status="PASS" start="2026-03-03T16:09:33.176406" elapsed="0.102061"/>
+</kw>
+<status status="PASS" start="2026-03-03T16:09:33.176406" elapsed="0.102061"/>
+</kw>
+<status status="PASS" start="2026-03-03T16:09:32.600209" elapsed="0.678258"/>
+</suite>
+<statistics>
+<total>
+<stat pass="11" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat name="Pbi6 Api Test" id="s1" pass="11" fail="0" skip="0">Pbi6 Api Test</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
