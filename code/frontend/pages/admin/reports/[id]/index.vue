@@ -493,7 +493,6 @@ const defaultStatusText: Record<string, string> = {
 const isPatchingStatus = ref(false)
 const targetStatus = ref<ReportStatus | ''>('')
 const notificationBody = ref('')
-const notificationBody = ref('')
 
 function statusLower(st?: ReportStatus | null) {
   if (!st) return '-'
