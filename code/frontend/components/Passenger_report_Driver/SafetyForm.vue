@@ -131,6 +131,7 @@ async function submitForm() {
   formData.append('category', category)
   formData.append('types', JSON.stringify(finalTypes))
   formData.append('description', description.value)
+  formData.append('bookingId', bookingId)
 
   files.value.forEach(file => {
     formData.append('media', file)

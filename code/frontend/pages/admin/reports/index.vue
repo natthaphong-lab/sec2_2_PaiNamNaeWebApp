@@ -110,7 +110,7 @@
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
-                                <tr v-for="r in filteredRows" :key="r.id" class="transition-colors hover:bg-gray-50">
+                                <tr v-for="r in rows" :key="r.id" class="transition-colors hover:bg-gray-50">
 
                                     <!-- ผู้รายงาน -->
                                     <td class="px-4 py-3">
@@ -419,10 +419,7 @@ async function fetchRows(page = pagination.page) {
     loadError.value = null
 
     try {
-        // แยก sort เช่น "createdAt:desc"
         const [sortBy, sortOrder] = (filters.sort || 'createdAt:desc').split(':')
-
-        console.log('Fetching reports with:', { page, limit: pagination.limit, sortBy, sortOrder, q: filters.q, status: filters.status })
 
         const res = await $fetch(`${config.public.apiBase}/reports/admin`, {
             headers: {
@@ -439,17 +436,33 @@ async function fetchRows(page = pagination.page) {
             }
         })
 
-        console.log('Reports response:', res)
-
         if (!res || !res.data) {
             throw new Error('Invalid response format')
         }
 
-        rows.value = res.data
-        pagination.total = res.pagination?.total ?? res.data.length
+        const map = new Map()   // ⭐ ต้องประกาศตรงนี้
+
+        for (const r of res.data) {
+            const key = `${r.bookingId}_${r.category}`
+
+            if (!map.has(key)) {
+                map.set(key, r)
+            } else {
+                const existing = map.get(key)
+
+                if (new Date(r.createdAt) > new Date(existing.createdAt)) {
+                    map.set(key, r)
+                }
+            }
+        }
+
+        rows.value = Array.from(map.values())
+
+        pagination.total = res.pagination?.total ?? rows.value.length
         pagination.totalPages =
             res.pagination?.totalPages ??
             Math.ceil(pagination.total / pagination.limit)
+
         pagination.page = page
 
     } catch (err) {
@@ -464,7 +477,7 @@ onMounted(() => {
 })
 
 function onView(r) {
-    navigateTo(`/admin/reports/${r.id}`).catch(() => { })
+    navigateTo(`/admin/reports/group/${r.bookingId}/${r.category}`).catch(() => { })
 }
 
 const onDelete = async (report) => {
@@ -522,17 +535,4 @@ const pageButtons = computed(() => {
   return pages
 })
 
-const filteredRows = computed(() => {
-  const map = new Map()
-
-  for (const r of rows.value) {
-    const key = `${r.tripId}-${r.category}`
-
-    if (!map.has(key)) {
-      map.set(key, r)
-    }
-  }
-
-  return Array.from(map.values())
-})
 </script>

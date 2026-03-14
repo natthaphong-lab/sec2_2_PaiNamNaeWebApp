@@ -125,20 +125,7 @@
                    {{ (notificationBody || '').length }}/500
                 </p>
               </div>
-              <!-- Custom notification body -->
-              <div class="px-4 pb-4 sm:px-6">
-                <label class="block mb-1 text-xs font-medium text-gray-600">
-                  ข้อความแจ้งเตือนถึงผู้รายงาน <span class="text-gray-400">(ไม่บังคับ — ถ้าไม่กรอกจะใช้ข้อความเริ่มต้น)</span>
-                </label>
-                <textarea
-                  v-model="notificationBody"
-                  rows="3"
-                  maxlength="500"
-                  placeholder="เช่น เราตรวจสอบแล้วพบว่า..."
-                  class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md bg-white resize-none focus:outline-none focus:ring-2 focus:ring-blue-300"
-                />
-                <p class="mt-1 text-xs text-gray-400 text-right">{{ notificationBody.length }}/500</p>
-              </div>
+
             </div>
             
             <!-- Card -->
@@ -583,7 +570,7 @@ async function patchStatus(status: ReportStatus) {
 
   try {
     await $fetch(
-      `/api/reports/admin/group/${bookingId}/${category}/status`,
+      `/reports/admin/group/${bookingId}/${category}/status`,
       {
         baseURL: config.public.apiBase,
         method: 'PATCH',
