@@ -45,22 +45,30 @@ function handleFileUpload(e) {
   // กำหนดประเภทที่ยอมรับ (Prefix ของ MIME type)
   const allowedPrefixes = ['image/', 'video/', 'audio/']
 
-  limitedFiles.forEach(file => {
-    // --- เพิ่มการเช็คประเภทไฟล์ตรงนี้ ---
-    const isRightType = allowedPrefixes.some(prefix => file.type.startsWith(prefix))
-    
-    if (!isRightType) {
-      fileError.value = 'รองรับเฉพาะไฟล์รูปภาพ วิดีโอ หรือเสียงเท่านั้น'
-      return // ข้ามไฟล์นี้ไป (ไม่ใส่ใน validFiles)
-    }
+limitedFiles.forEach(file => {
 
-    // --- เช็คขนาดไฟล์ (10MB) ---
-    if (file.size > 10 * 1024 * 1024) {
-      fileError.value = 'ไฟล์ต้องมีขนาดไม่เกิน 10MB ต่อไฟล์'
-    } else {
-      validFiles.push(file)
-    }
+  const isRightType = allowedPrefixes.some(prefix =>
+    file.type.startsWith(prefix)
+  )
+
+  if (!isRightType) {
+    fileError.value = 'รองรับเฉพาะไฟล์รูปภาพ วิดีโอ หรือเสียงเท่านั้น'
+    return
+  }
+
+  if (file.size > 10 * 1024 * 1024) {
+    fileError.value = 'ไฟล์ต้องมีขนาดไม่เกิน 10MB ต่อไฟล์'
+    return
+  }
+
+  validFiles.push({
+    file: file,
+    preview: URL.createObjectURL(file),
+    type: file.type,
+    name: file.name
   })
+
+})
 
   // เพิ่มเฉพาะไฟล์ที่ผ่านการตรวจสอบทั้ง Type และ Size
   files.value.push(...validFiles)
@@ -70,6 +78,12 @@ function handleFileUpload(e) {
 }
 
 function removeFile(index) {
+  const item = files.value[index]
+
+  if (item.preview) {
+    URL.revokeObjectURL(item.preview)
+  }
+
   files.value.splice(index, 1)
 }
 
@@ -111,10 +125,9 @@ let finalTypes = [selectedIssue.value]
   formData.append('types', JSON.stringify(['ปัญหาอื่น ๆ']))
   formData.append('description', description.value)
 
-  files.value.forEach(file => {
-    formData.append('media', file)
-  })
-
+files.value.forEach(item => {
+  formData.append('media', item.file)
+})
   try {
     await $api('/reports', {
       method: 'POST',
@@ -160,7 +173,7 @@ function handleFileClick(e) {
     <div class="mt-6">
       <div class="flex justify-between mb-2">
         <label class="font-medium">
-          รายละเอียดเพิ่มเติม  <span class="text-red-500">*</span>
+          รายละเอียดเพิ่มเติม <span class="text-red-500">*จำเป็นต้องกรอก</span>
         </label>
         <span class="text-sm text-gray-500">
           ({{ description.length }} / {{ maxLength }} ตัวอักษร)
@@ -179,8 +192,13 @@ function handleFileClick(e) {
     <!-- FILE UPLOAD -->
     <div class="mt-6">
       <label class="font-medium">
-        อัปโหลดรูป วิดีโอ หรือ คลิปเสียง
-        <span class="text-sm text-red-500">(ไม่เกิน 10 MB ต่อไฟล์)</span>
+        อัปโหลดรูป วิดีโอ หรือคลิปเสียง
+          <span class="text-gray-500">
+           (ถ้ามี)
+          </span>        
+      <span class="block text-sm text-gray-500">
+        รองรับ: PNG, JPG, MP4, MOV, MP3 (ไม่เกิน 10 MB ต่อไฟล์)
+      </span>
       </label>
 
      <input
@@ -204,19 +222,44 @@ function handleFileClick(e) {
 
       <!-- FILE LIST -->
       <div class="mt-3 space-y-2">
-        <div
-          v-for="(file, index) in files"
-          :key="index"
-          class="flex items-center justify-between px-3 py-2 text-sm bg-gray-100 rounded"
-        >
-          <span>{{ file.name }}</span>
-          <button
-            @click="removeFile(index)"
-            class="text-gray-500 hover:text-red-500"
-          >
-            ✕
-          </button>
-        </div>
+ <div class="grid grid-cols-3 gap-3 mt-4">
+
+<div
+  v-for="(item,index) in files"
+  :key="index"
+  class="relative border rounded-lg overflow-hidden"
+>
+
+<img
+  v-if="item.type.startsWith('image/')"
+  :src="item.preview"
+  class="object-cover w-full h-32"
+/>
+
+<video
+  v-else-if="item.type.startsWith('video/')"
+  :src="item.preview"
+  class="w-full h-32 object-cover"
+  controls
+></video>
+
+<div
+  v-else
+  class="flex items-center justify-center h-32 bg-gray-100"
+>
+<audio :src="item.preview" controls></audio>
+</div>
+
+<button
+  @click="removeFile(index)"
+  class="absolute top-1 right-1 bg-black/60 text-white w-7 h-7 flex items-center justify-center rounded-full hover:bg-red-500"
+>
+✕
+</button>
+
+</div>
+
+</div>
       </div>
     </div>
 
