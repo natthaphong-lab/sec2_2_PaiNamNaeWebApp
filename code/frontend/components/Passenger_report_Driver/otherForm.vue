@@ -124,6 +124,7 @@ let finalTypes = [selectedIssue.value]
   formData.append('category', category)
   formData.append('types', JSON.stringify(['ปัญหาอื่น ๆ']))
   formData.append('description', description.value)
+  formData.append('bookingId', bookingId)
 
 files.value.forEach(item => {
   formData.append('media', item.file)
