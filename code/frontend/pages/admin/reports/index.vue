@@ -110,7 +110,7 @@
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
-                                <tr v-for="r in rows" :key="r.id" class="transition-colors hover:bg-gray-50">
+                                <tr v-for="r in filteredRows" :key="r.id" class="transition-colors hover:bg-gray-50">
 
                                     <!-- ผู้รายงาน -->
                                     <td class="px-4 py-3">
@@ -522,4 +522,17 @@ const pageButtons = computed(() => {
   return pages
 })
 
+const filteredRows = computed(() => {
+  const map = new Map()
+
+  for (const r of rows.value) {
+    const key = `${r.tripId}-${r.category}`
+
+    if (!map.has(key)) {
+      map.set(key, r)
+    }
+  }
+
+  return Array.from(map.values())
+})
 </script>

@@ -10,7 +10,7 @@ const bookingId = route.query.bookingId
 const categories = [
   { key: 'safety', label: 'แจ้งปัญหาด้านความปลอดภัยเกี่ยวกับการขับขี่' },
   { key: 'passengerBehavior', label: 'แจ้งปัญหาพฤติกรรมผู้โดยสาร' },
-  { key: 'vehicle', label: 'แจ้งปัญหาเกี่ยวกับความเสียหายต่อรถและทรัพย์สิน' },
+  { key: 'damaged', label: 'แจ้งปัญหาเกี่ยวกับความเสียหายต่อรถและทรัพย์สิน' },
   { key: 'lostItem', label: 'แจ้งของหาย / ของตกหล่น' },
   { key: 'other', label: 'แจ้งปัญหาอื่น ๆ' }
 ]
