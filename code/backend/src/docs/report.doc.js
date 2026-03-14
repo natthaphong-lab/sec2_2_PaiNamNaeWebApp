@@ -23,6 +23,8 @@
  *       properties:
  *         id:
  *           type: string
+ *         bookingId:
+ *           type: string
  *         reporterId:
  *           type: string
  *         reportedUserId:
@@ -59,6 +61,8 @@
  *       type: object
  *       properties:
  *         id:
+ *           type: string
+ *         bookingId:
  *           type: string
  *         reporterId:
  *           type: string
@@ -141,9 +145,13 @@
  *           schema:
  *             type: object
  *             required:
+ *               - bookingId
  *               - reportedUserId
  *               - category
  *             properties:
+ *               bookingId:
+ *                 type: string
+ *                 description: Booking ID for the trip context being reported
  *               reportedUserId:
  *                 type: string
  *                 description: ID of the user being reported
@@ -270,6 +278,10 @@
  *         name: status
  *         schema:
  *           $ref: '#/components/schemas/ReportStatus'
+ *       - in: query
+ *         name: bookingId
+ *         schema:
+ *           type: string
  *       - in: query
  *         name: reporterId
  *         schema:

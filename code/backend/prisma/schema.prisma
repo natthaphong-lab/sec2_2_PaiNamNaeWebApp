@@ -230,10 +230,14 @@ model Booking {
   pickupLocation  Json          @db.Json
   dropoffLocation Json          @db.Json
   createdAt       DateTime      @default(now())
+
+  reports         Report[]
 }
 
 model Report {
   id              String           @id @default(cuid())
+  bookingId       String
+  booking         Booking          @relation(fields: [bookingId], references: [id], onDelete: Restrict)
   reporterId      String
   reporter        User             @relation("ReportsMade", fields: [reporterId], references: [id], onDelete: Cascade)
   reportedUserId  String
@@ -247,6 +251,7 @@ model Report {
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
 
+  @@index([bookingId])
   @@index([reporterId])
   @@index([reportedUserId])
   @@index([status])

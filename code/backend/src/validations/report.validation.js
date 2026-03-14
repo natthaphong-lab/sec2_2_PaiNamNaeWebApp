@@ -7,6 +7,7 @@ const driverCategories = ['safety', 'driverBehavior','passengerBehavior', 'vehic
 const allCategories = [...new Set([...passengerCategories, ...driverCategories])];
 
 const createReportSchema = z.object({
+  bookingId: z.string().cuid({ message: 'Invalid booking ID format' }),
   reportedUserId: z.string().cuid({ message: 'Invalid reported user ID format' }),
   category: z.enum(allCategories, {
     required_error: 'Category is required',
@@ -46,6 +47,7 @@ const listReportsQuerySchema = z.object({
 
   q: z.string().trim().min(1).optional(),
   status: z.nativeEnum(ReportStatus).optional(),
+  bookingId: z.string().cuid().optional(),
   reporterId: z.string().cuid().optional(),
   reportedUserId: z.string().cuid().optional(),
   reporterRole: z.enum(['PASSENGER', 'DRIVER']).optional(),
