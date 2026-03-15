@@ -440,23 +440,7 @@ async function fetchRows(page = pagination.page) {
             throw new Error('Invalid response format')
         }
 
-        const map = new Map()   // ⭐ ต้องประกาศตรงนี้
-
-        for (const r of res.data) {
-            const key = `${r.bookingId}_${r.category}`
-
-            if (!map.has(key)) {
-                map.set(key, r)
-            } else {
-                const existing = map.get(key)
-
-                if (new Date(r.createdAt) > new Date(existing.createdAt)) {
-                    map.set(key, r)
-                }
-            }
-        }
-
-        rows.value = Array.from(map.values())
+        rows.value = res.data
 
         pagination.total = res.pagination?.total ?? rows.value.length
         pagination.totalPages =
@@ -477,7 +461,8 @@ onMounted(() => {
 })
 
 function onView(r) {
-    navigateTo(`/admin/reports/group/${r.bookingId}/${r.category}`).catch(() => { })
+    console.log(r)
+    navigateTo(`/admin/reports/group/${r.routeId}/${r.category}`)
 }
 
 const onDelete = async (report) => {
