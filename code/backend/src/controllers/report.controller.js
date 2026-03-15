@@ -21,6 +21,7 @@ const createReport = asyncHandler(async (req, res) => {
   }
 
   const payload = {
+    bookingId: req.body.bookingId,
     reportedUserId: req.body.reportedUserId,
     category: req.body.category,
     types: types || [],

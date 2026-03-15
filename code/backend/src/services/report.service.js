@@ -7,6 +7,7 @@ const MAX_MEDIA = 3;
 
 const baseSelect = {
   id: true,
+  bookingId: true,
   reporterId: true,
   reportedUserId: true,
   reporterRole: true,
@@ -23,10 +24,11 @@ const userBrief = { id: true, firstName: true, lastName: true, username: true, s
 const userFull = { ...userBrief, email: true, phoneNumber: true };
 
 const buildWhere = (opts = {}) => {
-  const { q, status, reporterId, reportedUserId, reporterRole, category, createdFrom, createdTo } = opts;
+  const { q, status, bookingId, reporterId, reportedUserId, reporterRole, category, createdFrom, createdTo } = opts;
 
   return {
     ...(status && { status }),
+    ...(bookingId && { bookingId }),
     ...(reporterId && { reporterId }),
     ...(reportedUserId && { reportedUserId }),
     ...(reporterRole && { reporterRole }),
@@ -82,6 +84,37 @@ const createReport = async (data, reporterId, reporterRole, files) => {
   // Validate category matches role
   validateCategory(reporterRole, data.category);
 
+  // Verify booking exists and enforce strict participant matching
+  const booking = await prisma.booking.findUnique({
+    where: { id: data.bookingId },
+    select: {
+      id: true,
+      passengerId: true,
+      route: { select: { driverId: true } },
+    },
+  });
+  if (!booking) {
+    throw new ApiError(404, 'Booking not found');
+  }
+
+  if (reporterRole === 'PASSENGER') {
+    if (booking.passengerId !== reporterId) {
+      throw new ApiError(400, 'Booking does not belong to this passenger');
+    }
+    if (booking.route.driverId !== data.reportedUserId) {
+      throw new ApiError(400, 'Reported user must be the booking driver');
+    }
+  }
+
+  if (reporterRole === 'DRIVER') {
+    if (booking.route.driverId !== reporterId) {
+      throw new ApiError(400, 'Booking route does not belong to this driver');
+    }
+    if (booking.passengerId !== data.reportedUserId) {
+      throw new ApiError(400, 'Reported user must be the booking passenger');
+    }
+  }
+
   // Verify reported user exists
   const reportedUser = await prisma.user.findUnique({
     where: { id: data.reportedUserId },
@@ -105,6 +138,7 @@ const createReport = async (data, reporterId, reporterRole, files) => {
   const report = await prisma.$transaction(async (tx) => {
     const created = await tx.report.create({
       data: {
+        bookingId: data.bookingId,
         reporterId,
         reportedUserId: data.reportedUserId,
         reporterRole,
@@ -130,6 +164,7 @@ const createReport = async (data, reporterId, reporterRole, files) => {
         metadata: {
           kind: 'REPORT_CREATED',
           reportId: created.id,
+          bookingId: data.bookingId,
           reportedUserId: data.reportedUserId,
         },
       },
