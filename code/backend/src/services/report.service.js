@@ -261,6 +261,57 @@ const adminGetReportById = async (id) => {
   return report;
 };
 
+
+const statusTextByCategory = {
+  safety: {
+    PENDING: 'รอดำเนินการ',
+    ON_PROGRESS: 'กำลังดำเนินการ',
+    COMPLETED: 'ตักเตือนและลงโทษแล้ว',
+    REJECTED: 'ไม่พบความผิด',
+  },
+
+  driverBehavior: {
+    PENDING: 'รอดำเนินการ',
+    ON_PROGRESS: 'กำลังดำเนินการ',
+    COMPLETED: 'ตักเตือนและลงโทษแล้ว',
+    REJECTED: 'ไม่พบความผิด',
+  },
+
+  passengerBehavior: {
+    PENDING: 'รอดำเนินการ',
+    ON_PROGRESS: 'กำลังดำเนินการ',
+    COMPLETED: 'ตักเตือนและลงโทษแล้ว',
+    REJECTED: 'ไม่พบความผิด',
+  },
+
+  lostItem: {
+    PENDING: 'รอดำเนินการ',
+    ON_PROGRESS: 'อยู่ระหว่างการติดต่อ',
+    COMPLETED: 'แจ้งไปที่ผู้โดยสารเรียบร้อย',
+    REJECTED: 'ไม่พบของ',
+  },
+
+  vehicle: {
+    PENDING: 'รอการดำเนินการ',
+    ON_PROGRESS: 'อยู่ระหว่างสอบสวน',
+    COMPLETED: 'แจ้งให้แก้ไขแล้ว',
+    REJECTED: 'ไม่พบความผิด',
+  },
+
+  damaged: {
+    PENDING: 'รอการดำเนินการ',
+    ON_PROGRESS: 'อยู่ระหว่างสอบสวน',
+    COMPLETED: 'แจ้งให้แก้ไขแล้ว',
+    REJECTED: 'ไม่พบความผิด',
+  },
+
+  other: {
+    PENDING: 'รอดำเนินการ',
+    ON_PROGRESS: 'กำลังดำเนินการ',
+    COMPLETED: 'ดำเนินการเสร็จสิ้น',
+    REJECTED: 'ไม่พบความผิด',
+  }
+};
 /**
  * Admin: update report status (pending / onProgress / completed / rejected)
  */
@@ -280,13 +331,8 @@ const adminUpdateReportStatus = async (id, status, notificationBody) => {
     });
 
     // Send notification to reporter about status change
-    const statusTextMap = {
-      PENDING: 'รอดำเนินการ',
-      ON_PROGRESS: 'กำลังดำเนินการ',
-      COMPLETED: 'ดำเนินการเรียบร้อย',
-      REJECTED: 'ปฏิเสธ',
-    };
-    const statusText = statusTextMap[status] || status;
+const categoryMap = statusTextByCategory[report.category] || {};
+const statusText = categoryMap[status] || status;
 
     const defaultBodyTextMap = {
       PENDING: 'รายงานของคุณถูกตั้งสถานะเป็นรอดำเนินการ',

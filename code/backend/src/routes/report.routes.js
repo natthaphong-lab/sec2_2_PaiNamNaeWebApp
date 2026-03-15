@@ -5,6 +5,10 @@ const upload = require('../middlewares/upload.middleware');
 const reportController = require('../controllers/report.controller');
 const { adminGetReportsByGroup } = require('../controllers/report.controller')
 
+
+const reportService = require('../services/report.service')
+const prisma = require('../utils/prisma')
+
 const {
   createReportSchema,
   idParamSchema,
@@ -21,36 +25,51 @@ router.get(
   adminGetReportsByGroup
 );
 
-router.patch('/admin/group/:bookingId/:category/status', protect,requireAdmin,async (req, res) => {
-  try {
+
+router.patch(
+  '/admin/group/:bookingId/:category/status',
+  protect,
+  requireAdmin,
+  async (req, res) => {
+
     const { bookingId, category } = req.params
     const { status, notificationBody } = req.body
 
-    const updated = await prisma.report.updateMany({
-      where: {
-        bookingId,
-        category
-      },
-      data: {
-        status,
-        updatedAt: new Date()
+    try {
+
+      const reports = await prisma.report.findMany({
+        where: {
+          bookingId,
+          category
+        }
+      })
+
+      const results = []
+
+      for (const report of reports) {
+        const updated = await reportService.adminUpdateReportStatus(
+          report.id,
+          status,
+          notificationBody
+        )
+        results.push(updated)
       }
-    })
 
-    res.json({
-      success: true,
-      message: 'Reports updated successfully',
-      data: updated
-    })
+      res.json({
+        success: true,
+        message: 'Reports updated successfully',
+        data: results
+      })
 
-  } catch (error) {
-    console.error(error)
-    res.status(500).json({
-      success: false,
-      message: 'Failed to update reports'
-    })
+    } catch (err) {
+      console.error(err)
+      res.status(500).json({
+        success: false,
+        message: 'Failed to update reports'
+      })
+    }
   }
-})
+)
 
 // --- Admin Routes ---
 // GET /reports/admin
