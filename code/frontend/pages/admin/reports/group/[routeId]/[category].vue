@@ -341,7 +341,7 @@ const route = useRoute()
 const config = useRuntimeConfig()
 const token = useCookie('token').value
 
-const bookingId = route.params.bookingId as string
+const routeId = route.params.routeId as string
 const category = route.params.category as string
 const report = ref<Report[]>([])
 const isLoading = ref(true)
@@ -351,7 +351,7 @@ const loadError = ref('')
 onMounted(async () => {
   try {
     const res = await $fetch<ApiResponse<Report[]>>(
-  `/reports/admin/group/${bookingId}/${category}`,
+  `/reports/admin/group/${routeId}/${category}`,
   {
     baseURL: config.public.apiBase,
     headers: {
@@ -570,7 +570,7 @@ async function patchStatus(status: ReportStatus) {
 
   try {
     await $fetch(
-      `/reports/admin/group/${bookingId}/${category}/status`,
+  `/reports/admin/group/${routeId}/${category}/status`,
       {
         baseURL: config.public.apiBase,
         method: 'PATCH',

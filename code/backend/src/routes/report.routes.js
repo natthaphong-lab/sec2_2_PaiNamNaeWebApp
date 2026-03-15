@@ -19,56 +19,18 @@ const {
 const router = express.Router();
 
 router.get(
-  "/admin/group/:bookingId/:category",
+  "/admin/group/:routeId/:category",
   protect,
   requireAdmin,
   adminGetReportsByGroup
 );
 
-
 router.patch(
-  '/admin/group/:bookingId/:category/status',
+  "/admin/group/:routeId/:category/status",
   protect,
   requireAdmin,
-  async (req, res) => {
+  reportController.adminUpdateReportStatus
 
-    const { bookingId, category } = req.params
-    const { status, notificationBody } = req.body
-
-    try {
-
-      const reports = await prisma.report.findMany({
-        where: {
-          bookingId,
-          category
-        }
-      })
-
-      const results = []
-
-      for (const report of reports) {
-        const updated = await reportService.adminUpdateReportStatus(
-          report.id,
-          status,
-          notificationBody
-        )
-        results.push(updated)
-      }
-
-      res.json({
-        success: true,
-        message: 'Reports updated successfully',
-        data: results
-      })
-
-    } catch (err) {
-      console.error(err)
-      res.status(500).json({
-        success: false,
-        message: 'Failed to update reports'
-      })
-    }
-  }
 )
 
 // --- Admin Routes ---

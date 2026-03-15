@@ -56,27 +56,26 @@ const adminGetReportById = asyncHandler(async (req, res) => {
   const data = await reportService.adminGetReportById(req.params.id);
   res.status(200).json({ success: true, message: 'Report retrieved successfully', data });
 });
+const adminUpdateReportStatus = async (req, res, next) => {
+  try {
+    const { routeId, category } = req.params
+    const { status, notificationBody } = req.body
 
-const adminUpdateReportStatus = asyncHandler(async (req, res) => {
+    const result = await reportService.adminUpdateReportStatus(
+      routeId,
+      category,
+      status,
+      notificationBody
+    )
 
-  console.log("PARAMS:", req.params)
-  console.log("BODY:", req.body)
-
-  const { id } = req.params;
-  const { status, notificationBody } = req.body;
-
-  console.log("ID:", id)
-  console.log("STATUS:", status)
-  console.log("NOTI:", notificationBody)
-
-  const data = await reportService.adminUpdateReportStatus(id, status, notificationBody);
-
-  res.status(200).json({
-    success: true,
-    message: `Report status updated to ${status}`,
-    data
-  });
-});
+    res.json({
+      success: true,
+      data: result
+    })
+  } catch (err) {
+    next(err)
+  }
+}
 
 const adminDeleteReport = asyncHandler(async (req, res) => {
   const data = await reportService.adminDeleteReport(req.params.id);
@@ -86,12 +85,16 @@ const adminDeleteReport = asyncHandler(async (req, res) => {
 
 const adminGetReportsByGroup = asyncHandler(async (req, res) => {
 
-  const { bookingId, category } = req.params;
+  const { routeId, category } = req.params;
 
   const reports = await prisma.report.findMany({
     where: {
-      bookingId,
-      category
+      category,
+      booking: {
+        route: {
+          id: routeId
+        }
+      }
     },
     include: {
       reporter: {
@@ -129,7 +132,6 @@ const adminGetReportsByGroup = asyncHandler(async (req, res) => {
   });
 
 });
-
 
 
 module.exports = {
