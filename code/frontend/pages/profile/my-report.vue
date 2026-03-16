@@ -199,46 +199,39 @@ class="px-3 py-1 text-xs font-medium rounded-full border"
     <!-- เส้น timeline -->
     <div class="absolute left-2 top-0 bottom-0 w-0.5 bg-gray-200"></div>
 
-    <div class="space-y-6">
+<div class="space-y-6">
 
-      <div class="flex items-start gap-3">
-        <div :class="timelineDot(r.status,'PENDING')"></div>
-        <div>
-<div class="font-medium">
-  {{ timelineText(r.category,'step1') }}
-</div>
-        </div>
-      </div>
-
-      <div class="flex items-start gap-3">
-        <div :class="timelineDot(r.status,'ON_PROGRESS')"></div>
-        <div>
-<div class="font-medium">
-  {{ timelineText(r.category,'step2') }}
-</div>
-
-        </div>
-      </div>
-
-<div v-if="r.status === 'COMPLETED'" class="flex items-start gap-3">
-  <div :class="timelineDot(r.status,'COMPLETED')"></div>
+<!-- STEP 1 -->
+<div class="flex items-start gap-3">
+  <div :class="timelineDot(r.status,'PENDING')"></div>
   <div>
     <div class="font-medium">
-      {{ timelineText(r.category,'step3') }}
+      {{ timelineText(r.category,'step1') }}
     </div>
   </div>
 </div>
 
-<div v-if="r.status === 'REJECTED'" class="flex items-start gap-3">
-  <div :class="timelineDot(r.status,'REJECTED')"></div>
+<!-- STEP 2 -->
+<div class="flex items-start gap-3">
+  <div :class="timelineDot(r.status,'ON_PROGRESS')"></div>
   <div>
     <div class="font-medium">
-      {{ timelineText(r.category,'step4') }}
+      {{ timelineText(r.category,'step2') }}
     </div>
   </div>
 </div>
 
+<!-- STEP 3 -->
+<div class="flex items-start gap-3">
+  <div :class="timelineDot(r.status,'FINAL')"></div>
+  <div>
+    <div class="font-medium">
+      {{ finalTimelineText(r) }}
     </div>
+  </div>
+</div>
+
+</div>
 
   </div>
 
@@ -545,6 +538,8 @@ function stepClass(currentStatus, step) {
 
 function timelineDot(currentStatus, step) {
 
+  const base = "w-4 h-4 rounded-full mt-1 z-10"
+
   const order = {
     PENDING: 1,
     ON_PROGRESS: 2,
@@ -552,18 +547,27 @@ function timelineDot(currentStatus, step) {
     REJECTED: 3
   }
 
-  const base = "w-4 h-4 rounded-full mt-1 z-10"
+  // STEP3 (FINAL)
+  if (step === "FINAL") {
 
-  if (currentStatus === step) {
+    if (currentStatus === "COMPLETED")
+      return `${base} bg-green-500`
+
     if (currentStatus === "REJECTED")
       return `${base} bg-red-500`
 
-    return `${base} bg-blue-500`
+    return `${base} bg-gray-300`
   }
 
+  // step ปัจจุบัน
+  if (currentStatus === step)
+    return `${base} bg-blue-500`
+
+  // step ที่ผ่านมาแล้ว
   if (order[currentStatus] > order[step])
     return `${base} bg-green-500`
 
+  // step ที่ยังไม่ถึง
   return `${base} bg-gray-300`
 }
 
@@ -621,6 +625,15 @@ const timelineTextMap = {
 
 function timelineText(category, step) {
   return timelineTextMap[category]?.[step] || '-'
+}
+
+function finalTimelineText(r) {
+
+  if (r.status === "REJECTED") {
+    return timelineTextMap[r.category]?.step4 || "ไม่พบความผิด"
+  }
+
+  return timelineTextMap[r.category]?.step3 || "ดำเนินการเสร็จสิ้น"
 }
 
 </script>
