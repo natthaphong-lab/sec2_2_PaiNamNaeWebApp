@@ -37,7 +37,7 @@
 - รูปภาพ วิดีโอและคลิปเสียงประกอบการรายงาน  
 - วันและเวลาที่แจ้งรายงาน  
 
-![หน้ารายละเอียดการรายงาน](./image/Admin_report/Admin_Report_Detail.png)
+![หน้ารายละเอียดการรายงาน](../../image/Admin_report/Admin_Report_Detail.png)
 
 ---
 
