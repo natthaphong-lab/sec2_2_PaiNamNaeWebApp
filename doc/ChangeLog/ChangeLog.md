@@ -351,3 +351,20 @@ WHERE status = 'APPROVED';
 - [ ] เพิ่มการ rate limiting สำหรับ POST /reports
 - [ ] เพิ่มการ compress media ก่อนอัปโหลด
 - [ ] เพิ่มการแจ้งเตือนถึงผู้ถูกรายงานเมื่อรายงานถูก COMPLETED
+
+
+## [Sprint 3] - 16-03-2026
+
+### Added
+
+- เพิ่มฟิลด์ `bookingId` ในโมเดล `Report` (เชื่อมโยงกับ `Booking`) และรองรับใน API/validation/Service
+- เพิ่มฟีเจอร์กรองรายงานตามหมวดหมู่ในหน้า **My Report** (frontend)
+- เพิ่มไทม์ไลน์สถานะในหน้า **My Report** (Step 1 / Step 2 / Final) พร้อมปรับปรุงการแสดงสถานะสุดท้าย
+- ปรับปรุงสีการแจ้งเตือน (notification) ให้เห็นสถานะชัดเจนยิ่งขึ้น
+- ปรับปรุงการอัปโหลดไฟล์ (ตรวจสอบชนิดและขนาดไฟล์) และเพิ่ม preview สำหรับรูป วิดีโอ และเสียง
+
+### Changed
+
+- ปรับปรุง `adminUpdateReportStatus` ให้รองรับการเปลี่ยนสถานะเป็นกลุ่ม (group by `routeId` + `category`) และส่งแจ้งเตือนแบบ localized
+- เพิ่มชุดข้อความสถานะตามหมวดหมู่ใน `report.service.js` (localized status texts)
+- ปรับปรุงการจัดการอัปโหลดไฟล์ใน frontend เพื่อรองรับ validation และ preview ใหม่

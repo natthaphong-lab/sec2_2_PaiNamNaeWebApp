@@ -15,7 +15,7 @@ const category = computed(() => route.query.category)
 const componentMap = {
   safety: SafetyForm,
   passengerBehavior: passengerBehaviorForm,
-  vehicle: vehicleForm,
+  damaged: vehicleForm,
   lostItem: lostFoundForm,
   other: otherForm
 }
