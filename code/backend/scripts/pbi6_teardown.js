@@ -18,18 +18,28 @@ async function safeDelete(promise) {
 }
 
 async function main() {
-  const reportId = getArg('--reportId');
-  const testUserId = getArg('--testUserId');
+  const passenger1Id = getArg('--passenger1Id');
+  const passenger2Id = getArg('--passenger2Id');
+  const driverId = getArg('--driverId');
+  const reporterIds = [passenger1Id, passenger2Id].filter(Boolean);
 
-  if (reportId) {
-    await safeDelete(prisma.report.delete({ where: { id: reportId } }));
+  if (reporterIds.length > 0) {
+    await safeDelete(prisma.report.deleteMany({ where: { reporterId: { in: reporterIds } } }));
   }
 
-  if (testUserId) {
-    await safeDelete(prisma.user.delete({ where: { id: testUserId } }));
+  if (passenger1Id) {
+    await safeDelete(prisma.user.delete({ where: { id: passenger1Id } }));
   }
 
-  process.stdout.write(JSON.stringify({ ok: true, reportId, testUserId }));
+  if (passenger2Id) {
+    await safeDelete(prisma.user.delete({ where: { id: passenger2Id } }));
+  }
+
+  if (driverId) {
+    await safeDelete(prisma.user.delete({ where: { id: driverId } }));
+  }
+
+  process.stdout.write(JSON.stringify({ ok: true, passenger1Id, passenger2Id, driverId }));
 }
 
 main()
