@@ -212,39 +212,61 @@ const getMyReportById = async (id, userId) => {
  * Admin: list all reports with pagination & filters
  */
 const listReportsAdmin = async (opts = {}) => {
-  const {
-    page = 1,
-    limit = 20,
-    sortBy = 'createdAt',
-    sortOrder = 'desc',
-    ...filters
-  } = opts;
+  const { page = 1, limit = 20 } = opts
+  const skip = (page - 1) * limit
 
-  const where = buildWhere(filters);
-  const skip = (page - 1) * limit;
-  const take = limit;
+  const groups = await prisma.$queryRaw`
+    SELECT 
+      b."routeId",
+      r."category",
+      COUNT(r.id) as "reportCount",
+      MAX(r."createdAt") as "latestReport"
+    FROM "Report" r
+    JOIN "Booking" b ON r."bookingId" = b.id
+    GROUP BY b."routeId", r."category"
+    ORDER BY "latestReport" DESC
+    LIMIT ${limit}
+    OFFSET ${skip}
+  `
 
-  const [total, data] = await prisma.$transaction([
-    prisma.report.count({ where }),
-    prisma.report.findMany({
-      where,
-      orderBy: { [sortBy]: sortOrder },
-      skip,
-      take,
-      select: {
-        ...baseSelect,
-        reporter: { select: userFull },
-        reportedUser: { select: userFull },
-      },
-    }),
-  ]);
+  const data = (await Promise.all(
+    groups.map(async (g) => {
+      const report = await prisma.report.findFirst({
+        where: {
+          category: g.category,
+          booking: { routeId: g.routeId }
+        },
+        orderBy: { createdAt: 'desc' },
+        select: {
+          ...baseSelect,
+          reporter: { select: userFull },
+          reportedUser: { select: userFull },
+          booking: { select: { routeId: true } }
+        }
+      })
+
+      if (!report) return null
+
+      const { booking, ...rest } = report
+
+      return {
+        ...rest,
+        routeId: booking?.routeId,
+        reportCount: Number(g.reportCount)
+      }
+    })
+  )).filter(Boolean)
 
   return {
     data,
-    pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
-  };
-};
-
+    pagination: {
+      page,
+      limit,
+      total: data.length,
+      totalPages: Math.ceil(data.length / limit)
+    }
+  }
+}
 /**
  * Admin: get report by ID
  */
@@ -261,60 +283,134 @@ const adminGetReportById = async (id) => {
   return report;
 };
 
+
+const statusTextByCategory = {
+  safety: {
+    PENDING: 'รอดำเนินการ',
+    ON_PROGRESS: 'กำลังดำเนินการ',
+    COMPLETED: 'ตักเตือนและลงโทษแล้ว',
+    REJECTED: 'ไม่พบความผิด',
+  },
+
+  driverBehavior: {
+    PENDING: 'รอดำเนินการ',
+    ON_PROGRESS: 'กำลังดำเนินการ',
+    COMPLETED: 'ตักเตือนและลงโทษแล้ว',
+    REJECTED: 'ไม่พบความผิด',
+  },
+
+  passengerBehavior: {
+    PENDING: 'รอดำเนินการ',
+    ON_PROGRESS: 'กำลังดำเนินการ',
+    COMPLETED: 'ตักเตือนและลงโทษแล้ว',
+    REJECTED: 'ไม่พบความผิด',
+  },
+
+  lostItem: {
+    PENDING: 'รอดำเนินการ',
+    ON_PROGRESS: 'อยู่ระหว่างการติดต่อ',
+    COMPLETED: 'แจ้งไปที่ผู้โดยสารเรียบร้อย',
+    REJECTED: 'ไม่พบของ',
+  },
+
+  vehicle: {
+    PENDING: 'รอการดำเนินการ',
+    ON_PROGRESS: 'อยู่ระหว่างสอบสวน',
+    COMPLETED: 'แจ้งให้แก้ไขแล้ว',
+    REJECTED: 'ไม่พบความผิด',
+  },
+
+  damaged: {
+    PENDING: 'รอการดำเนินการ',
+    ON_PROGRESS: 'อยู่ระหว่างสอบสวน',
+    COMPLETED: 'แจ้งให้แก้ไขแล้ว',
+    REJECTED: 'ไม่พบความผิด',
+  },
+
+  other: {
+    PENDING: 'รอดำเนินการ',
+    ON_PROGRESS: 'กำลังดำเนินการ',
+    COMPLETED: 'ดำเนินการเสร็จสิ้น',
+    REJECTED: 'ไม่พบความผิด',
+  }
+};
 /**
  * Admin: update report status (pending / onProgress / completed / rejected)
  */
-const adminUpdateReportStatus = async (id, status, notificationBody) => {
-  const report = await prisma.report.findUnique({ where: { id } });
-  if (!report) throw new ApiError(404, 'Report not found');
+const adminUpdateReportStatus = async (routeId, category, status, notificationBody) => {
+
+  const reports = await prisma.report.findMany({
+    where: {
+      category,
+      booking: {
+        route: { id: routeId }
+      }
+    },
+    select: {
+      id: true,
+      reporterId: true
+    }
+  })
+
+  if (!reports.length) {
+    throw new ApiError(404, "Report group not found")
+  }
 
   const updated = await prisma.$transaction(async (tx) => {
-    const updatedReport = await tx.report.update({
-      where: { id },
-      data: { status },
-      select: {
-        ...baseSelect,
-        reporter: { select: userFull },
-        reportedUser: { select: userFull },
-      },
-    });
 
-    // Send notification to reporter about status change
+    await tx.report.updateMany({
+      where: {
+        category,
+        booking: {
+          route: {
+            id: routeId
+          }
+        }
+      },
+      data: {
+        status
+      }
+    })
+
     const statusTextMap = {
       PENDING: 'รอดำเนินการ',
       ON_PROGRESS: 'กำลังดำเนินการ',
       COMPLETED: 'ดำเนินการเรียบร้อย',
-      REJECTED: 'ปฏิเสธ',
-    };
-    const statusText = statusTextMap[status] || status;
+      REJECTED: 'ปฏิเสธ'
+    }
 
     const defaultBodyTextMap = {
       PENDING: 'รายงานของคุณถูกตั้งสถานะเป็นรอดำเนินการ',
-      ON_PROGRESS: 'ทีมงานกำลังตรวจสอบรายงานของคุณ จะแจ้งผลให้ทราบเร็วๆ นี้',
-      COMPLETED: 'ทางทีมงานได้ตรวจสอบและดำเนินการตามแนวทางของระบบแล้ว ขอบคุณที่แจ้งข้อมูลให้เราทราบ',
-      REJECTED: 'ขอขอบคุณสำหรับการรายงาน หลังจากตรวจสอบแล้ว ทีมงานไม่พบการกระทำที่เข้าข่ายการละเมิดหรือผิดกฎของระบบ จึงขอปฏิเสธการรายงานในครั้งนี้',
-    };
-    const bodyText = notificationBody || defaultBodyTextMap[status] || '';
+      ON_PROGRESS: 'ทีมงานกำลังตรวจสอบรายงานของคุณ',
+      COMPLETED: 'ทีมงานได้ดำเนินการเรียบร้อยแล้ว',
+      REJECTED: 'หลังจากตรวจสอบแล้วไม่พบการกระทำที่ผิดกฎ'
+    }
 
-    await tx.notification.create({
-      data: {
-        userId: report.reporterId,
-        type: 'REPORT',
-        title: `สถานะรายงานของคุณ: ${statusText}`,
-        body: bodyText,
-        metadata: {
-          kind: 'REPORT_STATUS_UPDATED',
-          reportId: id,
-          status,
-        },
-      },
-    });
+    const statusText = statusTextMap[status] || status
+    const bodyText = notificationBody || defaultBodyTextMap[status] || ''
 
-    return updatedReport;
-  });
+    for (const report of reports) {
+      await tx.notification.create({
+        data: {
+          userId: report.reporterId,
+          type: 'REPORT',
+          title: `สถานะรายงานของคุณ: ${statusText}`,
+          body: bodyText,
+          metadata: {
+            kind: 'REPORT_STATUS_UPDATED',
+            reportId: report.id,
+            routeId,
+            status
+          }
+        }
+      })
+    }
 
-  return updated;
-};
+    return { updated: reports.length }
+  })
+
+  return updated
+}
 
 /**
  * Admin: delete a report

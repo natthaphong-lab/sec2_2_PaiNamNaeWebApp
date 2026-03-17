@@ -27,69 +27,86 @@
             <div class="text-sm text-gray-700">สถานะปัจจุบัน:</div>
               <span
                 class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full"
-                :class="statusClass(report?.status)"
+                :class="statusClass(report[0]?.status)"
               >
               <i class="fa-solid fa-circle mr-1 text-[8px]"></i>
-                {{ statusReportTH(report?.status, report?.category , report?.reporterRole) }}
+                {{ statusReportTH(report[0]?.status, report[0]?.category , report[0]?.reporterRole) }}
               </span>
               <div class="flex gap-2 ml-auto">
-                <!-- PENDING -->
-                <button
-                  class="px-3 py-2 border rounded-md hover:bg-gray-50 disabled:opacity-50"
-                  :disabled="
-                              isPatchingStatus ||
-                              !report ||
-                              report.status !== 'PENDING' ||
-                              report.status === 'PENDING'
-                            "
-                  @click="patchStatus('PENDING')"
-                >
-                  <i
-                    v-if="isPatchingStatus && targetStatus === 'PENDING'"
-                    class="mr-1 fa-solid fa-spinner fa-spin"
-                  ></i>
-                  {{ statusReportTH("PENDING", report?.category , report?.reporterRole) }}
-                </button>
 
-                <!-- ON_PROGRESS -->
-                <button
-                  class="px-3 py-2 text-blue-700 border border-blue-300 rounded-md hover:bg-blue-50 disabled:opacity-50"
-                  :disabled="isPatchingStatus || !report || report.status === 'ON_PROGRESS' || report.status === 'COMPLETED' || report.status === 'REJECTED'"
-                  @click="patchStatus('ON_PROGRESS')"
-                >
-                  <i
-                    v-if="isPatchingStatus && targetStatus === 'ON_PROGRESS'"
-                    class="mr-1 fa-solid fa-spinner fa-spin"
-                  ></i>
-                  {{ statusReportTH("ON_PROGRESS", report?.category , report?.reporterRole) }}
-                </button>
+<!-- PENDING -->
+<button
+  class="px-3 py-2 border rounded-md hover:bg-gray-50 disabled:opacity-50"
+  :disabled="
+    isPatchingStatus ||
+    !report.length ||
+    report[0]?.status === 'PENDING'
+  "
+  @click="patchStatus('PENDING')"
+>
+  <i
+    v-if="isPatchingStatus && targetStatus === 'PENDING'"
+    class="mr-1 fa-solid fa-spinner fa-spin"
+  ></i>
+  {{ statusReportTH("PENDING", report[0]?.category , report[0]?.reporterRole) }}
+</button>
 
-                <!-- COMPLETED -->
-                <button
-                  class="px-3 py-2 text-green-700 border border-green-300 rounded-md hover:bg-green-50 disabled:opacity-50"
-                  :disabled="isPatchingStatus || !report || report.status === 'COMPLETED' || report.status === 'REJECTED'"
-                  @click="patchStatus('COMPLETED')"
-                >
-                  <i
-                    v-if="isPatchingStatus && targetStatus === 'COMPLETED'"
-                    class="mr-1 fa-solid fa-spinner fa-spin"
-                  ></i>
-                  {{ statusReportTH("COMPLETED", report?.category , report?.reporterRole) }}
-                </button>
+<!-- ON_PROGRESS -->
+<button
+  class="px-3 py-2 text-blue-700 border border-blue-300 rounded-md hover:bg-blue-50 disabled:opacity-50"
+  :disabled="
+    isPatchingStatus ||
+    !report.length ||
+    report[0]?.status === 'ON_PROGRESS' ||
+    report[0]?.status === 'COMPLETED' ||
+    report[0]?.status === 'REJECTED'
+  "
+  @click="patchStatus('ON_PROGRESS')"
+>
+  <i
+    v-if="isPatchingStatus && targetStatus === 'ON_PROGRESS'"
+    class="mr-1 fa-solid fa-spinner fa-spin"
+  ></i>
+  {{ statusReportTH("ON_PROGRESS", report[0]?.category , report[0]?.reporterRole) }}
+</button>
 
-                <!-- REJECTED -->
-                <button
-                  class="px-3 py-2 text-red-700 border border-red-300 rounded-md hover:bg-red-50 disabled:opacity-50"
-                  :disabled="isPatchingStatus || !report || report.status === 'REJECTED' || report.status === 'COMPLETED'"
-                  @click="patchStatus('REJECTED')"
-                >
-                  <i
-                    v-if="isPatchingStatus && targetStatus === 'REJECTED'"
-                    class="mr-1 fa-solid fa-spinner fa-spin"
-                  ></i>
-                  {{ statusReportTH("REJECTED", report?.category , report?.reporterRole) }}
-                </button>
-                </div>
+<!-- COMPLETED -->
+<button
+  class="px-3 py-2 text-green-700 border border-green-300 rounded-md hover:bg-green-50 disabled:opacity-50"
+  :disabled="
+    isPatchingStatus ||
+    !report.length ||
+    report[0]?.status === 'COMPLETED' ||
+    report[0]?.status === 'REJECTED'
+  "
+  @click="patchStatus('COMPLETED')"
+>
+  <i
+    v-if="isPatchingStatus && targetStatus === 'COMPLETED'"
+    class="mr-1 fa-solid fa-spinner fa-spin"
+  ></i>
+  {{ statusReportTH("COMPLETED", report[0]?.category , report[0]?.reporterRole) }}
+</button>
+
+<!-- REJECTED -->
+<button
+  class="px-3 py-2 text-red-700 border border-red-300 rounded-md hover:bg-red-50 disabled:opacity-50"
+  :disabled="
+    isPatchingStatus ||
+    !report.length ||
+    report[0]?.status === 'REJECTED' ||
+    report[0]?.status === 'COMPLETED'
+  "
+  @click="patchStatus('REJECTED')"
+>
+  <i
+    v-if="isPatchingStatus && targetStatus === 'REJECTED'"
+    class="mr-1 fa-solid fa-spinner fa-spin"
+  ></i>
+  {{ statusReportTH("REJECTED", report[0]?.category , report[0]?.reporterRole) }}
+</button>
+
+</div>
               </div>
 
              <!-- Custom notification body -->
@@ -130,29 +147,37 @@
               <div v-if="isLoading" class="p-8 text-center text-gray-500">กำลังโหลดข้อมูล...</div>
               <div v-else-if="loadError" class="p-8 text-center text-red-600">{{ loadError }}</div>
 
-              <div v-else-if="report" class="grid grid-cols-1 gap-6 p-4 sm:p-6 text-[15px]">
-                <div class="w-full max-w-[80rem] mx-auto space-y-6">
+              <div v-else-if="report.length" class="space-y-8 p-4 sm:p-6">
+                <div
+                  v-for="item in report"
+                  :key="item.id"
+                  class="grid grid-cols-1 gap-6 text-[15px] border-b pb-6"
+                >
                   <!-- ผู้ใช้ -->
                   <section>
-                    <h3 class="mb-3 text-sm font-semibold text-gray-700">ข้อมูลผู้แจ้งรายงาน</h3>
+                    <h3 class="mb-3 text-sm font-semibold text-gray-700">
+                      ข้อมูลผู้แจ้งรายงาน
+                    </h3>
+
                     <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
                       <InfoBox label="ชื่อ-นามสกุล">
-                        {{ (report.reporter?.firstName || '-') + ' ' + (report.reporter?.lastName || '') }}
+                        {{ (item.reporter?.firstName || '-') + ' ' + (item.reporter?.lastName || '') }}
                       </InfoBox>
 
                       <InfoBox label="อีเมล">
-                        {{ report.reporter?.email || '-' }}
+                        {{ item.reporter?.email || '-' }}
                       </InfoBox>
 
-                      <InfoBox label="ชื่อผู้ใช้ (username)">
-                        {{ report.reporter?.username || '-' }}
+                      <InfoBox label="ชื่อผู้ใช้">
+                        {{ item.reporter?.username || '-' }}
                       </InfoBox>
 
-                      <InfoBox label="เบอร์โทรศัพท์">
-                        {{ report.reporter?.phoneNumber || '-' }}
+                      <InfoBox label="เบอร์โทร">
+                        {{ item.reporter?.phoneNumber || '-' }}
                       </InfoBox>
+
                       <InfoBox label="บทบาท">
-                        {{ report.reporterRole === 'DRIVER' ? 'ไดรเวอร์' : 'ผู้โดยสาร' }}
+                        {{ item.reporterRole === 'DRIVER' ? 'ไดรเวอร์' : 'ผู้โดยสาร' }}
                       </InfoBox>
                     </div>
                   </section>
@@ -161,22 +186,22 @@
                     <h3 class="mb-3 text-sm font-semibold text-gray-700">ข้อมูลผู้ถูกรายงาน</h3>
                     <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
                       <InfoBox label="ชื่อ-นามสกุล">
-                        {{ (report.reportedUser?.firstName || '-') + ' ' + (report.reportedUser?.lastName || '') }}
+                        {{ (item.reportedUser?.firstName || '-') + ' ' + (item.reportedUser?.lastName || '') }}
                       </InfoBox>
 
                       <InfoBox label="อีเมล">
-                        {{ report.reportedUser?.email || '-' }}
+                        {{ item.reportedUser?.email || '-' }}
                       </InfoBox>
 
                       <InfoBox label="ชื่อผู้ใช้ (username)">
-                        {{ report.reportedUser?.username || '-' }}
+                        {{ item.reportedUser?.username || '-' }}
                       </InfoBox>
 
                       <InfoBox label="เบอร์โทรศัพท์">
-                        {{ report.reportedUser?.phoneNumber || '-' }}
+                        {{ item.reportedUser?.phoneNumber || '-' }}
                       </InfoBox>
                       <InfoBox label="บทบาท">
-                        {{ report.reporterRole === 'DRIVER' ? 'ผู้โดยสาร' : 'ไดรเวอร์'}}
+                        {{ item.reporterRole === 'DRIVER' ? 'ผู้โดยสาร' : 'ไดรเวอร์'}}
                       </InfoBox>
                     </div>
                   </section>
@@ -185,18 +210,18 @@
                     <h3 class="mb-3 text-sm font-semibold text-gray-700">รายละเอียดการรายงาน</h3>
                     <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
                       <InfoBox label="ประเภท">
-                        {{ reportCategoryTH(report?.category) }}
-                        <span v-if="report?.types?.length">
-                          : {{ report.types.map(type => mapReportType(type)).join(', ') }}
+                        {{ reportCategoryTH(item?.category) }}
+                        <span v-if="item?.types?.length">
+                          : {{ item.types.map(type => mapReportType(type)).join(', ') }}
                         </span>
                       </InfoBox>
 
                       <InfoBox label="รายละเอียด">
-                        {{ report.description || '-' }}
+                        {{ item.description || '-' }}
                       </InfoBox>
 
                       <InfoBox label="วันเวลาที่แจ้ง">
-                        {{formatDate(report.createdAt)}}
+                        {{formatDate(item.createdAt)}}
                       </InfoBox>
                       <!-- <InfoBox label="วันเวลาที่อัปเดต">
                         {{formatDate(report.updatedAt)}}
@@ -204,12 +229,12 @@
                       
  <!--แก้ไขส่วนแสดงสื่อ-->
           <InfoBox label="ไฟล์แนบ" class="col-span-1 md:col-span-3">
-             <div v-if="report.mediaUrls?.length">
+             <div v-if="item.mediaUrls?.length">
                       <div
                       class="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
                         >
                           <div
-                          v-for="(media, index) in report.mediaUrls"
+                          v-for="(media, index) in item.mediaUrls"
                           :key="index"
                             >
                         <div class="w-full aspect-video bg-gray-100 rounded-xl overflow-hidden border shadow-sm flex items-center justify-center">
@@ -329,25 +354,27 @@ const route = useRoute()
 const config = useRuntimeConfig()
 const token = useCookie('token').value
 
-const reportId = route.params.id as string
-const report = ref<Report | null>(null)
+const bookingId = route.params.bookingId as string
+const category = route.params.category as string
+const report = ref<Report[]>([])
 const isLoading = ref(true)
 const loadError = ref('')
 
 
 onMounted(async () => {
   try {
-    const res = await $fetch<ApiResponse<Report>>(
-      `/reports/admin/${reportId}`,
-      {
-        baseURL: config.public.apiBase,
-        headers: {
-          Accept: 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {})
-        }
-      }
-    )
-    report.value = res.data
+    const res = await $fetch<ApiResponse<Report[]>>(
+  `/reports/admin/group/${bookingId}/${category}`,
+  {
+    baseURL: config.public.apiBase,
+    headers: {
+      Accept: 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {})
+    }
+  }
+)
+
+  report.value = res.data
   } catch (err: any) {
     console.error(err)
     loadError.value = err?.data?.message || 'โหลดข้อมูลไม่สำเร็จ'
@@ -548,15 +575,15 @@ function statusClass(st?: string | null) {
 }
 
 async function patchStatus(status: ReportStatus) {
-  if (!report.value) return
+  if (!report.value.length) return
   if (!confirm(`ยืนยันเปลี่ยนสถานะเป็น "${statusLabel(status)}" ?`)) return
 
   isPatchingStatus.value = true
   targetStatus.value = status
 
   try {
-    const res = await $fetch<ApiResponse<Report>>(
-      `/reports/admin/${reportId}/status`,
+    await $fetch(
+      `/api/reports/admin/group/${bookingId}/${category}/status`,
       {
         baseURL: config.public.apiBase,
         method: 'PATCH',
@@ -566,16 +593,19 @@ async function patchStatus(status: ReportStatus) {
         },
         body: {
           status,
-          ...(notificationBody.value.trim() ? { notificationBody: notificationBody.value.trim() } : {})
+          ...(notificationBody.value.trim()
+            ? { notificationBody: notificationBody.value.trim() }
+            : {})
         }
       }
     )
 
-    report.value = {
-      ...report.value,
-      status: res.data.status,
-      updatedAt: res.data.updatedAt
-    }
+    // update local state ทุก report
+    report.value = report.value.map(r => ({
+      ...r,
+      status
+    }))
+
   } catch (err) {
     console.error(err)
     alert('อัปเดตสถานะไม่สำเร็จ')
@@ -584,7 +614,6 @@ async function patchStatus(status: ReportStatus) {
     targetStatus.value = ''
   }
 }
-
 /* Reusable display box */
 const InfoBox = defineComponent({
     name: 'InfoBox',

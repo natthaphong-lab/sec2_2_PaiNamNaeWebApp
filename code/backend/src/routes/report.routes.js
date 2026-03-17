@@ -3,6 +3,12 @@ const validate = require('../middlewares/validate');
 const { protect, requireAdmin } = require('../middlewares/auth');
 const upload = require('../middlewares/upload.middleware');
 const reportController = require('../controllers/report.controller');
+const { adminGetReportsByGroup } = require('../controllers/report.controller')
+
+
+const reportService = require('../services/report.service')
+const prisma = require('../utils/prisma')
+
 const {
   createReportSchema,
   idParamSchema,
@@ -11,6 +17,21 @@ const {
 } = require('../validations/report.validation');
 
 const router = express.Router();
+
+router.get(
+  "/admin/group/:routeId/:category",
+  protect,
+  requireAdmin,
+  adminGetReportsByGroup
+);
+
+router.patch(
+  "/admin/group/:routeId/:category/status",
+  protect,
+  requireAdmin,
+  reportController.adminUpdateReportStatus
+
+)
 
 // --- Admin Routes ---
 // GET /reports/admin
@@ -73,5 +94,7 @@ router.post(
   validate({ body: createReportSchema }),
   reportController.createReport
 );
+
+
 
 module.exports = router;

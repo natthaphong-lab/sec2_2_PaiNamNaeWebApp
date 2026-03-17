@@ -499,15 +499,16 @@ async function fetchUserNotifications() {
         })
 
         const raw = Array.isArray(res?.data) ? res.data : []
-        notifications.value = raw.map(it => ({
-            id: it.id,
-            title: it.title || '-',
-            body: it.body || '',
-            createdAt: it.createdAt || Date.now(),
-            readAt: it.readAt || null,
-            type: it.type || null,
-            metadata: it.metadata || null
-        }))
+notifications.value = raw.map(it => ({
+    id: it.id,
+    title: it.title || '-',
+    body: it.body || '',
+    createdAt: it.createdAt || Date.now(),
+    readAt: it.readAt || null,
+    type: it.type || null,
+    status: it.metadata?.status || null,
+    metadata: it.metadata || null
+}))
     } catch (e) {
         console.error(e)
         notifications.value = []
@@ -603,24 +604,22 @@ function timeAgo(ts) {
 }
 
 function getStatusType(n) {
-    const text = `${n.title ?? ''} ${n.body ?? ''}`.toLowerCase()
+    switch (n.status) {
+        case 'PENDING':
+            return 'pending'
 
-    if (text.includes('ปฏิเสธ')) {
-        return 'rejected'
+        case 'ON_PROGRESS':
+            return 'in_progress'
+
+        case 'COMPLETED':
+            return 'completed'
+
+        case 'REJECTED':
+            return 'rejected'
+
+        default:
+            return 'default'
     }
-
-    if (text.includes('กำลังดำเนินการ')) {
-        return 'in_progress'
-    }
-
-    if (
-        text.includes('ตักเตือนแล้ว') ||
-        text.includes('ลงโทษแล้ว')
-    ) {
-        return 'completed'
-    }
-
-    return 'default'
 }
 
 /* lifecycle */

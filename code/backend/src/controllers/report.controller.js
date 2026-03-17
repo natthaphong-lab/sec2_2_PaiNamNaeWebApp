@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const reportService = require('../services/report.service');
 const ApiError = require('../utils/ApiError');
+const prisma = require('../utils/prisma');
 
 const createReport = asyncHandler(async (req, res) => {
   const reporterId = req.user.sub;
@@ -55,18 +56,83 @@ const adminGetReportById = asyncHandler(async (req, res) => {
   const data = await reportService.adminGetReportById(req.params.id);
   res.status(200).json({ success: true, message: 'Report retrieved successfully', data });
 });
+const adminUpdateReportStatus = async (req, res, next) => {
+  try {
+    const { routeId, category } = req.params
+    const { status, notificationBody } = req.body
 
-const adminUpdateReportStatus = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  const { status, notificationBody } = req.body;
-  const data = await reportService.adminUpdateReportStatus(id, status, notificationBody);
-  res.status(200).json({ success: true, message: `Report status updated to ${status}`, data });
-});
+    const result = await reportService.adminUpdateReportStatus(
+      routeId,
+      category,
+      status,
+      notificationBody
+    )
+
+    res.json({
+      success: true,
+      data: result
+    })
+  } catch (err) {
+    next(err)
+  }
+}
 
 const adminDeleteReport = asyncHandler(async (req, res) => {
   const data = await reportService.adminDeleteReport(req.params.id);
   res.status(200).json({ success: true, message: 'Report deleted successfully', data });
 });
+
+
+const adminGetReportsByGroup = asyncHandler(async (req, res) => {
+
+  const { routeId, category } = req.params;
+
+  const reports = await prisma.report.findMany({
+    where: {
+      category,
+      booking: {
+        route: {
+          id: routeId
+        }
+      }
+    },
+    include: {
+      reporter: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          username: true,
+          phoneNumber: true,
+          profilePicture: true
+        }
+      },
+      reportedUser: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          username: true,
+          phoneNumber: true,
+          profilePicture: true
+        }
+      }
+    },
+    orderBy: {
+      createdAt: 'desc'
+    }
+  });
+
+  res.status(200).json({
+    success: true,
+    message: 'Reports retrieved successfully',
+    data: reports
+  });
+
+});
+
 
 module.exports = {
   createReport,
@@ -76,4 +142,5 @@ module.exports = {
   adminGetReportById,
   adminUpdateReportStatus,
   adminDeleteReport,
+  adminGetReportsByGroup   
 };
