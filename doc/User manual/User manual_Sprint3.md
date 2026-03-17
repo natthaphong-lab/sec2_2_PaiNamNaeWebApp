@@ -14,7 +14,7 @@
 - ดูรายละเอียดของรายงาน  
 - ลบข้อมูลการรายงานของผู้โดยสารออกจากระบบได้โดยตรง  
 
-![หน้ารายการรายงานคนขับ](../image/Admin_report/Admin_Report_Management.png)
+![หน้ารายการรายงานคนขับ](../../image/Admin_report/Admin_Report_Management.png)
 
 ---
 
